@@ -241,7 +241,7 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 - [x] **Sprint 3:** Mapbox map with building polygons
 - [x] **Sprint 4:** Realtime geolocation broadcasting
 - [x] **Sprint 5:** Zone aggregation Edge Function
-- [ ] **Sprint 6:** Occupancy blending (live + Google + predicted)
+- [x] **Sprint 6:** Occupancy blending (live + Google + predicted)
 - [ ] **Sprint 7:** Live heatmap rendering
 - [ ] **Sprint 8:** Building cards (bottom sheet)
 - [ ] **Sprint 9:** Floor-level breakdown

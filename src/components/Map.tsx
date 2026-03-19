@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import type { Building } from '@/types'
+import type { BlendedOccupancy, Building } from '@/types'
 import { buildingsToFeatureCollection } from '@/lib/mapHelpers'
 import {
   MAPBOX_STYLE,
@@ -14,6 +14,7 @@ import {
 
 interface MapProps {
   buildings: Building[]
+  occupancyMap?: Map<string, BlendedOccupancy> // consumed in Sprint 7 for polygon colouring
   onBuildingClick: (buildingId: string) => void
 }
 
@@ -22,7 +23,7 @@ const FILL_LAYER = 'building-fills'
 const OUTLINE_LAYER = 'building-outlines'
 const LABEL_LAYER = 'building-labels'
 
-export default function Map({ buildings, onBuildingClick }: MapProps) {
+export default function Map({ buildings, occupancyMap: _occupancyMap, onBuildingClick }: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<mapboxgl.Map | null>(null)
   const onClickRef = useRef(onBuildingClick)

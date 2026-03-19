@@ -4,12 +4,14 @@ import { useBuildings } from '@/hooks/useBuildings'
 import { useZones } from '@/hooks/useZones'
 import { useGeolocation } from '@/hooks/useGeolocation'
 import { usePositionBroadcast } from '@/hooks/usePositionBroadcast'
+import { useBlendedOccupancy } from '@/hooks/useBlendedOccupancy'
 import { detectZone } from '@/lib/zoneDetection'
 
 export default function MapPage() {
   const { buildings, error } = useBuildings()
   const { zones } = useZones()
   const { position, isWatching } = useGeolocation()
+  const { occupancyMap } = useBlendedOccupancy(buildings, zones)
   const [_selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null)
 
   // Zone detection — coordinates consumed here, only zone_id exits
@@ -40,7 +42,7 @@ export default function MapPage() {
 
   return (
     <div className="h-full w-full relative">
-      <Map buildings={buildings} onBuildingClick={handleBuildingClick} />
+      <Map buildings={buildings} occupancyMap={occupancyMap} onBuildingClick={handleBuildingClick} />
     </div>
   )
 }
