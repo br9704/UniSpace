@@ -90,10 +90,13 @@ Deno.serve(async (_req) => {
 
     for (const building of buildings as BuildingWithPlaceId[]) {
       try {
-        // Call Google Places API
+        // Call Google Places API (legacy Place Details)
+        // NOTE: current_popularity is NOT available via the official API — it's
+        // a Google Maps internal feature. We fetch opening_hours for is_open_now
+        // and store current_popularity as null. The column is retained for future use.
         const url = new URL("https://maps.googleapis.com/maps/api/place/details/json");
         url.searchParams.set("place_id", building.google_place_id);
-        url.searchParams.set("fields", "current_opening_hours,utc_offset");
+        url.searchParams.set("fields", "opening_hours,utc_offset");
         url.searchParams.set("key", googleApiKey);
 
         const response = await fetch(url.toString());

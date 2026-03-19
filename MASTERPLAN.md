@@ -3,7 +3,7 @@
 > Status key: [ ] Not started | [x] Complete | [~] In progress | [⏭️] Deferred
 
 ## Project Status
-**Current state:** Sprint 0 and Sprint 1 complete. Full database schema defined (8 migration files), UoM Parkville seeded with 5 buildings and 13 floor zones, Edge Function scaffolds for aggregate-occupancy and sync-google-popularity written with privacy guards enforced. Ready for Sprint 2.
+**Current state:** Sprint 0, 1, and 2 complete. Full database schema deployed to Supabase, UoM Parkville seeded with 5 buildings, 13 floor zones, and 335 google_popular_times rows. Both Edge Functions deployed. Blending logic implemented with full test coverage (20 tests). Ready for Sprint 3.
 
 ---
 
@@ -111,13 +111,13 @@
 - Blending utility that returns the best available data source per building
 
 **Subtasks:**
-- [ ] S2.1 — Implement sync-google-popularity Edge Function (fetch current_popularity + is_open_now for each building)
-- [ ] S2.2 — Add skip-if-unchanged logic (don't write if popularity hasn't changed)
-- [ ] S2.3 — Implement error handling (per-building — one failure doesn't block others)
-- [ ] S2.4 — Write seed script for google_popular_times (typical weekly histogram data for 5 buildings)
-- [ ] S2.5 — Write src/lib/blending.ts — occupancy source priority logic (live > google > predicted > google-typical > none)
-- [ ] S2.6 — Write unit tests for blending logic
-- [ ] S2.7 — Add GOOGLE_PLACES_API_KEY to .env.example documentation (server-side only warning)
+- [x] S2.1 — Implement sync-google-popularity Edge Function ✅ (deployed to Supabase, fetches opening_hours/is_open_now per building)
+- [x] S2.2 — Add skip-if-unchanged logic ✅ (compares cached vs new values before writing)
+- [x] S2.3 — Implement error handling ✅ (per-building — one failure doesn't block others)
+- [x] S2.4 — Write seed script for google_popular_times ✅ (335 rows across 5 buildings, realistic weekly curves)
+- [x] S2.5 — Write src/lib/blending.ts ✅ (fallback: live > google cache > predicted > google typical > none)
+- [x] S2.6 — Write unit tests for blending logic ✅ (20 tests, all passing)
+- [x] S2.7 — Add GOOGLE_PLACES_API_KEY to .env.example documentation ✅ (server-side only, set via Supabase secrets)
 
 **Test criteria:**
 - Edge Function compiles with Deno
@@ -833,6 +833,8 @@ Manual subject tags. "Looking for study partner" status. Study session creation 
 | 2026-03-19 | @types/geojson added | Required for Polygon type in building/zone interfaces |
 | 2026-03-19 | Vite v8 scaffolded | Latest stable, uses flat ESLint config |
 | 2026-03-19 | pnpm via npx (not global install) | Permission constraints on user's system |
+| 2026-03-19 | Google Places API does not return `current_popularity` | This is an internal Google Maps feature, not exposed via public API. Blending hierarchy adjusted: live > predicted > google typical > none. `google_popularity_cache.current_popularity` kept nullable for future use. Edge Function still syncs `is_open_now` for "currently open" filter. |
+| 2026-03-19 | Vitest config in separate `vitest.config.ts` | Vite 8's `defineConfig` type does not include `test` property. Separate config avoids TS errors while inheriting path aliases. |
 
 ---
 

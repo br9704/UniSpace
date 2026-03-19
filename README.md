@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/status-in%20development-orange" alt="Status: In Development" />
-  <img src="https://img.shields.io/badge/phase-0%20complete-blue" alt="Phase: 0 Complete" />
+  <img src="https://img.shields.io/badge/phase-0%20complete%20|%20sprint%202%20done-blue" alt="Phase: 0 Complete, Sprint 2 Done" />
   <img src="https://img.shields.io/badge/pilot-UoM%20Parkville-003366" alt="Pilot: UoM Parkville" />
   <img src="https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey" alt="License" />
 </p>
@@ -127,7 +127,10 @@ supabase db push
 # 5. Seed the database (UoM Parkville — 5 buildings, 13 zones)
 # Run supabase/seed/001_uom_parkville.sql via Supabase SQL Editor or CLI
 
-# 6. Start dev server
+# 6. Run tests
+pnpm test
+
+# 7. Start dev server
 pnpm dev
 ```
 
@@ -232,7 +235,7 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 ### Phase 0 — Foundation
 - [x] **Sprint 0:** Project scaffolding (Vite + React + TypeScript + Tailwind + PWA)
 - [x] **Sprint 1:** Supabase infrastructure (schema, migrations, seed data, Edge Function scaffolds)
-- [ ] **Sprint 2:** Google Places integration and occupancy blending logic
+- [x] **Sprint 2:** Google Places integration and occupancy blending logic
 
 ### Phase 1 — MVP
 - [ ] **Sprint 3:** Mapbox map with building polygons
