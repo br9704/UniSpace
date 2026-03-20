@@ -244,7 +244,7 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 - [x] **Sprint 6:** Occupancy blending (live + Google + predicted)
 - [x] **Sprint 7:** Live heatmap rendering + building expansion (5 → 20 buildings)
 - [x] **Sprint 8:** Building cards (bottom sheet)
-- [ ] **Sprint 9:** Floor-level breakdown
+- [x] **Sprint 9:** Floor-level breakdown
 - [ ] **Sprint 10:** Smart recommendations ("Find me a spot")
 - [ ] **Sprint 11:** Prediction engine (Google baseline)
 - [ ] **Sprint 12:** PWA install flow + service worker

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import type { PanInfo } from 'framer-motion'
 import type { BlendedOccupancy, Building } from '@/types'
-import { getOccupancyLabel } from '@/constants/occupancy'
+import FloorBreakdown from './FloorBreakdown'
 import { isOpenNow } from '@/lib/buildingHours'
 import OccupancyBar from './OccupancyBar'
 import OccupancyBadge from './OccupancyBadge'
@@ -30,9 +30,7 @@ export default function BuildingCard({ building, occupancy, onDismiss }: Buildin
   const pct = occupancy?.pct ?? null
   const trend = occupancy?.trend ?? 'stable'
   const floors = occupancy?.floor_occupancies ?? []
-  const quietestFloor = floors.length > 0
-    ? floors.reduce((q, f) => f.occupancy_pct < q.occupancy_pct ? f : q)
-    : null
+  // quietestFloor logic moved to FloorBreakdown component
 
   function handleDragEnd(_: never, info: PanInfo) {
     const offset = info.offset.y
@@ -103,17 +101,7 @@ export default function BuildingCard({ building, occupancy, onDismiss }: Buildin
             <div className="mt-4 border-t pt-4" style={{ borderColor: 'var(--color-border)' }}>
               {occupancy && <div className="mb-3"><DataSourceBadge source={occupancy.source} /></div>}
 
-              {floors.length > 0 && (<div className="mb-4">
-                <h3 className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>By Floor</h3>
-                {floors.map((f) => (
-                  <div key={f.zone_id} className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xs w-20 truncate" style={{ color: 'var(--color-text-secondary)' }}>{f.zone_name}</span>
-                    <div className="flex-1"><OccupancyBar pct={f.occupancy_pct} height={6} /></div>
-                    <span className="text-xs w-8 text-right" style={{ color: 'var(--color-text-primary)' }}>{Math.round(f.occupancy_pct)}%</span>
-                    <span className="text-xs w-14" style={{ color: 'var(--color-text-tertiary)' }}>{getOccupancyLabel(f.occupancy_pct)}</span>
-                    {quietestFloor?.zone_id === f.zone_id && <span className="text-xs" style={{ color: 'var(--color-uom-gold)' }}>★</span>}
-                  </div>))}
-              </div>)}
+              <FloorBreakdown floors={floors} />
 
               {amenities.length > 0 && (<div className="mb-4">
                 <h3 className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Amenities</h3>

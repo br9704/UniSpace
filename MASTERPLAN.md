@@ -376,12 +376,12 @@
 - Staggered reveal animation (50ms delay per floor)
 
 **Subtasks:**
-- [ ] S9.1 — Create src/components/FloorBreakdown.tsx
-- [ ] S9.2 — Render per-floor rows with mini occupancy bars
-- [ ] S9.3 — Identify and highlight quietest floor with gold "Recommended" label
-- [ ] S9.4 — Add staggered reveal animation (Framer Motion, 50ms per floor)
-- [ ] S9.5 — Create src/components/AmenityChip.tsx (icon + label for WiFi, Power, etc.)
-- [ ] S9.6 — Render amenity chips in expanded card
+- [x] S9.1 — FloorBreakdown.tsx extracted from BuildingCard ✅
+- [x] S9.2 — Per-floor rows with mini OccupancyBar, %, label ✅ (Sprint 8)
+- [x] S9.3 — Quietest floor "→ Recommended" gold label ✅
+- [x] S9.4 — Staggered Framer Motion reveal (50ms per floor) ✅
+- [x] S9.5 — AmenityChip.tsx ✅ (Sprint 8)
+- [x] S9.6 — Amenity chips in expanded card ✅ (Sprint 8)
 
 **Test criteria:**
 - All floors for the selected building are displayed
