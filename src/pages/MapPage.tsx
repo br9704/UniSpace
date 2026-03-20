@@ -59,7 +59,7 @@ export default function MapPage() {
     <div className="h-full w-full relative">
       <StaleDataBanner lastUpdated={latestUpdate} />
       <Map buildings={buildings} occupancyMap={occupancyMap} onBuildingClick={handleBuildingClick} />
-      <div className="absolute bottom-4 left-4" style={{ zIndex: 50 }}>
+      <div className="absolute bottom-2 left-4" style={{ zIndex: 50 }}>
         <DataSourcePill source={dominantSource} />
       </div>
       <AnimatePresence>

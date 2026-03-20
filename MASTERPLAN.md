@@ -3,7 +3,7 @@
 > Status key: [ ] Not started | [x] Complete | [~] In progress | [⏭️] Deferred
 
 ## Project Status
-**Current state:** Sprints 0–8 complete. 18 UoM buildings with real OSM outlines, heatmap colours, and bottom-sheet Building Cards with occupancy bar, trend arrow, floor breakdown, amenities, and action buttons. 76 unit tests passing. Ready for Sprint 9.
+**Current state:** Sprints 0–8 + UI Overhaul Phase 1 complete. Light theme (blue+white), bottom tab bar (Home/Map/Find/Alerts), Home dashboard with campus status + building cards + full list. 18 buildings with OSM outlines, heatmap colours, building cards. 76 unit tests passing.
 
 ---
 

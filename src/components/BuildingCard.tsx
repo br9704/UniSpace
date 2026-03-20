@@ -53,7 +53,7 @@ export default function BuildingCard({ building, occupancy, onDismiss }: Buildin
       {/* Overlay */}
       <motion.div
         className="fixed inset-0"
-        style={{ backgroundColor: 'rgba(3,13,26,0.7)', opacity: bgOpacity, pointerEvents: isExpanded ? 'auto' : 'none', zIndex: 90 }}
+        style={{ backgroundColor: 'rgba(0,0,0,0.3)', opacity: bgOpacity, pointerEvents: isExpanded ? 'auto' : 'none', zIndex: 90 }}
         onClick={() => { setIsExpanded(false); animate(y, 0, SPRING) }}
       />
 

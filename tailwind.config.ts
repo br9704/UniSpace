@@ -12,13 +12,13 @@ export default {
           'gold-light': '#E8C97A',
         },
         bg: {
-          primary: '#030D1A',
-          secondary: '#071828',
-          elevated: '#0D2340',
+          primary: '#FFFFFF',
+          secondary: '#F5F7FA',
+          elevated: '#FFFFFF',
         },
         border: {
-          DEFAULT: '#1A3A5C',
-          bright: '#2A5A8C',
+          DEFAULT: '#E2E8F0',
+          bright: '#CBD5E1',
         },
         occupancy: {
           empty: '#4CAF7D',

@@ -41,7 +41,7 @@ export function getOutlineLayerConfig(): LineLayerSpecification {
     type: 'line',
     source: BUILDINGS_SOURCE,
     paint: {
-      'line-color': '#4A8ABF',
+      'line-color': '#003865',
       'line-width': 1.5,
     },
   }
@@ -67,8 +67,8 @@ export function getLabelLayerConfig(): SymbolLayerSpecification {
       'text-allow-overlap': true,
     },
     paint: {
-      'text-color': '#F0F4F8',
-      'text-halo-color': '#030D1A',
+      'text-color': '#1E293B',
+      'text-halo-color': '#FFFFFF',
       'text-halo-width': 1.5,
     },
   }
