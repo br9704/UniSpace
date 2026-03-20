@@ -3,7 +3,7 @@
 > Status key: [ ] Not started | [x] Complete | [~] In progress | [⏭️] Deferred
 
 ## Project Status
-**Current state:** Sprints 0–8 + UI Overhaul Phase 1 complete. Light theme (blue+white), bottom tab bar (Home/Map/Find/Alerts), Home dashboard with campus status + building cards + full list. 18 buildings with OSM outlines, heatmap colours, building cards. 76 unit tests passing.
+**Current state:** Sprints 0–10 complete. Production UI with light theme, SVG tab bar, professional Home dashboard (time-of-day greeting, campus status, building cards), Find page with scoring algorithm + filter chips + ranked results, FAQ/More page. Map locked to UoM bounds. 87 unit tests passing.
 
 ---
 
@@ -408,18 +408,19 @@
 - Empty state when no buildings match
 
 **Subtasks:**
-- [ ] S10.1 — Create src/pages/FindPage.tsx route shell
-- [ ] S10.2 — Create src/hooks/useRecommendations.ts with scoring algorithm
-- [ ] S10.3 — Implement walking time calculation (Turf.js distance, 1.4 m/s speed)
-- [ ] S10.4 — Implement amenity match percentage calculation
-- [ ] S10.5 — Create src/components/FilterSheet.tsx (toggles + sliders)
-- [ ] S10.6 — Create src/components/RecommendationCard.tsx
-- [ ] S10.7 — Implement filter chip horizontal scroll bar
-- [ ] S10.8 — Debounce filter changes (300ms)
-- [ ] S10.9 — Create empty state component
-- [ ] S10.10 — Add tab bar navigation (Map / Find / Alerts)
-- [ ] S10.11 — Write unit tests for scoring algorithm
-- [ ] S10.12 — Write unit tests for walking time calculation
+- [x] S10.1 — FindPage.tsx with full implementation ✅
+- [x] S10.2 — useRecommendations hook with debounced scoring ✅
+- [x] S10.3 — Walking time via Turf.js distance at 1.4 m/s ✅
+- [x] S10.4 — Amenity match percentage calculation ✅
+- [x] S10.5 — FilterChips horizontal scroll (FilterSheet bottom sheet deferred) ✅
+- [x] S10.6 — RecommendationCard with directions, amenities, status ✅
+- [x] S10.7 — Filter chip horizontal scroll bar ✅
+- [x] S10.8 — 300ms debounce on filter changes ✅
+- [x] S10.9 — Empty state with reset button ✅
+- [x] S10.10 — Tab bar with SVG icons (Home/Map/Find/More) ✅
+- [x] S10.11 — 11 unit tests for scoring algorithm ✅
+- [x] S10.12 — Walking time tests (known coords, null GPS, null entrance) ✅
+  - [x] S10.extra — Full UI revamp: light theme polish, SVG tab icons, professional Home page with greeting + campus status + building cards, FAQ/More page, map bounds lock
 
 **Test criteria:**
 - Toggling filters updates results within 300ms

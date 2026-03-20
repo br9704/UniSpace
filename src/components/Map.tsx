@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import type { BlendedOccupancy, Building } from '@/types'
 import { buildingsToFeatureCollection } from '@/lib/mapHelpers'
 import { getFillLayerConfig, getOutlineLayerConfig, getLabelLayerConfig } from '@/lib/mapLayers'
-import { MAPBOX_STYLE, DEFAULT_CAMPUS_CENTER, DEFAULT_ZOOM, MIN_ZOOM, MAX_ZOOM } from '@/constants/map'
+import { MAPBOX_STYLE, DEFAULT_CAMPUS_CENTER, DEFAULT_ZOOM, MIN_ZOOM, MAX_ZOOM, MAX_BOUNDS } from '@/constants/map'
 
 interface MapProps {
   buildings: Building[]
@@ -35,6 +35,7 @@ export default function Map({ buildings, occupancyMap, onBuildingClick }: MapPro
       zoom: DEFAULT_ZOOM,
       minZoom: MIN_ZOOM,
       maxZoom: MAX_ZOOM,
+      maxBounds: MAX_BOUNDS,
       attributionControl: false,
     })
 
