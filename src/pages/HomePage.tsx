@@ -182,12 +182,17 @@ function BuildingRow({ building, occ, walkMin, onClick }: { building: Building; 
   ].filter((a): a is string => a !== null)
 
   return (
-    <button onClick={onClick} style={{ display: 'flex', flexDirection: 'column', width: '100%', padding: 18, textAlign: 'left', borderRadius: 16, backgroundColor: '#FAFBFD', border: '1px solid #EDF0F4', borderLeft: `4px solid ${colour}`, cursor: 'pointer' }}>
+    <button onClick={onClick} style={{ display: 'flex', flexDirection: 'column', width: '100%', padding: 22, textAlign: 'left', borderRadius: 18, backgroundColor: '#FAFBFD', border: '1px solid #EDF0F4', borderLeft: `4px solid ${colour}`, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
       {/* Header: name + percentage */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
-          <p style={{ fontSize: 16, fontWeight: 600, color: '#1E293B' }}>{building.name}</p>
-          {meta && <p style={{ fontSize: 13, color: '#64748B', marginTop: 3, lineHeight: 1.4 }}>{meta.description}</p>}
+          <p style={{ fontSize: 20, fontWeight: 700, color: '#1E293B', lineHeight: 1.2 }}>{building.name}</p>
+          {meta && (
+            <>
+              <span style={{ display: 'inline-block', fontSize: 11, padding: '3px 10px', borderRadius: 6, backgroundColor: '#EDF0F4', color: '#64748B', marginTop: 6 }}>{meta.address}</span>
+              <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.6 }}>{meta.description}</p>
+            </>
+          )}
         </div>
         <span style={{ fontSize: 22, fontWeight: 700, color: colour, flexShrink: 0 }}>{pct !== null ? `${Math.round(pct)}%` : '—'}</span>
       </div>

@@ -40,7 +40,8 @@ export function mergeZoneOccupancy(
   return next
 }
 
-/** Find the google_popular_times row matching current day+hour for a building. */
+/** Find the google_popular_times row matching current day+hour for a building.
+ *  Falls back to nearest available hour on the same day if exact match not found. */
 export function getCurrentTypical(
   rows: GooglePopularTime[],
   buildingId: string,
@@ -49,9 +50,19 @@ export function getCurrentTypical(
   const d = now ?? new Date()
   const dow = d.getDay() // 0=Sun
   const hour = d.getHours()
-  return rows.find(
+
+  // Exact match first
+  const exact = rows.find(
     (r) => r.building_id === buildingId && r.day_of_week === dow && r.hour_of_day === hour,
-  ) ?? null
+  )
+  if (exact) return exact
+
+  // Fallback: nearest hour on same day
+  const sameDayRows = rows
+    .filter((r) => r.building_id === buildingId && r.day_of_week === dow)
+    .sort((a, b) => Math.abs(a.hour_of_day - hour) - Math.abs(b.hour_of_day - hour))
+
+  return sameDayRows[0] ?? null
 }
 
 /** Find the occupancy_predictions row matching current day+hour for a building. */
