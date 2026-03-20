@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import TabBar from '@/components/TabBar'
 import HomePage from '@/pages/HomePage'
 import MapPage from '@/pages/MapPage'
-import FindPage from '@/pages/FindPage'
+// FindPage removed — functionality merged into HomePage
 import AlertsPage from '@/pages/AlertsPage'
 
 export default function App() {
@@ -13,7 +13,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/map" element={<MapPage />} />
-            <Route path="/find" element={<FindPage />} />
+            {/* Find page removed — search/sort in HomePage */}
             <Route path="/alerts" element={<AlertsPage />} />
           </Routes>
         </div>

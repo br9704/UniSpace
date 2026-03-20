@@ -23,7 +23,7 @@ export default function RecommendationCard({ ranked }: RecommendationCardProps) 
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
             <span style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: status.open ? '#4CAF7D' : '#E05252' }} />
             <span style={{ fontSize: 13, color: '#64748B' }}>
-              {status.open ? `Open · Closes ${status.closesAt}` : 'Closed'}
+              {status.open ? `Open · Closes ${status.closesAt}` : 'Officially closed · Keycard access'}
             </span>
           </div>
         </div>

@@ -12,9 +12,9 @@ import type { BlendedOccupancy, Building } from '@/types'
 
 function getGreeting(): string {
   const h = new Date().getHours()
-  if (h < 12) return 'Good morning'
-  if (h < 17) return 'Good afternoon'
-  return 'Good evening'
+  if (h < 12) return 'Good morning, student'
+  if (h < 17) return 'Good afternoon, student'
+  return 'Good evening, student'
 }
 
 export default function HomePage() {
@@ -109,7 +109,7 @@ function CompactCard({ building, occ, walkMin, onClick }: { building: Building; 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <span style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: status.open ? '#4CAF7D' : '#E05252' }} />
-          <span style={{ fontSize: 12, color: '#94A3B8' }}>{status.open ? 'Open' : 'Closed'}</span>
+          <span style={{ fontSize: 12, color: '#94A3B8' }}>{status.open ? 'Open' : 'After hours'}</span>
         </div>
         {walkMin !== null && <span style={{ fontSize: 12, color: '#94A3B8' }}>~{Math.round(walkMin)}m</span>}
       </div>
@@ -190,7 +190,7 @@ function BuildingRow({ building, occ, walkMin, onClick }: { building: Building; 
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
             <span style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: status.open ? '#4CAF7D' : '#E05252' }} />
             <span style={{ fontSize: 13, color: '#64748B' }}>
-              {status.open ? `Open · Closes ${status.closesAt}` : 'Closed'}
+              {status.open ? `Open · Closes ${status.closesAt}` : 'After hours · Keycard access'}
               {walkMin !== null ? ` · ~${Math.round(walkMin)} min walk` : ''}
             </span>
           </div>

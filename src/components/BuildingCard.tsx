@@ -99,7 +99,7 @@ export default function BuildingCard({ building, occupancy, onDismiss }: Buildin
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }}>
             <span style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: status.open ? '#4CAF7D' : '#E05252' }} />
             <span style={{ fontSize: 13, color: '#64748B' }}>
-              {status.open ? `Open · Closes ${status.closesAt}` : status.opensAt ? `Closed · Opens ${status.opensAt}` : 'Closed today'}
+              {status.open ? `Open · Closes ${status.closesAt}` : status.opensAt ? `Officially closed · Opens ${status.opensAt} · Keycard access may be available` : 'Officially closed · Keycard access may be available'}
             </span>
           </div>
 
