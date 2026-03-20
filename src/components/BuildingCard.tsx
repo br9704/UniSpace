@@ -17,7 +17,7 @@ interface BuildingCardProps {
   onDismiss: () => void
 }
 
-const COLLAPSED = 220
+const COLLAPSED = 340
 const SPRING = { type: 'spring' as const, stiffness: 280, damping: 28 }
 
 export default function BuildingCard({ building, occupancy, onDismiss }: BuildingCardProps) {
@@ -88,11 +88,12 @@ export default function BuildingCard({ building, occupancy, onDismiss }: Buildin
 
         <div style={{ padding: '0 20px 20px' }}>
           {/* Collapsed content */}
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1E293B' }}>{building.name}</h2>
+          <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1E293B' }}>{building.name}</h2>
+          {meta && <span style={{ display: 'inline-block', fontSize: 11, padding: '3px 10px', borderRadius: 6, backgroundColor: '#EDF0F4', color: '#64748B', marginTop: 6 }}>{meta.address}</span>}
           {meta ? (
-            <p style={{ fontSize: 13, color: '#64748B', marginTop: 4, lineHeight: 1.5 }}>{meta.description}</p>
+            <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.6 }}>{meta.description}</p>
           ) : (
-            <p style={{ fontSize: 13, color: '#64748B', marginTop: 2 }}>University of Melbourne · Parkville</p>
+            <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>University of Melbourne · Parkville</p>
           )}
 
           <div style={{ marginTop: 14 }}><OccupancyBar pct={pct} height={8} /></div>
@@ -121,6 +122,23 @@ export default function BuildingCard({ building, occupancy, onDismiss }: Buildin
               ))}
             </div>
           )}
+
+          {/* Nearby food + directions (always visible) */}
+          {meta?.nearbyFood?.[0] && (
+            <p style={{ fontSize: 13, color: '#94A3B8', marginTop: 8 }}>Nearby: {meta.nearbyFood[0]}</p>
+          )}
+
+          <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+            <a href={`https://www.google.com/maps/dir/?api=1&destination=${building.entrance_lat},${building.entrance_lng}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{ flex: 1, textAlign: 'center', padding: '10px 0', borderRadius: 10, fontSize: 14, fontWeight: 600, backgroundColor: '#003865', color: '#FFFFFF', textDecoration: 'none' }}>
+              Directions
+            </a>
+            <button onClick={() => { setIsExpanded(true); animate(y, -(expandedH - COLLAPSED), SPRING) }}
+              style={{ flex: 1, padding: '10px 0', borderRadius: 10, fontSize: 14, fontWeight: 600, backgroundColor: '#F0F2F5', color: '#003865', border: '1px solid #EDF0F4', cursor: 'pointer' }}>
+              More Info
+            </button>
+          </div>
 
           {/* Expanded content */}
           {isExpanded && (
