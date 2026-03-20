@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from 'react'
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import Map from '@/components/Map'
 import DataSourcePill from '@/components/DataSourcePill'
 import StaleDataBanner from '@/components/StaleDataBanner'
@@ -7,15 +8,22 @@ import { useZones } from '@/hooks/useZones'
 import { useGeolocation } from '@/hooks/useGeolocation'
 import { usePositionBroadcast } from '@/hooks/usePositionBroadcast'
 import { useBlendedOccupancy } from '@/hooks/useBlendedOccupancy'
+import { useBuildingCard } from '@/hooks/useBuildingCard'
 import { detectZone } from '@/lib/zoneDetection'
 import { getDominantDataSource, getLatestUpdate } from '@/lib/occupancyHelpers'
+
+const BuildingCard = lazy(() => import('@/components/BuildingCard'))
 
 export default function MapPage() {
   const { buildings, error } = useBuildings()
   const { zones } = useZones()
   const { position, isWatching } = useGeolocation()
   const { occupancyMap } = useBlendedOccupancy(buildings, zones)
-  const [_selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null)
+  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null)
+
+  const { building: selectedBuilding, occupancy: selectedOccupancy } = useBuildingCard(
+    selectedBuildingId, buildings, occupancyMap,
+  )
 
   const zoneId = useMemo(
     () => position && zones.length > 0 ? detectZone(position, zones) : null,
@@ -33,7 +41,10 @@ export default function MapPage() {
 
   const handleBuildingClick = useCallback((id: string) => {
     setSelectedBuildingId(id)
-    console.log('[Pulse] Building selected:', id)
+  }, [])
+
+  const handleDismiss = useCallback(() => {
+    setSelectedBuildingId(null)
   }, [])
 
   if (error) {
@@ -51,6 +62,18 @@ export default function MapPage() {
       <div className="absolute bottom-4 left-4" style={{ zIndex: 50 }}>
         <DataSourcePill source={dominantSource} />
       </div>
+      <AnimatePresence>
+        {selectedBuilding && (
+          <Suspense fallback={null}>
+            <BuildingCard
+              key={selectedBuilding.id}
+              building={selectedBuilding}
+              occupancy={selectedOccupancy}
+              onDismiss={handleDismiss}
+            />
+          </Suspense>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

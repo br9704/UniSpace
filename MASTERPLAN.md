@@ -3,7 +3,7 @@
 > Status key: [ ] Not started | [x] Complete | [~] In progress | [⏭️] Deferred
 
 ## Project Status
-**Current state:** Sprints 0–7 complete. 20 UoM buildings with OSM-sourced polygons. Live heatmap rendering with data-driven fill colours, DataSourcePill, StaleDataBanner. Map layers extracted to mapLayers.ts. 69 unit tests passing. Ready for Sprint 8.
+**Current state:** Sprints 0–8 complete. 18 UoM buildings with real OSM outlines, heatmap colours, and bottom-sheet Building Cards with occupancy bar, trend arrow, floor breakdown, amenities, and action buttons. 76 unit tests passing. Ready for Sprint 9.
 
 ---
 
@@ -339,16 +339,16 @@
 - Swipe-to-dismiss
 
 **Subtasks:**
-- [ ] S8.1 — Create src/components/BuildingCard.tsx shell with Framer Motion bottom sheet
-- [ ] S8.2 — Implement collapsed state (name, OccupancyBar, TrendArrow, open/closed badge)
-- [ ] S8.3 — Implement drag handle and snap points (collapsed: 180px, expanded: 70vh)
-- [ ] S8.4 — Create src/components/OccupancyBar.tsx (fill bar with gradient colour)
-- [ ] S8.5 — Create src/components/TrendArrow.tsx (animated SVG: filling/emptying/stable)
-- [ ] S8.6 — Create src/components/DataSourceBadge.tsx ("Live" / "Google estimate" / "Predicted")
-- [ ] S8.7 — Create src/components/OccupancyBadge.tsx (coloured pill: "38% · Quiet")
-- [ ] S8.8 — Implement expanded state content area
-- [ ] S8.9 — Wire polygon tap → BuildingCard open with selected building data
-- [ ] S8.10 — Implement swipe-to-dismiss gesture
+- [x] S8.1 — BuildingCard.tsx with Framer Motion bottom sheet (spring: 280/28) ✅
+- [x] S8.2 — Collapsed state: name, OccupancyBar, TrendArrow, open/closed badge ✅
+- [x] S8.3 — Drag handle + snap points (collapsed 220px, expanded 75vh) ✅
+- [x] S8.4 — OccupancyBar.tsx (gradient fill, 500ms transition) ✅
+- [x] S8.5 — TrendArrow.tsx (animated SVG: filling/emptying/stable) ✅
+- [x] S8.6 — DataSourceBadge.tsx (icon + label pill) ✅
+- [x] S8.7 — OccupancyBadge.tsx ("38% · Quiet" with colour) ✅
+- [x] S8.8 — Expanded: floor breakdown, amenity chips, Navigate/Alert buttons ✅
+- [x] S8.9 — Wired polygon tap → BuildingCard via lazy load + AnimatePresence ✅
+- [x] S8.10 — Swipe-to-dismiss + overlay dimming ✅
 
 **Test criteria:**
 - Tapping a polygon opens the card with correct building data
