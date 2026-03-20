@@ -1,50 +1,48 @@
 import { useState } from 'react'
 
 const FAQ = [
-  { q: 'How does Pulse know how busy a building is?', a: 'Pulse combines crowdsourced location data from active users with Google Maps popularity data. When enough students use Pulse, we show live occupancy. Otherwise, we use Google\'s typical busyness patterns for the current time.' },
-  { q: 'Is my location data private?', a: 'Yes. Your GPS coordinates never leave your device. Pulse only detects which building zone you\'re in (using on-device processing), then sends just the zone ID — never your actual location. Session IDs rotate every 30 minutes and are never stored.' },
-  { q: 'How accurate is the occupancy data?', a: 'Accuracy depends on the data source. Live crowdsourced data is the most accurate. Google estimates are directional (~15-20% margin). All data shows a source label so you know what you\'re looking at.' },
-  { q: 'What does "Google estimate" mean?', a: 'When we don\'t have enough live users in a building, we fall back to Google Maps\' typical popularity data — weekly patterns of how busy each building usually is at this time.' },
-  { q: 'Can I use Pulse without sharing my location?', a: 'Absolutely. You can browse all building occupancy data, view the map, and get recommendations without enabling GPS. Walking time estimates just won\'t be available.' },
+  { q: 'How does Pulse know how busy a building is?', a: 'Pulse combines crowdsourced location data from active users with Google Maps popularity data. When enough students use Pulse, we show live occupancy. Otherwise, we use Google\'s typical busyness patterns.' },
+  { q: 'Is my location data private?', a: 'Yes. Your GPS coordinates never leave your device. Pulse only detects which building zone you\'re in using on-device processing, then sends just the zone ID — never your actual location.' },
+  { q: 'How accurate is the occupancy data?', a: 'Accuracy depends on the data source. Live crowdsourced data is the most accurate. Google estimates are directional (~15-20% margin). All data shows a source label.' },
+  { q: 'What does "Google estimate" mean?', a: 'When we don\'t have enough live users, we show Google Maps\' typical popularity data — weekly patterns of how busy each building usually is at this time.' },
+  { q: 'Can I use Pulse without sharing my location?', a: 'Absolutely. You can browse occupancy data, view the map, and get recommendations without GPS. Walking time estimates just won\'t be available.' },
 ]
 
 export default function AlertsPage() {
   return (
-    <div className="h-full overflow-y-auto" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
+    <div className="h-full overflow-y-auto" style={{ backgroundColor: '#F0F2F5' }}>
       {/* Header */}
-      <div className="px-5 pt-12 pb-5" style={{ background: 'linear-gradient(135deg, #003865 0%, #0080A4 100%)' }}>
-        <h1 className="text-xl font-bold text-white">More</h1>
-        <p className="text-xs text-white/60 mt-0.5">FAQ, alerts, and about Pulse</p>
+      <div style={{ background: 'linear-gradient(145deg, #001F3F 0%, #003865 50%, #005A8C 100%)', padding: '56px 24px 32px' }}>
+        <h1 style={{ fontSize: 28, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.5px' }}>More</h1>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginTop: 6 }}>FAQ, alerts, and about Pulse</p>
       </div>
 
       {/* Alerts preview */}
-      <div className="mx-4 mt-4 p-4 rounded-xl" style={{ backgroundColor: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-card)' }}>
-        <h2 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>Occupancy Alerts</h2>
-        <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
-          Get notified when a building drops below your chosen occupancy threshold. Set alerts from any building card.
+      <div style={{ margin: '20px 20px 0', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '1px solid rgba(0,56,101,0.06)' }}>
+        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#1E293B' }}>Occupancy Alerts</h2>
+        <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.6 }}>
+          Get notified when a building drops below your chosen occupancy threshold. Set alerts from any building card on the map.
         </p>
-        <div className="mt-3 px-3 py-1.5 rounded-full text-xs font-medium inline-block" style={{ backgroundColor: 'var(--color-uom-gold)', color: '#FFFFFF' }}>
+        <div style={{ marginTop: 16, display: 'inline-block', padding: '8px 20px', borderRadius: 10, fontSize: 13, fontWeight: 600, backgroundColor: '#C8A951', color: '#FFFFFF' }}>
           Coming Soon
         </div>
       </div>
 
       {/* FAQ */}
-      <div className="mx-4 mt-6 mb-4">
-        <h2 className="text-xs font-semibold tracking-wider mb-3" style={{ color: 'var(--color-text-tertiary)' }}>FREQUENTLY ASKED QUESTIONS</h2>
-        <div className="space-y-2">
-          {FAQ.map((item) => (
-            <FaqItem key={item.q} question={item.q} answer={item.a} />
-          ))}
+      <div style={{ margin: '20px 20px 0' }}>
+        <h2 style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', letterSpacing: '1px', marginBottom: 14 }}>FREQUENTLY ASKED QUESTIONS</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {FAQ.map((item) => <FaqItem key={item.q} question={item.q} answer={item.a} />)}
         </div>
       </div>
 
       {/* About */}
-      <div className="mx-4 mb-8 p-4 rounded-xl" style={{ backgroundColor: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)' }}>
-        <h2 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>About Pulse</h2>
-        <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+      <div style={{ margin: '20px 20px 32px', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '1px solid rgba(0,56,101,0.06)' }}>
+        <h2 style={{ fontSize: 17, fontWeight: 700, color: '#1E293B' }}>About Pulse</h2>
+        <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.6 }}>
           Pulse gives university students real-time visibility into campus occupancy so they never waste time walking to a full building again.
         </p>
-        <p className="text-xs mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
+        <p style={{ fontSize: 13, color: '#94A3B8', marginTop: 12 }}>
           Version 0.1.0 · Built by Bruno Jaamaa
         </p>
       </div>
@@ -56,19 +54,16 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="rounded-xl overflow-hidden" style={{ backgroundColor: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)' }}>
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full px-4 py-3 text-left"
-      >
-        <span className="text-sm font-medium pr-4" style={{ color: 'var(--color-text-primary)' }}>{question}</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-tertiary)" strokeWidth="2" style={{ transform: open ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 200ms' }}>
+    <div style={{ backgroundColor: '#FFFFFF', borderRadius: 16, border: '1px solid rgba(0,56,101,0.06)', boxShadow: '0 2px 8px rgba(0,0,0,0.02)', overflow: 'hidden' }}>
+      <button onClick={() => setOpen(!open)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '18px 20px', textAlign: 'left', cursor: 'pointer', border: 'none', backgroundColor: 'transparent' }}>
+        <span style={{ fontSize: 14, fontWeight: 500, color: '#1E293B', paddingRight: 16, lineHeight: 1.4 }}>{question}</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" style={{ flexShrink: 0, transform: open ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 200ms' }}>
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
       {open && (
-        <div className="px-4 pb-3">
-          <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>{answer}</p>
+        <div style={{ padding: '0 20px 18px' }}>
+          <p style={{ fontSize: 14, lineHeight: 1.7, color: '#64748B' }}>{answer}</p>
         </div>
       )}
     </div>

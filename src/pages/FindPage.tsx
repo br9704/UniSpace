@@ -27,35 +27,35 @@ export default function FindPage() {
   }, [])
 
   return (
-    <div className="h-full flex flex-col" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
+    <div className="h-full flex flex-col" style={{ backgroundColor: '#F0F2F5' }}>
       {/* Header */}
-      <div className="px-5 pt-12 pb-4" style={{ background: 'linear-gradient(135deg, #003865 0%, #0080A4 100%)' }}>
-        <h1 className="text-xl font-bold text-white">Find a Spot</h1>
-        <p className="text-xs text-white/60 mt-0.5">Filter by amenities and availability</p>
+      <div style={{ background: 'linear-gradient(145deg, #001F3F 0%, #003865 50%, #005A8C 100%)', padding: '56px 24px 32px' }}>
+        <h1 style={{ fontSize: 28, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.5px' }}>Find a Spot</h1>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginTop: 6 }}>Filter by amenities, distance, and availability</p>
       </div>
 
       {/* Filter chips */}
-      <FilterChips
-        filters={filters}
-        onToggle={handleToggle}
-        onOpenSheet={() => {/* FilterSheet — future enhancement */}}
-      />
+      <div style={{ padding: '16px 20px', backgroundColor: '#FFFFFF', borderBottom: '1px solid #EDF0F4' }}>
+        <FilterChips filters={filters} onToggle={handleToggle} onOpenSheet={() => {}} />
+      </div>
 
       {/* Results */}
-      <div className="flex-1 overflow-y-auto px-4 space-y-3 pb-4">
+      <div className="flex-1 overflow-y-auto" style={{ padding: '16px 20px 24px' }}>
         {results.length > 0 ? (
-          results.map((r) => <RecommendationCard key={r.building.id} ranked={r} />)
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <p style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>{results.length} RESULTS</p>
+            {results.map((r) => <RecommendationCard key={r.building.id} ranked={r} />)}
+          </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: 'var(--color-bg-primary)', border: '1px solid var(--color-border)' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-tertiary)" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
+            <div style={{ width: 72, height: 72, borderRadius: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', border: '1px solid #EDF0F4', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: 20 }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </div>
-            <p className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>No spaces match</p>
-            <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>Try removing some filters</p>
+            <p style={{ fontSize: 17, fontWeight: 600, color: '#1E293B' }}>No spaces match</p>
+            <p style={{ fontSize: 14, color: '#94A3B8', marginTop: 6, textAlign: 'center' }}>Try removing some filters to see more results</p>
             <button
               onClick={() => setFilters({ ...DEFAULT_FILTERS })}
-              className="mt-3 px-4 py-1.5 rounded-full text-xs font-medium"
-              style={{ backgroundColor: 'var(--color-uom-navy)', color: '#FFFFFF' }}
+              style={{ marginTop: 20, padding: '10px 24px', borderRadius: 12, fontSize: 14, fontWeight: 600, backgroundColor: '#003865', color: '#FFFFFF', border: 'none', cursor: 'pointer' }}
             >
               Reset Filters
             </button>

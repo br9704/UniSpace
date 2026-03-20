@@ -15,42 +15,37 @@ export default function RecommendationCard({ ranked }: RecommendationCardProps) 
   const amenities = getActiveAmenities(building)
 
   return (
-    <div
-      className="p-4 rounded-xl"
-      style={{ backgroundColor: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-card)' }}
-    >
+    <div style={{ padding: 22, backgroundColor: '#FFFFFF', borderRadius: 20, border: '1px solid rgba(0,56,101,0.06)', boxShadow: '0 4px 20px rgba(0,56,101,0.06)' }}>
       {/* Header */}
-      <div className="flex items-start justify-between mb-2">
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
         <div>
-          <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>{building.name}</h3>
-          <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: status.open ? 'var(--color-empty)' : 'var(--color-packed)' }} />
-            <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
+          <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1E293B' }}>{building.name}</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+            <span style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: status.open ? '#4CAF7D' : '#E05252' }} />
+            <span style={{ fontSize: 13, color: '#64748B' }}>
               {status.open ? `Open · Closes ${status.closesAt}` : 'Closed'}
             </span>
           </div>
         </div>
         {walk_minutes !== null && (
-          <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-secondary)' }}>
+          <span style={{ fontSize: 13, fontWeight: 500, padding: '4px 12px', borderRadius: 8, backgroundColor: '#F0F2F5', color: '#64748B' }}>
             ~{Math.round(walk_minutes)} min
           </span>
         )}
       </div>
 
       {/* Occupancy */}
-      <OccupancyBar pct={occupancy.pct} className="mb-2" />
-      <div className="flex items-center justify-between mb-3">
+      <OccupancyBar pct={occupancy.pct} height={7} className="mb-3" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
         <OccupancyBadge pct={occupancy.pct} />
-        <TrendArrow trend={occupancy.trend} size={16} />
+        <TrendArrow trend={occupancy.trend} size={18} />
       </div>
 
       {/* Amenities */}
       {amenities.length > 0 && (
-        <div className="flex flex-wrap gap-1 mb-3">
-          {amenities.slice(0, 4).map((a) => (
-            <span key={a.label} className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: 'var(--color-bg-secondary)', color: 'var(--color-text-secondary)' }}>
-              {a.label}
-            </span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 14 }}>
+          {amenities.map((a) => (
+            <span key={a.label} style={{ fontSize: 12, padding: '4px 10px', borderRadius: 8, backgroundColor: '#F0F2F5', color: '#64748B' }}>{a.label}</span>
           ))}
         </div>
       )}
@@ -59,8 +54,7 @@ export default function RecommendationCard({ ranked }: RecommendationCardProps) 
       <a
         href={`https://www.google.com/maps/dir/?api=1&destination=${building.entrance_lat},${building.entrance_lng}`}
         target="_blank" rel="noopener noreferrer"
-        className="block text-center py-2 rounded-lg text-sm font-medium"
-        style={{ backgroundColor: 'var(--color-uom-navy)', color: '#FFFFFF' }}
+        style={{ display: 'block', textAlign: 'center', padding: '12px 0', borderRadius: 12, fontSize: 15, fontWeight: 600, backgroundColor: '#003865', color: '#FFFFFF', textDecoration: 'none', marginTop: 16 }}
       >
         Get Directions
       </a>

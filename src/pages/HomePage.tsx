@@ -26,11 +26,7 @@ export default function HomePage() {
 
   const sorted = useMemo(() => {
     return buildings
-      .map((b) => ({
-        building: b,
-        occ: occupancyMap.get(b.id) ?? null,
-        walk: calculateWalkingTime(position, b.entrance_lat, b.entrance_lng),
-      }))
+      .map((b) => ({ building: b, occ: occupancyMap.get(b.id) ?? null, walk: calculateWalkingTime(position, b.entrance_lat, b.entrance_lng) }))
       .filter((x) => x.occ?.pct !== null && x.occ?.pct !== undefined)
       .sort((a, b) => (a.occ?.pct ?? 100) - (b.occ?.pct ?? 100))
   }, [buildings, occupancyMap, position])
@@ -38,90 +34,90 @@ export default function HomePage() {
   const quiet = sorted.filter((x) => (x.occ?.pct ?? 100) <= 40)
   const filling = sorted.filter((x) => x.occ?.trend === 'filling')
   const quietCount = sorted.filter((x) => (x.occ?.pct ?? 100) < 50).length
+  const campusLabel = quietCount > sorted.length / 2 ? 'Quiet' : 'Moderate'
+  const campusColor = campusLabel === 'Quiet' ? '#4CAF7D' : '#F5A623'
 
   return (
-    <div className="h-full overflow-y-auto" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
-      {/* Header */}
-      <div className="px-5 pt-12 pb-5" style={{ background: 'linear-gradient(135deg, #003865 0%, #0080A4 100%)' }}>
-        <p className="text-sm text-white/70">{getGreeting()}</p>
-        <h1 className="text-2xl font-bold text-white tracking-tight">PULSE</h1>
-        <p className="text-xs text-white/50 mt-0.5">University of Melbourne · Parkville</p>
+    <div className="h-full overflow-y-auto" style={{ backgroundColor: '#F0F2F5' }}>
+
+      {/* ── Header ── */}
+      <div style={{ background: 'linear-gradient(145deg, #001F3F 0%, #003865 50%, #005A8C 100%)', padding: '56px 24px 40px' }}>
+        <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', fontWeight: 400, marginBottom: 2 }}>{getGreeting()}</p>
+        <h1 style={{ fontSize: 36, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-1px', lineHeight: 1.1 }}>PULSE</h1>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>University of Melbourne · Parkville</p>
       </div>
 
-      {/* Campus status */}
-      <div className="mx-4 -mt-4 p-4 rounded-xl" style={{ backgroundColor: 'var(--color-bg-elevated)', boxShadow: 'var(--shadow-card)', border: '1px solid var(--color-border)' }}>
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: quietCount > sorted.length / 2 ? 'var(--color-empty)' : 'var(--color-moderate)' }} />
-          <span className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-            Campus is {quietCount > sorted.length / 2 ? 'Quiet' : 'Moderate'}
-          </span>
+      {/* ── Campus Status ── */}
+      <div style={{ margin: '-20px 20px 0', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,56,101,0.08), 0 2px 8px rgba(0,0,0,0.03)', border: '1px solid rgba(0,56,101,0.06)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: campusColor, boxShadow: `0 0 10px ${campusColor}50` }} />
+          <span style={{ fontSize: 20, fontWeight: 700, color: '#1E293B' }}>Campus is {campusLabel}</span>
         </div>
-        <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
-          {quietCount} of {sorted.length} buildings under 50% capacity
+        <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.5 }}>
+          {quietCount} of {sorted.length} buildings are under 50% capacity right now
         </p>
       </div>
 
-      {/* Quiet right now */}
+      {/* ── Quiet Right Now ── */}
       {quiet.length > 0 && (
-        <Section title="QUIET RIGHT NOW">
-          <div className="flex gap-3 overflow-x-auto px-4 pb-1 scrollbar-hide">
+        <SectionCard title="QUIET RIGHT NOW" style={{ margin: '20px 20px 0' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
             {quiet.slice(0, 8).map((x) => (
-              <SummaryCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate('/map')} />
+              <CompactCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate('/map')} />
             ))}
           </div>
-        </Section>
+        </SectionCard>
       )}
 
-      {/* Filling up */}
+      {/* ── Filling Up ── */}
       {filling.length > 0 && (
-        <Section title="FILLING UP">
-          <div className="flex gap-3 overflow-x-auto px-4 pb-1 scrollbar-hide">
+        <SectionCard title="FILLING UP" style={{ margin: '16px 20px 0' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14 }}>
             {filling.slice(0, 8).map((x) => (
-              <SummaryCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate('/map')} />
+              <CompactCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate('/map')} />
             ))}
           </div>
-        </Section>
+        </SectionCard>
       )}
 
-      {/* All buildings */}
-      <Section title="ALL BUILDINGS">
-        <div className="px-4 space-y-2 pb-6">
+      {/* ── All Buildings ── */}
+      <SectionCard title="ALL BUILDINGS" style={{ margin: '16px 20px 24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {sorted.map((x) => (
             <BuildingRow key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate('/map')} />
           ))}
         </div>
-      </Section>
+      </SectionCard>
     </div>
   )
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function SectionCard({ title, children, style }: { title: string; children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <div className="mt-5">
-      <h2 className="text-xs font-semibold px-4 mb-2 tracking-wider" style={{ color: 'var(--color-text-tertiary)' }}>{title}</h2>
+    <div style={{ padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '1px solid rgba(0,56,101,0.06)', ...style }}>
+      <h2 style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', letterSpacing: '1px', marginBottom: 16 }}>{title}</h2>
       {children}
     </div>
   )
 }
 
-function SummaryCard({ building, occ, walkMin, onClick }: { building: Building; occ: BlendedOccupancy | null; walkMin: number | null; onClick: () => void }) {
+function CompactCard({ building, occ, walkMin, onClick }: { building: Building; occ: BlendedOccupancy | null; walkMin: number | null; onClick: () => void }) {
   const pct = occ?.pct ?? null
-  const level = getOccupancyLevel(pct)
-  const colour = OCCUPANCY_COLOURS[level]
+  const colour = OCCUPANCY_COLOURS[getOccupancyLevel(pct)]
   const status = isOpenNow(building)
 
   return (
-    <button onClick={onClick} className="shrink-0 w-36 p-3 rounded-xl text-left" style={{ backgroundColor: 'var(--color-bg-elevated)', boxShadow: 'var(--shadow-card)', border: '1px solid var(--color-border)' }}>
-      <p className="text-xs font-semibold truncate" style={{ color: 'var(--color-text-primary)' }}>{building.short_name || building.name}</p>
-      <p className="text-2xl font-bold mt-1" style={{ color: colour }}>{pct !== null ? `${Math.round(pct)}%` : '—'}</p>
-      <OccupancyBar pct={pct} height={4} className="mt-1" />
-      <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>{getOccupancyLabel(pct)}</p>
-      <div className="flex items-center justify-between mt-1.5">
-        <div className="flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: status.open ? 'var(--color-empty)' : 'var(--color-packed)' }} />
-          <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>{status.open ? 'Open' : 'Closed'}</span>
+    <button onClick={onClick} style={{ flexShrink: 0, width: 152, padding: 18, backgroundColor: '#FAFBFD', borderRadius: 16, border: '1px solid #EDF0F4', borderLeft: `4px solid ${colour}`, textAlign: 'left', transition: 'transform 150ms', cursor: 'pointer' }}>
+      <p style={{ fontSize: 14, fontWeight: 600, color: '#1E293B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{building.short_name || building.name}</p>
+      <p style={{ fontSize: 32, fontWeight: 800, color: colour, marginTop: 10, lineHeight: 1 }}>{pct !== null ? `${Math.round(pct)}%` : '—'}</p>
+      <div style={{ marginTop: 10 }}><OccupancyBar pct={pct} height={5} /></div>
+      <p style={{ fontSize: 13, color: '#64748B', marginTop: 8 }}>{getOccupancyLabel(pct)}</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <span style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: status.open ? '#4CAF7D' : '#E05252' }} />
+          <span style={{ fontSize: 12, color: '#94A3B8' }}>{status.open ? 'Open' : 'Closed'}</span>
         </div>
-        {walkMin !== null && <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>~{Math.round(walkMin)}m</span>}
+        {walkMin !== null && <span style={{ fontSize: 12, color: '#94A3B8' }}>~{Math.round(walkMin)}m</span>}
       </div>
     </button>
   )
@@ -129,24 +125,52 @@ function SummaryCard({ building, occ, walkMin, onClick }: { building: Building; 
 
 function BuildingRow({ building, occ, walkMin, onClick }: { building: Building; occ: BlendedOccupancy | null; walkMin: number | null; onClick: () => void }) {
   const pct = occ?.pct ?? null
-  const level = getOccupancyLevel(pct)
-  const colour = OCCUPANCY_COLOURS[level]
+  const colour = OCCUPANCY_COLOURS[getOccupancyLevel(pct)]
   const status = isOpenNow(building)
+  const amenities = [
+    building.has_wifi ? 'WiFi' : null,
+    building.has_power ? 'Power' : null,
+    building.has_quiet_zone ? 'Quiet' : null,
+    building.has_group_seating ? 'Group' : null,
+  ].filter((a): a is string => a !== null)
 
   return (
-    <button onClick={onClick} className="flex items-center w-full gap-3 p-3 rounded-xl text-left" style={{ backgroundColor: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)' }}>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium truncate" style={{ color: 'var(--color-text-primary)' }}>{building.name}</p>
-        <div className="flex items-center gap-1.5 mt-0.5">
-          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: status.open ? 'var(--color-empty)' : 'var(--color-packed)' }} />
-          <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
-            {status.open ? `Open` : 'Closed'} · {getOccupancyLabel(pct)}
-          </span>
+    <button onClick={onClick} style={{ display: 'flex', flexDirection: 'column', width: '100%', padding: 18, textAlign: 'left', borderRadius: 16, backgroundColor: '#FAFBFD', border: '1px solid #EDF0F4', borderLeft: `4px solid ${colour}`, cursor: 'pointer', transition: 'background-color 150ms' }}>
+      {/* Top row: name + percentage */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: 16, fontWeight: 600, color: '#1E293B' }}>{building.name}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+            <span style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: status.open ? '#4CAF7D' : '#E05252' }} />
+            <span style={{ fontSize: 13, color: '#64748B' }}>
+              {status.open ? `Open · Closes ${status.closesAt}` : 'Closed'}
+              {walkMin !== null ? ` · ~${Math.round(walkMin)} min walk` : ''}
+            </span>
+          </div>
         </div>
+        <span style={{ fontSize: 22, fontWeight: 700, color: colour }}>{pct !== null ? `${Math.round(pct)}%` : '—'}</span>
       </div>
-      <span className="text-base font-bold" style={{ color: colour }}>{pct !== null ? `${Math.round(pct)}%` : '—'}</span>
-      <div className="w-16"><OccupancyBar pct={pct} height={6} /></div>
-      {walkMin !== null && <span className="text-xs w-10 text-right" style={{ color: 'var(--color-text-tertiary)' }}>~{Math.round(walkMin)}m</span>}
+
+      {/* Occupancy bar */}
+      <div style={{ marginTop: 12, width: '100%' }}><OccupancyBar pct={pct} height={6} /></div>
+      <p style={{ fontSize: 12, color: '#94A3B8', marginTop: 4 }}>{getOccupancyLabel(pct)}</p>
+
+      {/* Bottom row: amenities + directions */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {amenities.slice(0, 3).map((a) => (
+            <span key={a} style={{ fontSize: 11, padding: '2px 8px', borderRadius: 6, backgroundColor: '#EDF0F4', color: '#64748B' }}>{a}</span>
+          ))}
+        </div>
+        <a
+          href={`https://www.google.com/maps/dir/?api=1&destination=${building.entrance_lat},${building.entrance_lng}`}
+          target="_blank" rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          style={{ fontSize: 12, fontWeight: 600, color: '#003865', textDecoration: 'none' }}
+        >
+          Directions →
+        </a>
+      </div>
     </button>
   )
 }
