@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -22,7 +22,8 @@ function isDismissed(): boolean {
 
 export function useInstallPrompt() {
   const [showBanner, setShowBanner] = useState(false)
-  const [isIOSDevice, setIsIOSDevice] = useState(false)
+  const isIOSDevice = useMemo(() => isIOS(), [])
+  const [canInstallNative, setCanInstallNative] = useState(false)
   const deferredPrompt = useRef<BeforeInstallPromptEvent | null>(null)
 
   useEffect(() => {
@@ -30,12 +31,11 @@ export function useInstallPrompt() {
     // Already installed as PWA
     if (window.matchMedia('(display-mode: standalone)').matches) return
 
-    setIsIOSDevice(isIOS())
-
     // Android/Chrome: capture beforeinstallprompt
     const handler = (e: Event) => {
       e.preventDefault()
       deferredPrompt.current = e as BeforeInstallPromptEvent
+      setCanInstallNative(true)
     }
     window.addEventListener('beforeinstallprompt', handler)
 
@@ -66,5 +66,5 @@ export function useInstallPrompt() {
     setShowBanner(false)
   }, [])
 
-  return { showBanner, isIOSDevice, canInstallNative: !!deferredPrompt.current, install, dismiss }
+  return { showBanner, isIOSDevice, canInstallNative, install, dismiss }
 }
