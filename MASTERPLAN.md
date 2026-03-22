@@ -671,14 +671,14 @@
 - Offline indicator banner
 
 **Subtasks:**
-- [ ] S16.1 — Configure workbox caching strategies in vite.config.ts
-- [ ] S16.2 — Add runtime caching for Supabase API responses (stale-while-revalidate)
-- [ ] S16.3 — Create src/components/InstallBanner.tsx
-- [ ] S16.4 — Implement 30-second engagement timer (localStorage flag for "shown once")
-- [ ] S16.5 — Implement iOS detection and custom install modal
-- [ ] S16.6 — Implement Android beforeinstallprompt handler
-- [ ] S16.7 — Create src/components/OfflineBanner.tsx ("Last updated X min ago")
-- [ ] S16.8 — Create placeholder PWA icons (192px, 512px, 512px maskable) in public/icons/
+- [x] S16.1 — Configure workbox caching strategies in vite.config.ts ✅ (Mapbox tiles CacheFirst 7d + Supabase API StaleWhileRevalidate 5min)
+- [x] S16.2 — Add runtime caching for Supabase API responses (stale-while-revalidate) ✅
+- [x] S16.3 — Create src/components/InstallBanner.tsx ✅ (fixed bottom banner, iOS/Android messaging, dismiss for 7 days)
+- [x] S16.4 — Implement 30-second engagement timer (localStorage flag for "shown once") ✅ (useInstallPrompt hook)
+- [x] S16.5 — Implement iOS detection and custom install modal ✅ ("Tap Share → Add to Home Screen")
+- [x] S16.6 — Implement Android beforeinstallprompt handler ✅ (deferred prompt capture + Install button)
+- [x] S16.7 — Create src/components/OfflineBanner.tsx ("Last updated X min ago") ✅ (amber top banner with AnimatePresence)
+- [x] S16.8 — Create placeholder PWA icons (192px, 512px, 512px maskable) in public/icons/ ✅ (UniMelb navy "U" icons)
 
 **Test criteria:**
 - App installs on Android via native prompt

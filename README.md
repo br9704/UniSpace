@@ -2,7 +2,7 @@
   <img src="public/favicon.svg" width="80" alt="Pulse logo" />
 </p>
 
-<h1 align="center">Pulse</h1>
+<h1 align="center">UniSpace</h1>
 
 <p align="center">
   <strong>Real-time campus occupancy for university students.</strong>
@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/status-in%20development-orange" alt="Status: In Development" />
-  <img src="https://img.shields.io/badge/phase-0%20complete%20|%20sprint%202%20done-blue" alt="Phase: 0 Complete, Sprint 2 Done" />
+  <img src="https://img.shields.io/badge/phase-1.5%20complete%20|%20sprint%2016%20done-blue" alt="Phase: 1.5 Complete, Sprint 16 Done" />
   <img src="https://img.shields.io/badge/pilot-UoM%20Parkville-003366" alt="Pilot: UoM Parkville" />
   <img src="https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey" alt="License" />
 </p>
@@ -30,9 +30,9 @@
 
 ---
 
-## What is Pulse?
+## What is UniSpace?
 
-Pulse gives every university student real-time visibility into campus occupancy so they never waste time walking to a full building again. It combines crowdsourced, privacy-preserving location data with Google Maps Popular Times to deliver a live occupancy heatmap — check it before you leave, not after you arrive.
+UniSpace gives every university student real-time visibility into campus occupancy so they never waste time walking to a full building again. It combines crowdsourced, privacy-preserving location data with Google Maps Popular Times to deliver a live occupancy heatmap — check it before you leave, not after you arrive.
 
 No accounts. No hardware. No tracking. Just open the app and see where the space is.
 
@@ -61,11 +61,12 @@ Pulse always shows the best available data:
 
 | Priority | Source | When it's used |
 |:--------:|--------|----------------|
-| 1 | **Live crowdsourced** | Active Pulse users in the building |
-| 2 | **Google current popularity** | Real-time busyness from Google Places API |
-| 3 | **Pulse predicted** | EWMA model trained on historical occupancy |
-| 4 | **Google typical popularity** | Weekly busyness histogram from Google |
-| 5 | **No data** | Grey polygon — "No data available" |
+| 1 | **Live crowdsourced** | Active UniSpace users in the building |
+| 2 | **Crowd reports** | Anonymous 1-5 busyness reports (30-min decay) |
+| 3 | **Google current popularity** | Real-time busyness from Google Places API |
+| 4 | **UniSpace predicted** | EWMA model trained on historical occupancy |
+| 5 | **Google typical popularity** | Weekly busyness histogram from Google |
+| 6 | **No data** | Grey polygon — "No data available" |
 
 ### Privacy by Design
 
@@ -85,7 +86,7 @@ Privacy is a core architectural constraint, not an afterthought:
 
 | Layer | Technology |
 |-------|------------|
-| **Frontend** | React 18 + TypeScript, Vite (PWA) |
+| **Frontend** | React 19 + TypeScript, Vite 8 (PWA) |
 | **Styling** | Tailwind CSS v4 with UoM design tokens |
 | **Map** | Mapbox GL JS (dark-v11 base) |
 | **Backend** | Supabase — Postgres, Realtime, Edge Functions (Deno) |
@@ -111,8 +112,8 @@ Privacy is a core architectural constraint, not an afterthought:
 
 ```bash
 # 1. Clone
-git clone https://github.com/br9704/PULSE.git
-cd PULSE
+git clone https://github.com/br9704/UniSpace.git
+cd UniSpace
 
 # 2. Install dependencies
 pnpm install
@@ -124,8 +125,8 @@ cp .env.example .env.local
 # 4. Apply database migrations (requires Supabase CLI)
 supabase db push
 
-# 5. Seed the database (UoM Parkville — 5 buildings, 13 zones)
-# Run supabase/seed/001_uom_parkville.sql via Supabase SQL Editor or CLI
+# 5. Seed the database (UoM Parkville — 18 buildings)
+# Run supabase/seed/001_uom_parkville.sql and 002_google_popular_times.sql via Supabase SQL Editor or CLI
 
 # 6. Run tests
 pnpm test
@@ -158,12 +159,12 @@ pulse/
 │   ├── components/       # Reusable UI components
 │   ├── hooks/            # Custom React hooks (data fetching, realtime, geo)
 │   ├── lib/              # Supabase client, Mapbox helpers, blending utilities
-│   ├── pages/            # Top-level route components (MapPage, FindPage)
+│   ├── pages/            # Top-level route components (HomePage, MapPage, AlertsPage)
 │   ├── types/            # Shared TypeScript interfaces and enums
 │   ├── stores/           # Zustand state stores
 │   └── constants/        # App constants (colours, thresholds, map defaults)
 ├── supabase/
-│   ├── migrations/       # SQL migrations (001–008), applied sequentially
+│   ├── migrations/       # SQL migrations (001–012), applied sequentially
 │   ├── functions/        # Deno Edge Functions
 │   └── seed/             # Seed data scripts
 ├── PRD.md                # Product requirements document
@@ -182,6 +183,7 @@ campuses ──< buildings ──< building_zones ──< zone_occupancy
                 │                └──< occupancy_history
                 │
                 ├──< occupancy_predictions
+                ├──< occupancy_reports
                 ├──< google_popularity_cache
                 ├──< google_popular_times
                 └──< user_alerts
@@ -197,6 +199,7 @@ campuses ──< buildings ──< building_zones ──< zone_occupancy
 | `occupancy_predictions` | Pre-computed predicted occupancy by day/hour |
 | `google_popularity_cache` | Cached Google current popularity (30-min TTL) |
 | `google_popular_times` | Google typical weekly popularity histogram |
+| `occupancy_reports` | Anonymous crowd reports (1-5 busyness + optional noise, 30-min expiry) |
 | `user_alerts` | Push notification subscriptions (keyed by push token, no user ID) |
 
 All tables have **Row Level Security** enabled. Anonymous users can read; only the service role (Edge Functions) can write.
@@ -218,15 +221,9 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 
 **University of Melbourne — Parkville**
 
-| Building | Est. Capacity | Floors | Key Amenities |
-|----------|:------------:|:------:|---------------|
-| Baillieu Library | ~800 | 3 | WiFi, power, quiet zones, group seating, elevator, accessible |
-| Eastern Resource Centre (ERC) | ~300 | 2 | WiFi, power, quiet zones, elevator, accessible |
-| Arts West | ~400 | 3 | WiFi, power, group seating, food nearby, accessible parking |
-| Engineering Building 1 | ~350 | 3 | WiFi, power, group seating, food nearby, elevator |
-| Doug McDonell (ICT) | ~250 | 2 | WiFi, power, group seating, elevator, accessible |
+18 UoM Parkville buildings with OSM-sourced polygon outlines, amenity data, building hours, and Google Popular Times data (1,453 rows across all 7 days).
 
-> Capacity estimates are directional (~), not precise. Building data will be verified against real-world conditions in Sprint 13.
+> Capacity estimates are directional (~), not precise. Building data will be verified in Sprint 17.
 
 ---
 
@@ -255,7 +252,7 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 - [x] **Sprint 15:** Building photos & tips (components ready, photo assets pending)
 
 ### Phase 1 (continued)
-- [ ] **Sprint 16:** PWA install flow + service worker
+- [x] **Sprint 16:** PWA install flow + service worker
 - [ ] **Sprint 17:** Seed data accuracy verification
 - [ ] **Sprint 18:** MVP integration testing + Vercel deploy
 
