@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/status-in%20development-orange" alt="Status: In Development" />
-  <img src="https://img.shields.io/badge/phase-1.5%20complete%20|%20sprint%2016%20done-blue" alt="Phase: 1.5 Complete, Sprint 16 Done" />
+  <img src="https://img.shields.io/badge/phase-2%20in%20progress%20|%20sprint%2020%20done-blue" alt="Phase: 2 In Progress, Sprint 20 Done" />
   <img src="https://img.shields.io/badge/pilot-UoM%20Parkville-003366" alt="Pilot: UoM Parkville" />
   <img src="https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey" alt="License" />
 </p>
@@ -253,12 +253,12 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 
 ### Phase 1 (continued)
 - [x] **Sprint 16:** PWA install flow + service worker
-- [ ] **Sprint 17:** Seed data accuracy verification
+- [x] **Sprint 17:** Seed data accuracy verification
 - [ ] **Sprint 18:** MVP integration testing + Vercel deploy
 
 ### Phase 2 — Polish & Reliability
 - [ ] Accessibility compliance (WCAG 2.1 AA)
-- [ ] Push notifications & alerts
+- [x] **Sprint 20:** Push notifications & alerts
 - [ ] Offline graceful degradation
 - [ ] Performance optimisation
 - [ ] Error states & edge cases
