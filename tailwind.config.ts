@@ -4,6 +4,12 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      screens: {
+        xs: '375px',
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+      },
       colors: {
         uom: {
           navy: '#003865',
@@ -15,10 +21,20 @@ export default {
           primary: '#FFFFFF',
           secondary: '#F5F7FA',
           elevated: '#FFFFFF',
+          card: '#FAFBFD',
+          chip: '#F0F2F5',
+          input: '#FAFBFD',
+          page: '#F0F2F5',
         },
         border: {
           DEFAULT: '#E2E8F0',
           bright: '#CBD5E1',
+        },
+        text: {
+          primary: '#1E293B',
+          secondary: '#64748B',
+          tertiary: '#94A3B8',
+          accent: '#003865',
         },
         occupancy: {
           empty: '#4CAF7D',
@@ -39,8 +55,8 @@ export default {
         lg: '20px',
       },
       boxShadow: {
-        card: '0 4px 24px rgba(0,0,0,0.4), 0 1px 4px rgba(0,56,101,0.3)',
-        elevated: '0 8px 40px rgba(0,0,0,0.6), 0 2px 8px rgba(0,56,101,0.2)',
+        card: '0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,56,101,0.06)',
+        elevated: '0 8px 30px rgba(0,56,101,0.12), 0 2px 8px rgba(0,0,0,0.06)',
       }
     }
   },

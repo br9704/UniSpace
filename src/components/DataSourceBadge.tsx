@@ -5,11 +5,12 @@ interface DataSourceBadgeProps {
 }
 
 const CONFIG: Record<DataQuality, { icon: string; label: string; color: string }> = {
-  live: { icon: '●', label: 'Live', color: 'var(--color-source-live)' },
-  google: { icon: '🌐', label: 'Google estimate', color: 'var(--color-source-google)' },
-  predicted: { icon: '◆', label: 'Predicted', color: 'var(--color-source-predicted)' },
-  stale: { icon: '●', label: 'Stale data', color: 'var(--color-source-stale)' },
-  none: { icon: '○', label: 'No data', color: 'var(--color-text-tertiary)' },
+  live: { icon: '\u25CF', label: 'Live', color: '#4CAF7D' },
+  'crowd-report': { icon: '\u25CF', label: 'Crowd report', color: '#4CAF7D' },
+  google: { icon: '\u25CF', label: 'Google data', color: '#0080A4' },
+  predicted: { icon: '\u25C6', label: 'Predicted', color: '#C8A951' },
+  stale: { icon: '\u25CF', label: 'Stale data', color: '#94A3B8' },
+  none: { icon: '\u25CB', label: 'No data', color: '#94A3B8' },
 }
 
 export default function DataSourceBadge({ source }: DataSourceBadgeProps) {
@@ -17,8 +18,8 @@ export default function DataSourceBadge({ source }: DataSourceBadgeProps) {
 
   return (
     <span
-      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs"
-      style={{ backgroundColor: 'var(--color-bg-secondary)', color }}
+      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs"
+      style={{ backgroundColor: '#F0F2F5', color }}
     >
       {icon} {label}
     </span>

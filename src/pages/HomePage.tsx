@@ -4,12 +4,18 @@ import { useBuildings } from '@/hooks/useBuildings'
 import { useZones } from '@/hooks/useZones'
 import { useBlendedOccupancy } from '@/hooks/useBlendedOccupancy'
 import { useGeolocation } from '@/hooks/useGeolocation'
+import { useFavourites } from '@/hooks/useFavourites'
+import FavouriteButton from '@/components/FavouriteButton'
 import { calculateWalkingTime } from '@/lib/scoring'
 import { isOpenNow } from '@/lib/buildingHours'
 import OccupancyBar from '@/components/OccupancyBar'
 import { getOccupancyLabel, getOccupancyLevel, OCCUPANCY_COLOURS } from '@/constants/occupancy'
-import type { BlendedOccupancy, Building } from '@/types'
+import type { BlendedOccupancy, Building, GooglePopularTime } from '@/types'
 import { BUILDING_META } from '@/constants/buildingMeta'
+import { getCurrentTypical } from '@/lib/occupancyHelpers'
+import { formatHour } from '@/lib/predictionInsights'
+
+type SortedItem = { building: Building; occ: BlendedOccupancy | null; walk: { minutes: number; meters: number } | null }
 
 function getGreeting(): string {
   const h = new Date().getHours()
@@ -21,17 +27,19 @@ function getGreeting(): string {
 export default function HomePage() {
   const { buildings } = useBuildings()
   const { zones } = useZones()
-  const { occupancyMap } = useBlendedOccupancy(buildings, zones)
+  const { occupancyMap, allTypicalRows } = useBlendedOccupancy(buildings, zones)
   const { position } = useGeolocation()
+  const { favouriteIds, toggle: toggleFavourite, isFavourite } = useFavourites()
   const navigate = useNavigate()
 
   const sorted = useMemo(() => {
     return buildings
       .map((b) => ({ building: b, occ: occupancyMap.get(b.id) ?? null, walk: calculateWalkingTime(position, b.entrance_lat, b.entrance_lng) }))
-      .filter((x) => x.occ?.pct !== null && x.occ?.pct !== undefined)
       .sort((a, b) => (a.occ?.pct ?? 100) - (b.occ?.pct ?? 100))
   }, [buildings, occupancyMap, position])
 
+  const favouriteSet = useMemo(() => new Set(favouriteIds), [favouriteIds])
+  const favourites = sorted.filter((x) => favouriteSet.has(x.building.id))
   const quiet = sorted.filter((x) => (x.occ?.pct ?? 100) <= 40)
   const filling = sorted.filter((x) => x.occ?.trend === 'filling')
   const quietCount = sorted.filter((x) => (x.occ?.pct ?? 100) < 50).length
@@ -41,70 +49,148 @@ export default function HomePage() {
   return (
     <div className="h-full overflow-y-auto" style={{ backgroundColor: '#F0F2F5' }}>
 
-      {/* ── Header ── */}
-      <div style={{ background: 'linear-gradient(145deg, #001F3F 0%, #003865 50%, #005A8C 100%)', padding: '56px 24px 40px' }}>
+      {/* Header */}
+      <div style={{ background: 'linear-gradient(145deg, #001F3F 0%, #003865 50%, #005A8C 100%)', padding: '56px 24px 40px', position: 'relative' }}>
+        <img src="/unimelb-logo.svg" alt="University of Melbourne" style={{ position: 'absolute', top: '50%', right: 24, height: 80, transform: 'translateY(-50%)', opacity: 0.85 }} />
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', fontWeight: 400, marginBottom: 2 }}>{getGreeting()}</p>
         <h1 style={{ fontSize: 36, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-1px', lineHeight: 1.1 }}>UniSpace</h1>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>University of Melbourne · Parkville</p>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', marginTop: 8 }}>University of Melbourne - Parkville</p>
+        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 6 }}>Not affiliated with the University of Melbourne</p>
       </div>
 
-      {/* ── Campus Status ── */}
-      <div style={{ margin: '-20px 24px 0', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,56,101,0.08), 0 2px 8px rgba(0,0,0,0.03)', border: '1px solid rgba(0,56,101,0.06)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 14, height: 14, borderRadius: 7, backgroundColor: campusColor, boxShadow: `0 0 10px ${campusColor}50` }} />
-          <span style={{ fontSize: 20, fontWeight: 700, color: '#1E293B' }}>Campus is {campusLabel}</span>
-        </div>
-        <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.5 }}>
-          {quietCount} of {sorted.length} buildings are under 50% capacity right now
-        </p>
+      {/* Campus At a Glance + Quiet Right Now — side by side */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20, margin: '20px 24px 0' }}>
+
+        {/* Left: Campus At a Glance */}
+        <CampusAtAGlance sorted={sorted} quietCount={quietCount} campusLabel={campusLabel} campusColor={campusColor} allTypicalRows={allTypicalRows} />
+
+        {/* Right: Quiet Right Now */}
+        {quiet.length > 0 && (
+          <SectionCard title="QUIET RIGHT NOW">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+              {quiet.slice(0, 9).map((x) => (
+                <CompactCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} />
+              ))}
+            </div>
+          </SectionCard>
+        )}
       </div>
 
-      {/* ── Quiet Right Now ── */}
-      {quiet.length > 0 && (
-        <SectionCard title="QUIET RIGHT NOW" style={{ margin: '20px 24px 0' }}>
+      {/* Your Favourites */}
+      {favourites.length > 0 && (
+        <SectionCard title="YOUR FAVOURITES" style={{ margin: '20px 24px 0' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center' }}>
-            {quiet.slice(0, 8).map((x) => (
-              <CompactCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} />
+            {favourites.slice(0, 8).map((x) => (
+              <CompactCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} />
             ))}
           </div>
         </SectionCard>
       )}
 
-      {/* ── Filling Up ── */}
+      {/* Filling Up */}
       {filling.length > 0 && (
         <SectionCard title="FILLING UP" style={{ margin: '16px 24px 0' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center' }}>
             {filling.slice(0, 8).map((x) => (
-              <CompactCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} />
+              <CompactCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} />
             ))}
           </div>
         </SectionCard>
       )}
 
-      {/* ── All Buildings ── */}
-      <AllBuildingsSection sorted={sorted} navigate={navigate} />
+      {/* All Buildings */}
+      <AllBuildingsSection sorted={sorted} navigate={navigate} isFavourite={isFavourite} toggleFavourite={toggleFavourite} allTypicalRows={allTypicalRows} />
     </div>
   )
 }
 
 function SectionCard({ title, children, style }: { title: string; children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <div style={{ padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '1px solid rgba(0,56,101,0.06)', ...style }}>
+    <div style={{ padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '2px solid rgba(0,56,101,0.65)', ...style }}>
       <h2 style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', letterSpacing: '1px', marginBottom: 16 }}>{title}</h2>
       {children}
     </div>
   )
 }
 
-function CompactCard({ building, occ, walkMin, onClick }: { building: Building; occ: BlendedOccupancy | null; walkMin: number | null; onClick: () => void }) {
+function CampusAtAGlance({ sorted, quietCount, campusLabel, campusColor, allTypicalRows }: { sorted: SortedItem[]; quietCount: number; campusLabel: string; campusColor: string; allTypicalRows: GooglePopularTime[] }) {
+  const openCount = sorted.filter((x) => isOpenNow(x.building).open).length
+  const withData = sorted.filter((x) => x.occ?.pct !== null && x.occ?.pct !== undefined)
+  const avgOccupancy = withData.length > 0
+    ? Math.round(withData.reduce((sum, x) => sum + (x.occ?.pct ?? 0), 0) / withData.length)
+    : null
+
+  const quietest = withData.length > 0
+    ? withData.reduce((min, x) => (x.occ!.pct! < min.occ!.pct! ? x : min))
+    : null
+  const busiest = withData.length > 0
+    ? withData.reduce((max, x) => (x.occ!.pct! > max.occ!.pct! ? x : max))
+    : null
+
+  // Find peak hour today across all buildings
+  const today = new Date().getDay()
+  const todayRows = allTypicalRows.filter((r) => r.day_of_week === today)
+  const hourTotals = new Map<number, number>()
+  for (const row of todayRows) {
+    hourTotals.set(row.hour_of_day, (hourTotals.get(row.hour_of_day) ?? 0) + row.typical_popularity)
+  }
+  let peakHour: number | null = null
+  let peakVal = 0
+  for (const [hour, total] of hourTotals) {
+    if (total > peakVal) { peakVal = total; peakHour = hour }
+  }
+
+  return (
+    <div style={{ padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '2px solid rgba(0,56,101,0.65)', display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Campus status header */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+          <div style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: campusColor, boxShadow: `0 0 8px ${campusColor}50` }} />
+          <span style={{ fontSize: 18, fontWeight: 700, color: '#1E293B' }}>Campus is {campusLabel}</span>
+        </div>
+        <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.5 }}>
+          {quietCount} of {sorted.length} buildings under 50%
+        </p>
+      </div>
+
+      {/* Divider */}
+      <div style={{ height: 1, backgroundColor: 'rgba(0,56,101,0.1)' }} />
+
+      {/* Stats */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <h3 style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', letterSpacing: '1px', margin: 0 }}>AT A GLANCE</h3>
+
+        <StatRow label="Buildings" value={`${sorted.length} total · ${openCount} open`} />
+        {avgOccupancy !== null && <StatRow label="Avg occupancy" value={`${avgOccupancy}%`} />}
+        {quietest && <StatRow label="Quietest" value={`${quietest.building.short_name || quietest.building.name} (${Math.round(quietest.occ!.pct!)}%)`} color="#4CAF7D" />}
+        {busiest && <StatRow label="Busiest" value={`${busiest.building.short_name || busiest.building.name} (${Math.round(busiest.occ!.pct!)}%)`} color="#E05252" />}
+        {peakHour !== null && <StatRow label="Peak hour today" value={formatHour(peakHour)} />}
+      </div>
+    </div>
+  )
+}
+
+function StatRow({ label, value, color }: { label: string; value: string; color?: string }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <span style={{ fontSize: 13, color: '#64748B' }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: 600, color: color ?? '#1E293B' }}>{value}</span>
+    </div>
+  )
+}
+
+function CompactCard({ building, occ, walkMin, onClick, isFav, onToggleFav }: { building: Building; occ: BlendedOccupancy | null; walkMin: number | null; onClick: () => void; isFav: boolean; onToggleFav: () => void }) {
   const pct = occ?.pct ?? null
   const colour = OCCUPANCY_COLOURS[getOccupancyLevel(pct)]
   const status = isOpenNow(building)
 
   return (
-    <button onClick={onClick} style={{ flexShrink: 0, width: 152, padding: 18, backgroundColor: '#FAFBFD', borderRadius: 16, border: '1px solid #EDF0F4', borderLeft: `4px solid ${colour}`, textAlign: 'left', transition: 'transform 150ms', cursor: 'pointer' }}>
-      <p style={{ fontSize: 14, fontWeight: 600, color: '#1E293B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{building.short_name || building.name}</p>
-      <p style={{ fontSize: 32, fontWeight: 800, color: colour, marginTop: 10, lineHeight: 1 }}>{pct !== null ? `${Math.round(pct)}%` : '—'}</p>
+    <button onClick={onClick} style={{ width: '100%', padding: 18, backgroundColor: '#FAFBFD', borderRadius: 16, border: '2px solid rgba(0,56,101,0.65)', borderLeft: `4px solid ${colour}`, textAlign: 'left', transition: 'transform 150ms', cursor: 'pointer', position: 'relative', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+      <div style={{ position: 'absolute', top: 6, right: 2 }}>
+        <FavouriteButton isFavourite={isFav} onToggle={onToggleFav} size={16} />
+      </div>
+      <p style={{ fontSize: 14, fontWeight: 600, color: '#1E293B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 20 }}>{building.short_name || building.name}</p>
+      <p style={{ fontSize: 32, fontWeight: 800, color: colour, marginTop: 10, lineHeight: 1 }}>{pct !== null ? `${Math.round(pct)}%` : '--'}</p>
       <div style={{ marginTop: 10 }}><OccupancyBar pct={pct} height={5} /></div>
       <p style={{ fontSize: 13, color: '#64748B', marginTop: 8 }}>{getOccupancyLabel(pct)}</p>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
@@ -118,9 +204,7 @@ function CompactCard({ building, occ, walkMin, onClick }: { building: Building; 
   )
 }
 
-type SortedItem = { building: Building; occ: BlendedOccupancy | null; walk: { minutes: number; meters: number } | null }
-
-function AllBuildingsSection({ sorted, navigate }: { sorted: SortedItem[]; navigate: (path: string) => void }) {
+function AllBuildingsSection({ sorted, navigate, isFavourite, toggleFavourite, allTypicalRows }: { sorted: SortedItem[]; navigate: (path: string) => void; isFavourite: (id: string) => boolean; toggleFavourite: (id: string) => void; allTypicalRows: GooglePopularTime[] }) {
   const [search, setSearch] = useState('')
   const [sortBy, setSortBy] = useState<'occupancy' | 'name' | 'distance'>('occupancy')
 
@@ -136,7 +220,7 @@ function AllBuildingsSection({ sorted, navigate }: { sorted: SortedItem[]; navig
   }, [sorted, search, sortBy])
 
   return (
-    <div style={{ margin: '16px 24px 24px', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '1px solid rgba(0,56,101,0.06)' }}>
+    <div style={{ margin: '16px 24px 24px', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '2px solid rgba(0,56,101,0.65)' }}>
       <h2 style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', letterSpacing: '1px', marginBottom: 14 }}>ALL BUILDINGS</h2>
 
       {/* Search */}
@@ -161,9 +245,9 @@ function AllBuildingsSection({ sorted, navigate }: { sorted: SortedItem[]; navig
       </div>
 
       {/* List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {filtered.map((x) => (
-          <BuildingRow key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} />
+          <BuildingRow key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} allTypicalRows={allTypicalRows} />
         ))}
         {filtered.length === 0 && <p style={{ fontSize: 14, color: '#94A3B8', textAlign: 'center', padding: 20 }}>No buildings match your search</p>}
       </div>
@@ -171,19 +255,31 @@ function AllBuildingsSection({ sorted, navigate }: { sorted: SortedItem[]; navig
   )
 }
 
-function BuildingRow({ building, occ, walkMin, onClick }: { building: Building; occ: BlendedOccupancy | null; walkMin: number | null; onClick: () => void }) {
+function BuildingRow({ building, occ, walkMin, onClick, isFav, onToggleFav, allTypicalRows }: { building: Building; occ: BlendedOccupancy | null; walkMin: number | null; onClick: () => void; isFav: boolean; onToggleFav: () => void; allTypicalRows: GooglePopularTime[] }) {
   const pct = occ?.pct ?? null
   const colour = OCCUPANCY_COLOURS[getOccupancyLevel(pct)]
   const status = isOpenNow(building)
   const meta = BUILDING_META[building.slug]
   const amenities = [
     building.has_wifi ? 'WiFi' : null, building.has_power ? 'Power' : null,
-    building.has_quiet_zone ? 'Quiet' : null, building.has_group_seating ? 'Group' : null,
+    building.has_food_nearby ? 'Food nearby' : null,
+    building.has_quiet_zone ? 'Quiet zones' : null, building.has_group_seating ? 'Group seating' : null,
+    building.is_ground_floor_accessible ? 'Accessible' : null,
   ].filter((a): a is string => a !== null)
 
+  // Prediction hint: what's typical right now
+  const typical = getCurrentTypical(allTypicalRows, building.id)
+  const typicalPct = typical?.typical_popularity ?? null
+
+  // Find peak hour today
+  const todayRows = allTypicalRows
+    .filter((r) => r.building_id === building.id && r.day_of_week === new Date().getDay())
+    .sort((a, b) => b.typical_popularity - a.typical_popularity)
+  const peakRow = todayRows[0]
+
   return (
-    <button onClick={onClick} style={{ display: 'flex', flexDirection: 'column', width: '100%', padding: 22, textAlign: 'left', borderRadius: 18, backgroundColor: '#FAFBFD', border: '1px solid #EDF0F4', borderLeft: `4px solid ${colour}`, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-      {/* Header: name + percentage */}
+    <button onClick={onClick} style={{ display: 'flex', flexDirection: 'column', width: '100%', padding: 22, textAlign: 'left', borderRadius: 18, backgroundColor: '#FAFBFD', border: '2px solid rgba(0,56,101,0.65)', borderLeft: `4px solid ${colour}`, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+      {/* Header: name + percentage + heart */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
           <p style={{ fontSize: 20, fontWeight: 700, color: '#1E293B', lineHeight: 1.2 }}>{building.name}</p>
@@ -194,24 +290,46 @@ function BuildingRow({ building, occ, walkMin, onClick }: { building: Building; 
             </>
           )}
         </div>
-        <span style={{ fontSize: 22, fontWeight: 700, color: colour, flexShrink: 0 }}>{pct !== null ? `${Math.round(pct)}%` : '—'}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+          <span style={{ fontSize: 22, fontWeight: 700, color: colour }}>{pct !== null ? `${Math.round(pct)}%` : '--'}</span>
+          <FavouriteButton isFavourite={isFav} onToggle={onToggleFav} size={18} />
+        </div>
       </div>
 
       {/* Occupancy bar */}
       <div style={{ marginTop: 12, width: '100%' }}><OccupancyBar pct={pct} height={6} /></div>
 
-      {/* Status row */}
+      {/* Status + walk time */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
         <span style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: status.open ? '#4CAF7D' : '#E05252' }} />
         <span style={{ fontSize: 13, color: '#64748B' }}>
-          {status.open ? `Open · Closes ${status.closesAt}` : 'After hours · Keycard access'}
-          {walkMin !== null ? ` · ~${Math.round(walkMin)} min walk` : ''}
+          {status.open ? `Open - Closes ${status.closesAt}` : 'After hours - Keycard access'}
+          {walkMin !== null ? ` - ~${Math.round(walkMin)} min walk` : ''}
         </span>
       </div>
 
+      {/* Prediction hint + capacity */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+        {typicalPct !== null && (
+          <span style={{ fontSize: 12, color: '#0080A4', fontWeight: 500 }}>
+            Usually {typicalPct}% at this time
+          </span>
+        )}
+        {peakRow && (
+          <span style={{ fontSize: 12, color: '#94A3B8' }}>
+            - Peaks at {formatHour(peakRow.hour_of_day)} ({peakRow.typical_popularity}%)
+          </span>
+        )}
+      </div>
+
+      {/* Capacity */}
+      {building.estimated_capacity && (
+        <p style={{ fontSize: 12, color: '#94A3B8', marginTop: 4 }}>~{building.estimated_capacity} seats</p>
+      )}
+
       {/* Nearby food */}
       {meta?.nearbyFood?.[0] && (
-        <p style={{ fontSize: 12, color: '#94A3B8', marginTop: 6 }}>Nearby: {meta.nearbyFood[0]}</p>
+        <p style={{ fontSize: 12, color: '#94A3B8', marginTop: 4 }}>Nearby: {meta.nearbyFood[0]}</p>
       )}
 
       {/* Amenities + directions */}
@@ -224,7 +342,7 @@ function BuildingRow({ building, occ, walkMin, onClick }: { building: Building; 
         <a href={`https://www.google.com/maps/dir/?api=1&destination=${building.entrance_lat},${building.entrance_lng}`}
           target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
           style={{ fontSize: 12, fontWeight: 600, color: '#003865', textDecoration: 'none', flexShrink: 0 }}>
-          Directions →
+          Directions
         </a>
       </div>
     </button>

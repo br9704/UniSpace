@@ -6,10 +6,12 @@ import type {
   GooglePopularityCache,
   GooglePopularTime,
   OccupancyPrediction,
+  OccupancyReport,
   OccupancyTrend,
   ZoneOccupancy,
 } from '@/types'
 import { GOOGLE_CACHE_TTL_MS, STALE_DATA_THRESHOLD_MS } from '@/constants/occupancy'
+import { aggregateReports } from '@/lib/reportDecay'
 
 // ── Public types ─────────────────────────────────────────────────────
 
@@ -19,6 +21,7 @@ export interface BlendingInput {
   googleCache: GooglePopularityCache | null
   prediction: OccupancyPrediction | null
   googleTypical: GooglePopularTime | null
+  reports?: OccupancyReport[]
   now?: Date // injectable for testing
 }
 
@@ -97,13 +100,14 @@ export function aggregateZoneOccupancies(
  * following the PRD fallback hierarchy:
  *
  *   1. Live crowdsourced  → 'live'
- *   2. Google cache       → 'google'  (current_popularity, when available)
- *   3. Pulse predicted    → 'predicted'
- *   4. Google typical     → 'google'  (weekly histogram)
- *   5. No data            → 'none'
+ *   2. Crowd reports      → 'crowd-report'
+ *   3. Google cache       → 'google'  (current_popularity, when available)
+ *   4. Pulse predicted    → 'predicted'
+ *   5. Google typical     → 'google'  (weekly histogram)
+ *   6. No data            → 'none'
  */
 export function blendOccupancy(input: BlendingInput): BlendedOccupancy {
-  const { zoneOccupancies, zones, googleCache, prediction, googleTypical } = input
+  const { zoneOccupancies, zones, googleCache, prediction, googleTypical, reports } = input
   const now = input.now ?? new Date()
 
   // ── Priority 1: Live crowdsourced data ──
@@ -122,7 +126,19 @@ export function blendOccupancy(input: BlendingInput): BlendedOccupancy {
     }
   }
 
-  // ── Priority 2: Google current popularity cache ──
+  // ── Priority 2: Crowd reports ──
+  const crowdResult = aggregateReports(reports ?? [], now)
+  if (crowdResult) {
+    return {
+      pct: crowdResult.pct,
+      source: 'crowd-report' as DataQuality,
+      trend: 'stable',
+      floor_occupancies: [],
+      last_updated: now.toISOString(),
+    }
+  }
+
+  // ── Priority 3: Google current popularity cache ──
   if (
     googleCache &&
     googleCache.current_popularity !== null &&
@@ -137,7 +153,7 @@ export function blendOccupancy(input: BlendingInput): BlendedOccupancy {
     }
   }
 
-  // ── Priority 3: Pulse historical prediction ──
+  // ── Priority 4: Pulse historical prediction ──
   if (prediction) {
     return {
       pct: prediction.predicted_pct,
@@ -148,7 +164,7 @@ export function blendOccupancy(input: BlendingInput): BlendedOccupancy {
     }
   }
 
-  // ── Priority 4: Google typical popularity (weekly histogram) ──
+  // ── Priority 5: Google typical popularity (weekly histogram) ──
   if (googleTypical && googleTypical.typical_popularity !== null) {
     return {
       pct: googleTypical.typical_popularity,
@@ -159,7 +175,7 @@ export function blendOccupancy(input: BlendingInput): BlendedOccupancy {
     }
   }
 
-  // ── Priority 5: No data ──
+  // ── Priority 6: No data ──
   return {
     pct: null,
     source: 'none' as DataQuality,

@@ -91,6 +91,7 @@ export function getDominantDataSource(
   }
 
   if (counts['live']) return 'live'
+  if (counts['crowd-report']) return 'crowd-report'
 
   let best: DataQuality = 'none'
   let bestCount = 0

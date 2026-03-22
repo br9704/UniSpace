@@ -12,6 +12,7 @@ const CHIPS: { key: keyof FilterState; label: string }[] = [
   { key: 'has_power', label: 'Power' },
   { key: 'has_quiet_zone', label: 'Quiet' },
   { key: 'has_group_seating', label: 'Group' },
+  { key: 'low_noise', label: 'Low Noise' },
 ]
 
 export default function FilterChips({ filters, onToggle, onOpenSheet }: FilterChipsProps) {
@@ -26,7 +27,7 @@ export default function FilterChips({ filters, onToggle, onOpenSheet }: FilterCh
             className="shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors"
             style={{
               backgroundColor: active ? 'var(--color-uom-navy)' : 'var(--color-bg-primary)',
-              color: active ? '#FFFFFF' : 'var(--color-text-secondary)',
+              color: active ? 'var(--color-text-on-navy)' : 'var(--color-text-secondary)',
               border: `1px solid ${active ? 'var(--color-uom-navy)' : 'var(--color-border)'}`,
             }}
           >

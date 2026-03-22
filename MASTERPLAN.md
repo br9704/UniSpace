@@ -3,7 +3,7 @@
 > Status key: [ ] Not started | [x] Complete | [~] In progress | [⏭️] Deferred
 
 ## Project Status
-**Current state:** Sprints 0–10 complete. Production UI with light theme, SVG tab bar, professional Home dashboard (time-of-day greeting, campus status, building cards), Find page with scoring algorithm + filter chips + ranked results, FAQ/More page. Map locked to UoM bounds. 87 unit tests passing.
+**Current state:** Sprints 0–15 complete. S14 (Noise + Favourites) adds noise aggregation from crowd reports (min 3 threshold), localStorage favourites with animated heart toggle, "Your Favourites" section on HomePage, "Low Noise" filter chip with adjusted scoring weights. S15 (Photos + Tips) adds PhotoCarousel component (CSS scroll-snap, IntersectionObserver dots), TipsList component (expandable, show 2 by default), and photos[] field in BuildingMeta — photo assets pending curation. 135 unit tests passing. Next: S16 (PWA Install + Service Worker).
 
 ---
 
@@ -450,15 +450,15 @@
 - Confidence badge showing data source
 
 **Subtasks:**
-- [ ] S11.1 — Scaffold supabase/functions/compute-predictions/index.ts
-- [ ] S11.2 — Implement Google-baseline prediction (use google_popular_times as default)
-- [ ] S11.3 — Create src/hooks/usePrediction.ts — fetch predictions for building
-- [ ] S11.4 — Create src/components/PredictionChart.tsx (Recharts 24-hour bar chart)
-- [ ] S11.5 — Create src/components/SparklineChart.tsx (6-hour Recharts sparkline)
-- [ ] S11.6 — Add "Usually peaks at..." text calculation
-- [ ] S11.7 — Add "Best time to go today" calculation
-- [ ] S11.8 — Add confidence badge (Google vs Pulse source)
-- [ ] S11.9 — Wire charts into BuildingCard expanded state
+- [x] S11.1 — Scaffold supabase/functions/compute-predictions/index.ts ✅ (maps google_popular_times → occupancy_predictions, batch upsert)
+- [x] S11.2 — Implement Google-baseline prediction ✅ (data_source='google', confidence='google-estimated')
+- [⏭️] S11.3 — Create src/hooks/usePrediction.ts ⏭️ DEFERRED: predictions fetched via useGooglePopularity hook instead — architecturally sound, avoids duplicate fetching
+- [x] S11.4 — Create src/components/PredictionChart.tsx ✅ (Recharts 24-hour bar chart with current hour reference line)
+- [x] S11.5 — Create src/components/SparklineChart.tsx ✅ (6-hour Recharts area sparkline, UoM Gold)
+- [x] S11.6 — Add "Usually peaks at..." text calculation ✅ (getPeakHour in predictionInsights.ts)
+- [x] S11.7 — Add "Best time to go today" calculation ✅ (getBestTimeToGo + getAvoidWindow in predictionInsights.ts, 23 unit tests)
+- [x] S11.8 — Add confidence badge (Google vs Pulse source) ✅ (PredictionSourceBadge.tsx)
+- [x] S11.9 — Wire charts into BuildingCard expanded state ✅ (PredictionSection in BuildingCardExpanded)
 
 **Test criteria:**
 - 24-hour prediction chart renders with Google data
@@ -474,7 +474,191 @@
 
 ---
 
-### Sprint 12: PWA Install Flow + Service Worker
+### Sprint 12: UI Polish, Theming & Production Readiness
+**Goal:** Replace all hardcoded colors with CSS custom properties, add dark/light theme with toggle, build shared UI primitives, add loading skeletons, responsive layouts, and micro-animations. Zero hardcoded hex in components/pages.
+
+**Inputs:** Sprints 0–10 complete, codebase audit revealing 150+ hardcoded colors, no dark theme, no responsive design
+
+**Outputs:**
+- Dark theme CSS custom properties (`[data-theme="dark"]`)
+- `useTheme` hook with localStorage persistence + system auto-detection
+- `useThemeColors` hook for Recharts (reads resolved CSS var hex values)
+- ThemeToggle component (3-state: light/dark/system)
+- Shared primitives: Button, Card, SectionHeader, StatusDot, SkeletonLoader, PageHeader
+- BuildingCard split: shell (100 lines) + Collapsed + Expanded
+- All pages migrated from inline styles to Tailwind + CSS vars
+- Map dark style switching (dark-v11)
+- Loading skeletons on HomePage and FindPage
+- Framer Motion FAQ accordion + page transition animations
+- Responsive grid on CompactCards (2→3→4 columns)
+- Hover/focus/active states on all interactive elements
+
+**Subtasks:**
+- [x] S12.1 — Dark theme CSS custom properties in index.css ✅
+- [x] S12.2 — Tailwind config: CSS variable bridge ✅
+- [x] S12.3 — useTheme hook + unit tests ✅
+- [x] S12.4 — ThemeToggle component ✅
+- [x] S12.5 — Map dark style switching ✅
+- [x] S12.6 — Button component ✅
+- [x] S12.7 — Card component ✅
+- [x] S12.8 — SectionHeader component ✅
+- [x] S12.9 — StatusDot component ✅
+- [x] S12.10 — SkeletonLoader component ✅
+- [x] S12.11 — PageHeader component ✅
+- [x] S12.12 — BuildingCard split + style migration ✅
+- [x] S12.13 — HomePage style migration ✅
+- [x] S12.14 — FindPage style migration ✅
+- [x] S12.15 — AlertsPage style migration ✅
+- [x] S12.16 — RecommendationCard style migration ✅
+- [x] S12.17 — Prediction components style migration ✅
+- [x] S12.18 — Final color audit sweep ✅
+- [x] S12.19 — Hover/focus/active states ✅
+- [x] S12.20 — Touch targets + accessibility ✅
+- [x] S12.21 — HomePage responsive layout ✅
+- [x] S12.22 — BuildingCard + MapPage responsive ✅
+- [x] S12.23 — FindPage + AlertsPage responsive ✅
+- [x] S12.24 — Loading skeletons for HomePage ✅
+- [x] S12.25 — Loading skeletons for FindPage ✅
+- [x] S12.26 — Card press + button feedback animations ✅
+- [x] S12.27 — Page transition animations ✅
+- [x] S12.28 — useThemeColors hook for Recharts ✅
+- [x] S12.29 — Theme integration testing ✅
+- [x] S12.30 — Final audit (tsc, tests, lint, grep) ✅ (114 tests pass, zero TS errors, zero new lint errors)
+
+**Test criteria:**
+- Toggle theme: light → dark → system auto — all pages correct
+- Map switches between light-v11 and dark-v11 styles
+- Theme persists across page reload (localStorage)
+- No hardcoded hex in components (`grep` clean)
+- All components under 150 lines
+- All buttons/cards have hover + focus-visible states
+- Responsive: test at 375px, 768px, 1024px
+- Loading skeletons show on initial load
+- `tsc -b` zero errors, 114 tests pass
+
+**Notes:**
+- New UI primitives: src/components/ui/Button.tsx, Card.tsx, SectionHeader.tsx, StatusDot.tsx, SkeletonLoader.tsx, PageHeader.tsx
+- BuildingCard split into BuildingCard.tsx (shell) + BuildingCardCollapsed.tsx + BuildingCardExpanded.tsx
+- FilterChips.tsx last hardcoded `#FFFFFF` replaced with `var(--color-text-on-navy)`
+- PredictionSourceBadge now uses `var(--color-bg-chip)` instead of computed `${color}10`
+- Framer Motion AnimatePresence added to FAQ accordion and App.tsx page routes
+
+---
+
+## Phase 1.5 — Competitive Edge (Pre-MVP Features)
+
+> Sprints 13–15 added from competitive research (March 2026). These features close gaps identified by analysing 9 campus apps. All sprints renumbered +1 from original plan due to S12 insertion.
+
+### Sprint 13: Manual Crowd Reporting
+**Goal:** Allow students to manually report how busy a building is (1–5 scale), solving the cold-start problem without requiring sensors.
+
+**Inspired by:** Campus Spots, Muggerino
+
+**Inputs:** Sprint 6 (blending logic), Sprint 8 (BuildingCard)
+
+**Outputs:**
+- occupancy_reports table with anonymous 1–5 busyness + optional noise level
+- Edge Function for report submission with rate limiting
+- Linear decay weighting over 30-minute report lifespan
+- Crowd-report source integrated into blending hierarchy (between live and google)
+- Report FAB on map page, report prompt in BuildingCard
+- Realtime subscription for fresh reports
+
+**Privacy:** No user_id. Session used only for in-memory rate-limiting in Edge Function. Reports auto-expire after 30 minutes.
+
+**Subtasks:**
+- [x] S13.1 — Migration 012_occupancy_reports.sql ✅ (table + indexes + RLS + Realtime, ip_hash for rate limiting)
+- [x] S13.2 — Edge Function submit-report/index.ts ✅ (Zod validation, SHA-256 IP hash, rate-limit 5/hr, no session_id)
+- [x] S13.3 — src/lib/reportDecay.ts ✅ (linear decay, REPORT_LEVEL_TO_PCT mapping, aggregateReports)
+- [x] S13.4 — Update src/lib/blending.ts ✅ (crowd-report as Priority 2 between live and google)
+- [x] S13.5 — src/hooks/useReportSubmit.ts ✅ (5-min client throttle via localStorage)
+- [x] S13.6 — src/components/ReportSheet.tsx ✅ (5-level picker + optional noise, Framer Motion bottom sheet)
+- [x] S13.7 — src/components/ReportFAB.tsx ✅ (fixed FAB, nearest-building logic, hidden when card visible)
+- [x] S13.8 — Add "How busy is it?" prompt + report count badge to BuildingCard ✅
+- [x] S13.9 — src/hooks/useRecentReports.ts ✅ (initial fetch + Realtime INSERT subscription + 60s prune interval)
+- [x] S13.10 — Unit tests ✅ (9 decay + 3 blending = 12 tests, all passing)
+- [x] S13.11 — Update src/types/index.ts ✅ (ReportLevel, NoiseLevel, OccupancyReport, DataQuality with 'crowd-report')
+
+**Test criteria:**
+- Report submission stores building_id + level + timestamp (no user_id)
+- Reports expire after 30 minutes and are excluded from aggregation
+- Decay function returns correct weight at 0, 15, and 30 minutes
+- Blending correctly inserts crowd-report between live and google sources
+- Rate limit prevents more than 1 report per building per 5 minutes (client) and 5/hr (server)
+- FAB and BuildingCard prompt both open ReportSheet
+
+---
+
+### Sprint 14: Noise Levels & Favourites
+**Goal:** Add noise level display (from crowd reports) and localStorage-based favourites — two engagement hooks that require no account.
+
+**Inspired by:** Muggerino
+
+**Inputs:** Sprint 12 (reports with optional noise_level)
+
+**Outputs:**
+- Noise level indicator in BuildingCard (aggregated from reports, minimum 3 reports)
+- Favourites stored in localStorage (array of building IDs)
+- "Your Favourites" section on HomePage
+- "Low Noise" filter chip in FindPage
+- Updated scoring algorithm (noise_score when noise filter active)
+
+**Privacy:** Favourites in localStorage only. Zero server storage. Noise aggregated from anonymous reports.
+
+**Subtasks:**
+- [x] S14.1 — Noise level display in BuildingCard ✅ (NoiseIndicator component, aggregated from reports, min 3 threshold)
+- [x] S14.2 — src/hooks/useFavourites.ts ✅ (localStorage array, toggle/isFavourite/favouriteIds)
+- [x] S14.3 — src/components/FavouriteButton.tsx ✅ (animated heart toggle, Framer Motion whileTap)
+- [x] S14.4 — "Your Favourites" section on HomePage ✅ (above "Quiet Right Now", hidden when empty)
+- [x] S14.5 — "Low Noise" filter chip in FilterChips ✅
+- [x] S14.6 — Update scoring ✅ (noise_score * 0.1 when low_noise active, amenity reduced to 0.1, filters out level > 2)
+- [x] S14.7 — src/lib/noiseAggregation.ts ✅ (weighted average with decay, reuses reportWeight from reportDecay.ts)
+- [x] S14.8 — Unit tests ✅ (6 noise aggregation + 3 scoring = 9 tests)
+
+**Test criteria:**
+- Noise level shows when >= 3 reports exist for a building
+- Favourites persist across page reloads (localStorage)
+- Favourites section appears on HomePage when non-empty, hidden when empty
+- "Low Noise" filter correctly filters and re-scores results
+- Scoring formula adjusts weights when noise filter active
+
+---
+
+### Sprint 15: Building Photos & Tips
+**Goal:** Add building exterior photos and tips to enrich building content, closing the content gap with LostOnCampus.
+
+**Inspired by:** LostOnCampus
+
+**Inputs:** Sprint 8 (BuildingCard), existing buildingMeta.ts tips data
+
+**Outputs:**
+- 2–3 CC-licensed WebP photos per building (static assets)
+- Photo carousel in BuildingCard expanded state
+- Tips list in BuildingCard expanded state
+- Building thumbnail in HomePage building rows
+
+**Privacy:** Static assets only. No user uploads until Phase 5.
+
+**Subtasks:**
+- [⏭️] S15.1 — Curate photos ⏭️ DEFERRED: photos[] field added to BuildingMeta interface and PhotoCarousel component ready, but actual CC-licensed WebP assets need manual curation
+- [x] S15.2 — Update buildingMeta.ts: add photos[] to BuildingMeta interface ✅
+- [x] S15.3 — src/components/PhotoCarousel.tsx ✅ (CSS scroll-snap, lazy images, IntersectionObserver dot indicators)
+- [x] S15.4 — Add PhotoCarousel to BuildingCard expanded state ✅ (below amenities, above tips)
+- [x] S15.5 — src/components/TipsList.tsx ✅ (expandable list, show 2 by default, "Show more" toggle)
+- [x] S15.6 — Wire TipsList into BuildingCard expanded state ✅ (replaces inline bullet tips)
+- [⏭️] S15.7 — Building thumbnail in HomePage BuildingRow ⏭️ DEFERRED: requires photo assets from S15.1
+- [x] S15.8 — Optimize: loading="lazy", decoding="async" on all images ✅
+
+**Test criteria:**
+- Photos load lazily in carousel (no eager load of off-screen images)
+- Carousel scrolls with snap points
+- Tips display correctly from buildingMeta
+- Thumbnail appears in HomePage building rows
+- All images under 400KB, WebP format
+
+---
+
+### Sprint 16: PWA Install Flow + Service Worker
 **Goal:** Complete PWA configuration with install prompts, service worker caching, and offline support.
 
 **Inputs:** Sprint 0 (PWA manifest configured), Sprint 7 (app is functional)
@@ -487,14 +671,14 @@
 - Offline indicator banner
 
 **Subtasks:**
-- [ ] S12.1 — Configure workbox caching strategies in vite.config.ts
-- [ ] S12.2 — Add runtime caching for Supabase API responses (stale-while-revalidate)
-- [ ] S12.3 — Create src/components/InstallBanner.tsx
-- [ ] S12.4 — Implement 30-second engagement timer (localStorage flag for "shown once")
-- [ ] S12.5 — Implement iOS detection and custom install modal
-- [ ] S12.6 — Implement Android beforeinstallprompt handler
-- [ ] S12.7 — Create src/components/OfflineBanner.tsx ("Last updated X min ago")
-- [ ] S12.8 — Create placeholder PWA icons (192px, 512px, 512px maskable) in public/icons/
+- [ ] S16.1 — Configure workbox caching strategies in vite.config.ts
+- [ ] S16.2 — Add runtime caching for Supabase API responses (stale-while-revalidate)
+- [ ] S16.3 — Create src/components/InstallBanner.tsx
+- [ ] S16.4 — Implement 30-second engagement timer (localStorage flag for "shown once")
+- [ ] S16.5 — Implement iOS detection and custom install modal
+- [ ] S16.6 — Implement Android beforeinstallprompt handler
+- [ ] S16.7 — Create src/components/OfflineBanner.tsx ("Last updated X min ago")
+- [ ] S16.8 — Create placeholder PWA icons (192px, 512px, 512px maskable) in public/icons/
 
 **Test criteria:**
 - App installs on Android via native prompt
@@ -510,72 +694,74 @@
 
 ---
 
-### Sprint 13: Seed Data (UoM Buildings)
-**Goal:** Verify and refine seed data for all 5 UoM buildings with accurate coordinates, polygons, amenities, hours, and Google Place IDs.
+### Sprint 17: Seed Data Verification
+**Goal:** Verify and refine seed data for all UoM buildings. Building polygons already completed in S7 (18 buildings, OSM-sourced).
 
-**Inputs:** Sprint 1 (initial seed), real-world UoM building data
+**Inputs:** Sprint 1 (initial seed), Sprint 7 (expanded to 18 buildings), real-world UoM building data
 
 **Outputs:**
-- Accurate building polygons that align with Mapbox satellite view
 - Verified amenity flags for each building
 - Accurate building hours
 - Floor zones with reasonable capacity estimates
 - Google Place IDs verified against Google Places API
 
 **Subtasks:**
-- [ ] S13.1 — Verify/refine building polygon coordinates against satellite imagery
-- [ ] S13.2 — Verify building hours from UoM website
-- [ ] S13.3 — Verify amenity flags (WiFi, power, quiet zones, accessibility)
-- [ ] S13.4 — Verify Google Place IDs return valid results
-- [ ] S13.5 — Adjust floor zone capacity estimates based on building size
-- [ ] S13.6 — Update seed script with refined data
+- [ ] S17.1 — Verify building hours from UoM website
+- [ ] S17.2 — Verify amenity flags (WiFi, power, quiet zones, accessibility)
+- [ ] S17.3 — Verify Google Place IDs return valid results
+- [ ] S17.4 — Adjust floor zone capacity estimates based on building size
+- [ ] S17.5 — Update seed script with refined data
 
 **Test criteria:**
-- All 5 buildings visible on map at correct positions
-- Building polygons roughly match building footprints
+- All 18 buildings visible on map at correct positions (already done in S7)
 - Amenity data is accurate for each building
 - Google Place IDs return valid API responses
 
 **Notes:**
-- Buildings: Baillieu Library, ERC Library (Eastern Resource Centre), Arts West, Engineering Building 1, ICT Building
+- Polygon verification already completed in S7 (OSM-sourced, up to 58 vertices)
 - Capacity estimates are directional, not precise — label as "~"
-- Reference PRD Q1 resolved decision
 
 ---
 
-### Sprint 14: MVP Integration Testing + Deploy to Vercel
-**Goal:** Full end-to-end testing of the MVP feature set and deployment to Vercel.
+### Sprint 18: MVP Integration Testing + Deploy to Vercel
+**Goal:** Full end-to-end testing of the complete MVP feature set (including crowd reporting, noise, favourites, photos) and deployment to Vercel.
 
-**Inputs:** All Sprint 3–13 complete
+**Inputs:** All Sprints 3–16 complete
 
 **Outputs:**
 - All features working together end-to-end
 - TypeScript compiles with zero errors
 - ESLint passes
-- Core unit tests pass
+- Core unit tests pass (target: 100+ including new S12–S14 tests)
 - Deployed to Vercel with environment variables configured
 - Accessible via public URL
 
 **Subtasks:**
-- [ ] S14.1 — Run full TypeScript type check (tsc --noEmit)
-- [ ] S14.2 — Run ESLint and fix any issues
-- [ ] S14.3 — Run all unit tests
-- [ ] S14.4 — Manual test: open app → view heatmap → tap building → see card
-- [ ] S14.5 — Manual test: recommendations → apply filters → see ranked results
-- [ ] S14.6 — Manual test: GPS permission flow (grant and deny)
-- [ ] S14.7 — Manual test: mobile viewport (375px)
-- [ ] S14.8 — Configure Vercel project with environment variables
-- [ ] S14.9 — Deploy to Vercel
-- [ ] S14.10 — Verify deployed app loads and connects to Supabase
+- [ ] S18.1 — Run full TypeScript type check (tsc --noEmit)
+- [ ] S18.2 — Run ESLint and fix any issues
+- [ ] S18.3 — Run all unit tests
+- [ ] S18.4 — Manual test: open app → view heatmap → tap building → see card
+- [ ] S18.5 — Manual test: recommendations → apply filters → see ranked results
+- [ ] S18.6 — Manual test: GPS permission flow (grant and deny)
+- [ ] S18.7 — Manual test: mobile viewport (375px)
+- [ ] S18.8 — Manual test: submit crowd report → see it reflected in blending
+- [ ] S18.9 — Manual test: toggle favourite → see it on HomePage
+- [ ] S18.10 — Manual test: noise level display with sufficient reports
+- [ ] S18.11 — Manual test: photo carousel and tips in BuildingCard
+- [ ] S18.12 — Configure Vercel project with environment variables
+- [ ] S18.13 — Deploy to Vercel
+- [ ] S18.14 — Verify deployed app loads and connects to Supabase
 
 **Test criteria:**
 - Zero TypeScript errors
 - Zero ESLint errors
-- All unit tests pass
+- All unit tests pass (87 existing + ~23 new from S12–S13)
 - App is accessible via Vercel URL
 - Heatmap renders with building polygons
-- Building cards open and show data
-- Recommendations work with filters
+- Building cards open and show data (including photos, tips, noise)
+- Recommendations work with filters (including noise filter)
+- Crowd reporting flow complete
+- Favourites persist across sessions
 
 **Notes:**
 - Vercel deployment config is straightforward for Vite — build command: `pnpm build`, output: `dist`
@@ -586,10 +772,10 @@
 
 ## Phase 2 — Polish & Reliability
 
-### Sprint 15: Accessibility Compliance
+### Sprint 19: Accessibility Compliance
 **Goal:** Achieve WCAG 2.1 AA compliance across all screens.
 
-**Inputs:** MVP complete (Sprint 14)
+**Inputs:** MVP complete (Sprint 17)
 
 **Outputs:**
 - All elements keyboard navigable
@@ -600,14 +786,14 @@
 - Map occupancy communicated via text (not colour alone)
 
 **Subtasks:**
-- [ ] S15.1 — Audit all components for keyboard navigation
-- [ ] S15.2 — Add aria-labels to all icon buttons and interactive elements
-- [ ] S15.3 — Verify contrast ratios meet 4.5:1 minimum
-- [ ] S15.4 — Ensure all touch targets are >= 44x44pt
-- [ ] S15.5 — Make BuildingCard screen-reader friendly (live regions for updates)
-- [ ] S15.6 — Add text labels alongside colour coding on map (not colour-only information)
-- [ ] S15.7 — Test with VoiceOver (macOS/iOS)
-- [ ] S15.8 — Make FilterSheet usable with assistive technology
+- [ ] S19.1 — Audit all components for keyboard navigation
+- [ ] S19.2 — Add aria-labels to all icon buttons and interactive elements
+- [ ] S19.3 — Verify contrast ratios meet 4.5:1 minimum
+- [ ] S19.4 — Ensure all touch targets are >= 44x44pt
+- [ ] S19.5 — Make BuildingCard screen-reader friendly (live regions for updates)
+- [ ] S19.6 — Add text labels alongside colour coding on map (not colour-only information)
+- [ ] S19.7 — Test with VoiceOver (macOS/iOS)
+- [ ] S19.8 — Make FilterSheet usable with assistive technology
 
 **Test criteria:**
 - Tab through entire app without mouse
@@ -621,7 +807,7 @@
 
 ---
 
-### Sprint 16: Push Notifications & Alerts
+### Sprint 20: Push Notifications & Alerts
 **Goal:** Implement occupancy alert system with Web Push notifications.
 
 **Inputs:** Sprint 8 (alert button in BuildingCard), user_alerts table
@@ -635,15 +821,15 @@
 - Rate limiting: 5 alerts per push token per hour
 
 **Subtasks:**
-- [ ] S16.1 — Create src/components/AlertSheet.tsx (threshold setter)
-- [ ] S16.2 — Implement Web Push subscription registration
-- [ ] S16.3 — Create register-alert Edge Function endpoint
-- [ ] S16.4 — Create cancel-alert Edge Function endpoint
-- [ ] S16.5 — Implement fire-alerts Edge Function (poll zone_occupancy, check thresholds)
-- [ ] S16.6 — Implement rate limiting (5 per token per hour)
-- [ ] S16.7 — Create src/hooks/useAlerts.ts
-- [ ] S16.8 — Wire alert button in BuildingCard to AlertSheet
-- [ ] S16.9 — Handle iOS limitations (requires iOS 16.4+ and home screen install)
+- [ ] S20.1 — Create src/components/AlertSheet.tsx (threshold setter)
+- [ ] S20.2 — Implement Web Push subscription registration
+- [ ] S20.3 — Create register-alert Edge Function endpoint
+- [ ] S20.4 — Create cancel-alert Edge Function endpoint
+- [ ] S20.5 — Implement fire-alerts Edge Function (poll zone_occupancy, check thresholds)
+- [ ] S20.6 — Implement rate limiting (5 per token per hour)
+- [ ] S20.7 — Create src/hooks/useAlerts.ts
+- [ ] S20.8 — Wire alert button in BuildingCard to AlertSheet
+- [ ] S20.9 — Handle iOS limitations (requires iOS 16.4+ and home screen install)
 
 **Test criteria:**
 - Can set an alert for a building at a threshold
@@ -659,10 +845,10 @@
 
 ---
 
-### Sprint 17: Offline Graceful Degradation
+### Sprint 21: Offline Graceful Degradation
 **Goal:** Ensure the app remains useful when offline or on poor connections.
 
-**Inputs:** Sprint 12 (service worker configured)
+**Inputs:** Sprint 15 (service worker configured)
 
 **Outputs:**
 - App shell loads from cache when offline
@@ -672,13 +858,13 @@
 - Recommendations work with cached data
 
 **Subtasks:**
-- [ ] S17.1 — Cache building metadata in service worker
-- [ ] S17.2 — Cache last occupancy snapshot to IndexedDB or localStorage
-- [ ] S17.3 — Display cached data with "Last updated X min ago" timestamp
-- [ ] S17.4 — Show offline indicator in header
-- [ ] S17.5 — Ensure recommendations work with stale data
-- [ ] S17.6 — Implement reconnection detection and data refresh
-- [ ] S17.7 — Test on airplane mode
+- [ ] S21.1 — Cache building metadata in service worker
+- [ ] S21.2 — Cache last occupancy snapshot to IndexedDB or localStorage
+- [ ] S21.3 — Display cached data with "Last updated X min ago" timestamp
+- [ ] S21.4 — Show offline indicator in header
+- [ ] S21.5 — Ensure recommendations work with stale data
+- [ ] S21.6 — Implement reconnection detection and data refresh
+- [ ] S21.7 — Test on airplane mode
 
 **Test criteria:**
 - App loads from cache in airplane mode
@@ -693,7 +879,7 @@
 
 ---
 
-### Sprint 18: Performance Optimisation
+### Sprint 22: Performance Optimisation
 **Goal:** Meet all performance targets from PRD Section 10.1.
 
 **Inputs:** MVP feature-complete
@@ -706,14 +892,14 @@
 - Recommendations recalculate < 500ms after filter change
 
 **Subtasks:**
-- [ ] S18.1 — Analyse bundle size, identify and fix large imports
-- [ ] S18.2 — Lazy load BuildingCard component
-- [ ] S18.3 — Preload Mapbox style and building GeoJSON on app init
-- [ ] S18.4 — Memoize recommendation scoring (useMemo/useCallback)
-- [ ] S18.5 — Optimise Mapbox layers (reduce repaints)
-- [ ] S18.6 — Run Lighthouse audit and fix flagged issues
-- [ ] S18.7 — Test on throttled 3G connection
-- [ ] S18.8 — Profile and optimise Turf.js point-in-polygon (Web Worker if needed)
+- [ ] S22.1 — Analyse bundle size, identify and fix large imports
+- [ ] S22.2 — Lazy load BuildingCard component
+- [ ] S22.3 — Preload Mapbox style and building GeoJSON on app init
+- [ ] S22.4 — Memoize recommendation scoring (useMemo/useCallback)
+- [ ] S22.5 — Optimise Mapbox layers (reduce repaints)
+- [ ] S22.6 — Run Lighthouse audit and fix flagged issues
+- [ ] S22.7 — Test on throttled 3G connection
+- [ ] S22.8 — Profile and optimise Turf.js point-in-polygon (Web Worker if needed)
 
 **Test criteria:**
 - Lighthouse performance score >= 90
@@ -727,7 +913,7 @@
 
 ---
 
-### Sprint 19: Error States & Edge Cases
+### Sprint 23: Error States & Edge Cases
 **Goal:** Handle all error states gracefully with appropriate UI feedback.
 
 **Inputs:** MVP feature-complete
@@ -740,14 +926,14 @@
 - Loading skeletons for async content
 
 **Subtasks:**
-- [ ] S19.1 — Create error boundary wrapper component
-- [ ] S19.2 — Implement fallback list view for map failure
-- [ ] S19.3 — Add loading skeleton components (pulse animation)
-- [ ] S19.4 — Handle Supabase connection errors (retry with backoff)
-- [ ] S19.5 — Handle GPS permission denied (show No Location screen)
-- [ ] S19.6 — Handle zero buildings with data (empty heatmap state)
-- [ ] S19.7 — Handle Mapbox token invalid / expired
-- [ ] S19.8 — Add error logging (console only, no third-party services)
+- [ ] S23.1 — Create error boundary wrapper component
+- [ ] S23.2 — Implement fallback list view for map failure
+- [ ] S23.3 — Add loading skeleton components (pulse animation)
+- [ ] S23.4 — Handle Supabase connection errors (retry with backoff)
+- [ ] S23.5 — Handle GPS permission denied (show No Location screen)
+- [ ] S23.6 — Handle zero buildings with data (empty heatmap state)
+- [ ] S23.7 — Handle Mapbox token invalid / expired
+- [ ] S23.8 — Add error logging (console only, no third-party services)
 
 **Test criteria:**
 - Each error state shows appropriate UI (not a blank screen or crash)
@@ -761,30 +947,39 @@
 
 ---
 
-### Sprint 20: Building Data Accuracy
-**Goal:** Verify and improve the accuracy of all building data — polygons, hours, amenities, accessibility.
+### Sprint 24: Building Data Accuracy + Room Directory
+**Goal:** Verify and improve building data accuracy, and add a room directory with cross-building room search.
 
-**Inputs:** Sprint 13 (initial seed data), user feedback
+**Inspired by:** UniMelb Maps (room/location search)
+
+**Inputs:** Sprint 16 (seed data), user feedback
 
 **Outputs:**
-- Building polygons verified against current satellite imagery
-- Hours verified against UoM semester 1 2026 schedule
-- Amenity flags verified via campus visit or UoM accessibility guides
-- "Report inaccuracy" mechanism for users
-- Updated seed data
+- Building data verified against current UoM sources
+- rooms table with name, floor, type, capacity, amenities
+- Room list in BuildingCard (grouped by floor)
+- Room search in HomePage search bar (cross-building)
+- "Report inaccuracy" button in BuildingCard
+
+**Privacy:** Rooms are static seed data. Feedback is anonymous.
 
 **Subtasks:**
-- [ ] S20.1 — Cross-reference building hours with UoM 2026 semester calendar
-- [ ] S20.2 — Verify accessibility data against UoM AccessAbility service
-- [ ] S20.3 — Add "Report inaccuracy" button to BuildingCard
-- [ ] S20.4 — Create simple feedback collection (Supabase table + Edge Function)
-- [ ] S20.5 — Update seed data with corrections
+- [ ] S24.1 — Migration 013_rooms.sql (rooms table with building_id, name, floor, type enum, capacity, has_power, is_bookable)
+- [ ] S24.2 — Seed rooms for top 5 buildings (from UoM Find a Room data)
+- [ ] S24.3 — src/hooks/useRooms.ts (fetch rooms by building_id)
+- [ ] S24.4 — src/components/RoomList.tsx (expandable in BuildingCard, grouped by floor)
+- [ ] S24.5 — Add room search to HomePage search bar (cross-building)
+- [ ] S24.6 — Verify building hours against UoM 2026 semester calendar
+- [ ] S24.7 — Verify accessibility data against UoM AccessAbility service
+- [ ] S24.8 — Add "Report inaccuracy" button to BuildingCard
+- [ ] S24.9 — Update types: Room, RoomType
 
 **Test criteria:**
+- Room list displays in BuildingCard, grouped by floor
+- Room search returns results across all buildings
 - Building hours match UoM published schedule
 - Accessibility flags match UoM published data
 - Report inaccuracy button functional
-- Feedback stored in Supabase
 
 **Notes:**
 - Accessibility data accuracy is an ethical obligation — incorrect data is harmful
@@ -792,42 +987,206 @@
 
 ---
 
-## Phase 3 — Intelligence (Overview)
+### Sprint 25: Feedback System
+**Goal:** Structured anonymous feedback mechanism for reporting data inaccuracies.
 
-### Sprint 21: EWMA Prediction Engine
-Implement Pulse's own prediction model using Exponentially Weighted Moving Average on occupancy_history. Replace Google baseline when sample_count >= 14 days for a given day/hour slot. Add confidence scoring (high/medium/low based on sample count and variance).
+**Inputs:** Sprint 23 (Report inaccuracy button)
 
-### Sprint 22: Anomaly Detection
-Detect unusual occupancy patterns (exam periods, events, holidays). Flag anomalies in prediction data. Adjust predictions during known unusual periods.
+**Outputs:**
+- feedback table (anonymous, category-based)
+- Edge Function for submission
+- FeedbackSheet component
+- Wired into BuildingCard "Report inaccuracy" button
 
-### Sprint 23: Personalised Recommendations
-Learn from user behaviour (buildings visited, filters used — all local, no server storage). Weight recommendations toward user preferences. "Your usual spots" section.
+**Privacy:** Anonymous — no user_id column. No tracking of who submitted what.
 
-### Sprint 24: Feedback Loops
-Allow users to confirm/deny occupancy accuracy ("Is this right?"). Use confirmations to calibrate capacity estimates. Track prediction accuracy over time.
+**Subtasks:**
+- [ ] S25.1 — Migration 014_feedback.sql (feedback table, anonymous, category enum: hours_wrong | amenity_wrong | occupancy_wrong | accessibility_wrong | other)
+- [ ] S25.2 — Edge Function submit-feedback/index.ts (Zod validation, rate-limit by IP)
+- [ ] S25.3 — src/components/FeedbackSheet.tsx (category picker + optional text, max 500 chars)
+- [ ] S25.4 — Wire into BuildingCard "Report inaccuracy" button
 
----
-
-## Phase 4 — Scale & Monetisation (Overview)
-
-### Sprint 25: Multi-Campus Support
-Add campus selector. Seed data for 2 additional Melbourne universities (Monash Clayton, RMIT City). Same database instance, data isolated by campus_id. Campus-specific map styling.
-
-### Sprint 26: University Analytics Dashboard
-Build admin.pulse.app subdomain. Supabase Auth with university email domain restriction. Views: campus-wide heatmap by hour, per-building utilisation charts, peak stress report, CSV export. All data aggregate and anonymised.
-
-### Sprint 27: Licensing & Billing
-Stripe integration for university subscriptions. Tiered pricing based on campus count. Admin user management.
+**Test criteria:**
+- Feedback stored with category + optional text + building_id + timestamp
+- No user_id in feedback table
+- Rate limiting prevents spam
+- Sheet opens from BuildingCard button
 
 ---
 
-## Phase 5 — Social Layer (Overview)
+## Phase 3 — Intelligence
 
-### Sprint 28: Friend Presence
-Mutual follow system (opt-in). Show friend location at building level only (never floor or seat). Account required for social features. Anonymous viewing always remains available.
+### Sprint 26: EWMA Prediction Engine
+**Goal:** Implement Pulse's own prediction model using Exponentially Weighted Moving Average on occupancy_history. Replace Google baseline when sample_count >= 14 days for a given day/hour slot. Add confidence scoring (high/medium/low based on sample count and variance).
 
-### Sprint 29: Study Group Matchmaking
-Manual subject tags. "Looking for study partner" status. Study session creation with building + time. Entirely opt-in.
+**Subtasks:**
+- [ ] S26.1 — Implement EWMA calculation in compute-predictions Edge Function
+- [ ] S26.2 — Confidence scoring (high: 14+ days, medium: 7–13 days, low: <7 days)
+- [ ] S26.3 — Auto-switch from Google baseline to Pulse predictions when threshold met
+- [ ] S26.4 — Update PredictionChart to show confidence band
+- [ ] S26.5 — Unit tests for EWMA and confidence calculations
+
+---
+
+### Sprint 27: Anomaly Detection
+**Goal:** Detect unusual occupancy patterns (exam periods, events, holidays). Flag anomalies in prediction data. Adjust predictions during known unusual periods.
+
+**Subtasks:**
+- [ ] S27.1 — Anomaly detection algorithm (z-score based, flag >2 std deviations)
+- [ ] S27.2 — Anomaly flag in occupancy_history
+- [ ] S27.3 — Exclude anomalies from EWMA calculation
+- [ ] S27.4 — UI indicator when current occupancy is anomalous
+
+---
+
+### Sprint 28: Personalised Recommendations
+**Goal:** Learn from user behaviour (buildings visited, filters used — all local, no server storage). Weight recommendations toward user preferences. "Your usual spots" section.
+
+**Privacy:** All preference data in localStorage. Zero server storage.
+
+**Subtasks:**
+- [ ] S28.1 — Track building views and filter usage in localStorage
+- [ ] S28.2 — Preference weighting in scoring algorithm
+- [ ] S28.3 — "Your usual spots" section on HomePage
+- [ ] S28.4 — Clear preferences option in settings
+
+---
+
+### Sprint 29: Feedback Loops + Lightweight Gamification
+**Goal:** Allow users to confirm/deny occupancy accuracy ("Is this right?"). Use confirmations to calibrate capacity estimates. Track prediction accuracy over time. Add lightweight gamification to encourage crowd reporting.
+
+**Inspired by:** Muggerino (streaks, badges)
+
+**Privacy:** All gamification state in localStorage. No server-side user profiles. Reporting streaks and badges are private to the device.
+
+**Subtasks:**
+- [ ] S29.1 — "Is this right?" prompt in BuildingCard (thumbs up/down)
+- [ ] S29.2 — Store confirmations in feedback table (type: accuracy_confirmation)
+- [ ] S29.3 — Calibration algorithm: adjust capacity estimates based on feedback
+- [ ] S29.4 — Track prediction accuracy over time (dashboard for admin)
+- [ ] S29.5 — Reporting streak counter (localStorage, days with >= 1 report)
+- [ ] S29.6 — Badge system: "First Report", "Week Streak", "Top Contributor" (localStorage)
+- [ ] S29.7 — Streak/badge display in More/Settings page
+- [ ] S29.8 — Subtle animation on badge unlock (Framer Motion)
+
+**Test criteria:**
+- Confirmations stored without user_id
+- Streak increments correctly, resets after missed day
+- Badges unlock at correct thresholds
+- All gamification data in localStorage only
+
+---
+
+## Phase 4 — Scale & Monetisation
+
+### Sprint 30: Multi-Campus Support
+**Goal:** Add campus selector. Seed data for 2 additional Melbourne universities (Monash Clayton, RMIT City). Same database instance, data isolated by campus_id. Campus-specific map styling.
+
+**Subtasks:**
+- [ ] S30.1 — Campus selector UI (dropdown or tab)
+- [ ] S30.2 — Seed Monash Clayton buildings and zones
+- [ ] S30.3 — Seed RMIT City buildings and zones
+- [ ] S30.4 — Map bounds and centre per campus
+- [ ] S30.5 — Verify data isolation (campus_id filtering)
+
+---
+
+### Sprint 31: University Analytics Dashboard
+**Goal:** Build admin.pulse.app subdomain. Supabase Auth with university email domain restriction. Views: campus-wide heatmap by hour, per-building utilisation charts, peak stress report, CSV export. All data aggregate and anonymised.
+
+**Subtasks:**
+- [ ] S31.1 — Admin app scaffold (separate Vite project or route)
+- [ ] S31.2 — Supabase Auth with email domain restriction
+- [ ] S31.3 — Campus-wide utilisation heatmap (hour × day grid)
+- [ ] S31.4 — Per-building utilisation charts
+- [ ] S31.5 — Peak stress report (busiest times)
+- [ ] S31.6 — CSV export of aggregate data
+
+---
+
+### Sprint 32: Licensing & Billing
+**Goal:** Stripe integration for university subscriptions. Tiered pricing based on campus count. Admin user management.
+
+**Subtasks:**
+- [ ] S32.1 — Stripe integration (checkout, webhooks)
+- [ ] S32.2 — Subscription tiers and pricing
+- [ ] S32.3 — Admin user management
+- [ ] S32.4 — Usage-based billing calculations
+
+---
+
+## Phase 5 — Social Layer & Community
+
+### Sprint 33: Friend Presence
+**Goal:** Mutual follow system (opt-in). Show friend location at building level only (never floor or seat). Account required for social features. Anonymous viewing always remains available.
+
+**Privacy:** Building-level only. Never floor or seat. Opt-in mutual follows.
+
+**Subtasks:**
+- [ ] S33.1 — Supabase Auth for social features
+- [ ] S33.2 — Follow/unfollow system (mutual opt-in)
+- [ ] S33.3 — Friend presence indicators on map (building-level only)
+- [ ] S33.4 — Friend list UI
+
+---
+
+### Sprint 34: Study Group Matchmaking
+**Goal:** Manual subject tags. "Looking for study partner" status. Study session creation with building + time. Entirely opt-in.
+
+**Subtasks:**
+- [ ] S34.1 — Subject tag system
+- [ ] S34.2 — "Looking for study partner" status toggle
+- [ ] S34.3 — Study session creation (building + time + subject)
+- [ ] S34.4 — Study session discovery and joining
+
+---
+
+### Sprint 35: Secret Spots & Community Reviews
+**Goal:** Community-submitted study spots with reviews — inspired by LostOnCampus's killer feature. Users can submit hidden gems with photos and amenity info. Other users can review and rate.
+
+**Inspired by:** LostOnCampus
+
+**Privacy:** Spots are anonymous submissions. Reviews are anonymous. Photos are user-uploaded (moderated).
+
+**Subtasks:**
+- [ ] S35.1 — Migration 015_spots.sql (spots table with photos[], amenities[], is_secret, location point, is_approved)
+- [ ] S35.2 — Migration 016_reviews.sql (reviews table, anonymous, rating 1-5 + noise_level + text)
+- [ ] S35.3 — src/components/SpotSubmission.tsx (name, type, photo upload, amenities checklist, location picker)
+- [ ] S35.4 — src/components/SpotCard.tsx (photo, rating, amenities, noise, review count)
+- [ ] S35.5 — src/components/ReviewForm.tsx + ReviewList.tsx
+- [ ] S35.6 — Spots as map markers (separate Mapbox layer, distinct from building polygons)
+- [ ] S35.7 — Admin moderation Edge Function (approve/reject spots)
+
+**Test criteria:**
+- Spot submission stores all fields without user_id
+- Reviews are anonymous
+- Spots appear on map as separate layer
+- Unapproved spots not visible to other users
+- Moderation endpoint rejects/approves correctly
+
+---
+
+### Sprint 36: Event Awareness
+**Goal:** Explain crowd spikes by associating events with buildings. Adjust predictions during known events so users aren't surprised by unusual busyness.
+
+**Inputs:** Sprint 25 (prediction engine)
+
+**Outputs:**
+- events table with building association, times, expected crowd impact
+- Event banner in BuildingCard during active events
+- Prediction adjustment during known events
+- Admin event entry tool
+
+**Subtasks:**
+- [ ] S36.1 — Migration 017_events.sql (events table with building_id, name, start_time, end_time, expected_crowd_multiplier, description)
+- [ ] S36.2 — src/components/EventBanner.tsx (shown in BuildingCard during active events, explains crowd spike)
+- [ ] S36.3 — Admin event entry tool (Edge Function + simple form)
+- [ ] S36.4 — Prediction adjustment: multiply baseline prediction by expected_crowd_multiplier during event window
+
+**Test criteria:**
+- Event banner appears only during active event window
+- Predictions adjust correctly with multiplier
+- Events without building_id show campus-wide banner
 
 ---
 
@@ -841,6 +1200,58 @@ Manual subject tags. "Looking for study partner" status. Study session creation 
 | 2026-03-19 | pnpm via npx (not global install) | Permission constraints on user's system |
 | 2026-03-19 | Google Places API does not return `current_popularity` | This is an internal Google Maps feature, not exposed via public API. Blending hierarchy adjusted: live > predicted > google typical > none. `google_popularity_cache.current_popularity` kept nullable for future use. Edge Function still syncs `is_open_now` for "currently open" filter. |
 | 2026-03-19 | Vitest config in separate `vitest.config.ts` | Vite 8's `defineConfig` type does not include `test` property. Separate config avoids TS errors while inheriting path aliases. |
+| 2026-03-21 | Competitive research integrated — 3 new pre-MVP sprints | Analysis of 9 campus apps (LostOnCampus, UniMelb Maps, Waitz, Occuspace, Density, Campus Spots, Muggerino, StudySpot, MazeMap) revealed no single competitor combines real-time heatmap + crowd reporting + recommendations + noise tracking + favourites + photos. Sprints 12–14 added to close gaps before MVP deploy. All subsequent sprints renumbered. |
+| 2026-03-21 | Crowd reports as blending source | Reports inserted between 'live' (sensor/Realtime) and 'google' in the fallback hierarchy. Stronger cold-start mitigation than Google data alone — students can contribute immediately. |
+| 2026-03-21 | Gamification kept localStorage-only | Muggerino model: reporting streaks and badges stored client-side. No server profiles, no leaderboards. Privacy-safe engagement loop. |
+| 2026-03-21 | Room directory added to S23 | UniMelb Maps competitive gap. Rooms table enables cross-building room search — a feature no competitor in the campus occupancy space offers. |
+
+---
+
+## Competitive Research Integration (March 2026)
+
+### Apps Analysed
+| App | Key Feature Taken | Sprint |
+|-----|-------------------|--------|
+| Campus Spots | Manual crowd reporting (1-5 scale) | S13 |
+| Muggerino | Noise levels, favourites, gamification (streaks/badges) | S14, S29 |
+| LostOnCampus | Building photos, tips, secret spots + reviews | S15, S35 |
+| UniMelb Maps | Room/location search | S24 |
+| Waitz | Sensor-based occupancy (validated our approach) | — |
+| Occuspace | Enterprise sensors (confirmed DIY gap) | — |
+| Density | API-first analytics (informed admin dashboard) | S31 |
+| StudySpot | Study-focused filtering (validated our filter chips) | — |
+| MazeMap | Indoor wayfinding, floor plans (future consideration) | — |
+
+### Competitive Position at MVP Deploy (Sprint 18)
+After completing Sprints 0–18, Pulse will combine:
+1. Real-time occupancy heatmap on interactive map (unique)
+2. Manual crowd reporting without sensors (Campus Spots model)
+3. Smart recommendations with scoring algorithm (unique)
+4. Noise level tracking (Muggerino)
+5. Favourites without account (Muggerino)
+6. Building photos and tips (LostOnCampus)
+7. Google Popular Times fallback (unique combination)
+8. Prediction charts (enterprise tools, but free)
+9. Floor-level breakdown (MazeMap concept, simplified)
+10. Privacy-first, no account required (unique positioning)
+
+**No single competitor has more than 3 of these. Pulse will have all 10.**
+
+---
+
+## Dependency Graph
+
+```
+S11 (Predictions) ──────────────────────┐
+S12 (UI Polish) ───────────────────────┤
+S13 (Crowd Reports) ── S14 (Noise+Favs) ┤  S15 can run parallel with S13-S14
+S15 (Photos+Tips) ──────────────────────┤
+                                         ├── S16 (PWA) ── S17 (Seed) ── S18 (Deploy)
+```
+
+- S13 and S15 are independent (can be built in parallel)
+- S14 depends on S13 (noise levels come from the reports table)
+- S16+ depends on core features being stable
 
 ---
 
@@ -848,12 +1259,14 @@ Manual subject tags. "Looking for study partner" status. Study session creation 
 
 | Risk | Status | Notes |
 |------|--------|-------|
-| Cold start — insufficient crowdsourced data | Mitigated | Google Popular Times integration (F010) fills gap from day one |
+| Cold start — insufficient crowdsourced data | **Strongly mitigated** | Google Popular Times (F010) + manual crowd reporting (S13) — two independent fallback mechanisms from day one |
 | Google Places API cost | Monitoring | ~$8/month for 10 buildings. Cache aggressively (30min TTL) |
-| Google Places API unavailable | Planned | Fallback to Pulse predictions in blending logic |
-| Location permission denial | Planned | Allow browsing with Google + predicted data without GPS |
+| Google Places API unavailable | Planned | Fallback to Pulse predictions + crowd reports in blending logic |
+| Location permission denial | Planned | Allow browsing with Google + predicted + crowd report data without GPS |
 | Supabase Realtime connection limits | Monitoring | Free tier: 200 concurrent. Polling fallback planned |
-| Building capacity estimates inaccurate | Accepted | Directional only ("~"). Report inaccuracy button planned |
+| Building capacity estimates inaccurate | Accepted | Directional only ("~"). Report inaccuracy button (S24) + feedback system (S25) |
 | iOS push requires 16.4+ + home screen | Accepted | In-app alerts as fallback |
 | current_popularity not available for all buildings | Accepted | Only buildings with google_place_id get Google data |
-| Accessibility data inaccurate | High priority | Manual verification + user reporting mechanism |
+| Accessibility data inaccurate | High priority | Manual verification + user reporting mechanism (S24–S25) |
+| Crowd report spam/abuse | Planned | Rate limiting: 5/hr server-side (IP), 1/building/5min client-side (localStorage). Reports auto-expire 30min. |
+| Photo licensing issues | Low | All photos CC-licensed. Static assets, no user uploads until S35. |

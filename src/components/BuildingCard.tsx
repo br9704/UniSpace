@@ -1,30 +1,48 @@
-import { useState } from 'react'
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
+import { motion, useMotionValue, animate } from 'framer-motion'
 import type { PanInfo } from 'framer-motion'
-import type { BlendedOccupancy, Building } from '@/types'
-import FloorBreakdown from './FloorBreakdown'
+import type { BlendedOccupancy, Building, HourlyPrediction } from '@/types'
 import { isOpenNow } from '@/lib/buildingHours'
 import { BUILDING_META } from '@/constants/buildingMeta'
 import OccupancyBar from './OccupancyBar'
 import OccupancyBadge from './OccupancyBadge'
 import TrendArrow from './TrendArrow'
 import DataSourceBadge from './DataSourceBadge'
-import AmenityChip, { getActiveAmenities } from './AmenityChip'
+import FloorBreakdown from './FloorBreakdown'
+import NoiseIndicator from './NoiseIndicator'
+import FavouriteButton from './FavouriteButton'
+import PredictionSection from './PredictionSection'
+import PhotoCarousel from './PhotoCarousel'
+import TipsList from './TipsList'
+import { getActiveAmenities } from './AmenityChip'
 
 interface BuildingCardProps {
   building: Building
   occupancy: BlendedOccupancy | null
+  predictions?: HourlyPrediction[]
   onDismiss: () => void
+  onReport?: () => void
+  reportCount?: number
+  noiseLevel?: number | null
+  noiseCount?: number
+  isFavourite?: boolean
+  onToggleFavourite?: () => void
 }
 
-const COLLAPSED = 340
 const SPRING = { type: 'spring' as const, stiffness: 280, damping: 28 }
 
-export default function BuildingCard({ building, occupancy, onDismiss }: BuildingCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+export default function BuildingCard({
+  building, occupancy, predictions, onDismiss, onReport,
+  reportCount = 0, noiseLevel, noiseCount, isFavourite, onToggleFavourite,
+}: BuildingCardProps) {
   const y = useMotionValue(0)
-  const expandedH = typeof window !== 'undefined' ? window.innerHeight * 0.75 : 500
-  const bgOpacity = useTransform(y, [-expandedH + COLLAPSED, 0], [0.6, 0])
+
+  function handleDragEnd(_: never, info: PanInfo) {
+    if (info.offset.y > 100 || info.velocity.y > 400) {
+      onDismiss()
+    } else {
+      animate(y, 0, SPRING)
+    }
+  }
 
   const status = isOpenNow(building)
   const amenities = getActiveAmenities(building)
@@ -32,173 +50,196 @@ export default function BuildingCard({ building, occupancy, onDismiss }: Buildin
   const pct = occupancy?.pct ?? null
   const trend = occupancy?.trend ?? 'stable'
   const floors = occupancy?.floor_occupancies ?? []
-  // quietestFloor logic moved to FloorBreakdown component
-
-  function handleDragEnd(_: never, info: PanInfo) {
-    const offset = info.offset.y
-    const velocity = info.velocity.y
-    if (offset > 80 || velocity > 500) {
-      onDismiss()
-    } else if (offset < -60 || velocity < -300) {
-      setIsExpanded(true)
-      animate(y, -(expandedH - COLLAPSED), SPRING)
-    } else {
-      setIsExpanded(false)
-      animate(y, 0, SPRING)
-    }
-  }
 
   return (
     <>
       {/* Overlay */}
       <motion.div
-        className="fixed inset-0"
-        style={{ backgroundColor: 'rgba(0,0,0,0.3)', opacity: bgOpacity, pointerEvents: isExpanded ? 'auto' : 'none', zIndex: 90 }}
-        onClick={() => { setIsExpanded(false); animate(y, 0, SPRING) }}
+        style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.25)', zIndex: 90 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onDismiss}
       />
 
       {/* Card */}
       <motion.div
-        className="fixed left-0 right-0 overflow-y-auto"
         style={{
-          bottom: 0, y, height: expandedH, zIndex: 100,
-          backgroundColor: 'var(--color-bg-elevated)',
-          borderTopLeftRadius: 'var(--radius-lg)', borderTopRightRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-elevated)',
+          position: 'fixed', left: 0, right: 0, bottom: 0, y,
+          height: '65vh', zIndex: 100,
+          backgroundColor: '#F0F2F5',
+          borderTopLeftRadius: 20, borderTopRightRadius: 20,
+          boxShadow: '0 -8px 40px rgba(0,0,0,0.12)',
+          overflowY: 'auto',
         }}
         drag="y"
-        dragConstraints={{ top: -(expandedH - COLLAPSED), bottom: COLLAPSED }}
-        dragElastic={0.1}
+        dragConstraints={{ top: 0, bottom: 300 }}
+        dragElastic={0.15}
         onDragEnd={handleDragEnd}
-        initial={{ y: COLLAPSED }}
+        initial={{ y: '100%' }}
         animate={{ y: 0 }}
-        exit={{ y: COLLAPSED + 50 }}
+        exit={{ y: '100%' }}
         transition={SPRING}
       >
-        {/* Top bar: drag handle + close button */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px 20px 8px', position: 'relative' }}>
-          <div style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: '#CBD5E1' }} className="cursor-grab active:cursor-grabbing" />
+        {/* Sticky header: drag handle + actions */}
+        <div style={{
+          position: 'sticky', top: 0, zIndex: 10,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '12px 20px 8px',
+          backgroundColor: '#F0F2F5',
+          borderTopLeftRadius: 20, borderTopRightRadius: 20,
+        }}>
+          {onToggleFavourite ? (
+            <FavouriteButton isFavourite={isFavourite ?? false} onToggle={onToggleFavourite} />
+          ) : <div />}
+          <div style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: '#CBD5E1', cursor: 'grab' }} />
           <button
             onClick={onDismiss}
-            style={{ position: 'absolute', right: 16, top: 10, width: 32, height: 32, borderRadius: 16, backgroundColor: '#F0F2F5', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            aria-label="Close"
+            style={{
+              width: 40, height: 40, borderRadius: 20, border: 'none',
+              backgroundColor: '#E2E6EB', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
 
-        <div style={{ padding: '0 20px 20px' }}>
-          {/* Collapsed content */}
-          <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1E293B' }}>{building.name}</h2>
-          {meta && <span style={{ display: 'inline-block', fontSize: 11, padding: '3px 10px', borderRadius: 6, backgroundColor: '#EDF0F4', color: '#64748B', marginTop: 6 }}>{meta.address}</span>}
-          {meta ? (
-            <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.6 }}>{meta.description}</p>
-          ) : (
-            <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>University of Melbourne · Parkville</p>
-          )}
+        {/* Content */}
+        <div style={{ padding: '0 20px 32px', display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-          <div style={{ marginTop: 14 }}><OccupancyBar pct={pct} height={8} /></div>
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
-            <OccupancyBadge pct={pct} />
-            <TrendArrow trend={trend} />
+          {/* Building name + address */}
+          <div style={{ padding: 16, borderRadius: 14, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.18)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <h2 style={{ fontSize: 26, fontWeight: 800, color: '#1E293B', lineHeight: 1.2, margin: 0 }}>{building.name}</h2>
+            {meta && (
+              <span style={{ display: 'inline-block', fontSize: 11, padding: '3px 10px', borderRadius: 6, backgroundColor: '#EDF0F4', color: '#64748B', marginTop: 6 }}>
+                {meta.address}
+              </span>
+            )}
+            {meta ? (
+              <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.6, marginBottom: 0 }}>{meta.description}</p>
+            ) : (
+              <p style={{ fontSize: 13, color: '#64748B', marginTop: 4, marginBottom: 0 }}>University of Melbourne - Parkville</p>
+            )}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }}>
-            <span style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: status.open ? '#4CAF7D' : '#E05252' }} />
-            <span style={{ fontSize: 13, color: '#64748B' }}>
-              {status.open ? `Open · Closes ${status.closesAt}` : status.opensAt ? `Officially closed · Opens ${status.opensAt} · Keycard access may be available` : 'Officially closed · Keycard access may be available'}
-            </span>
+          {/* Occupancy container */}
+          <div style={{ padding: 16, borderRadius: 14, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.18)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <OccupancyBar pct={pct} height={8} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+              <OccupancyBadge pct={pct} />
+              <TrendArrow trend={trend} />
+            </div>
+            {noiseLevel != null && noiseCount != null && noiseCount > 0 && (
+              <div style={{ marginTop: 8 }}>
+                <NoiseIndicator level={noiseLevel} count={noiseCount} />
+              </div>
+            )}
           </div>
 
-          {building.estimated_capacity && (
-            <p style={{ fontSize: 13, color: '#94A3B8', marginTop: 6 }}>Capacity: ~{building.estimated_capacity} people</p>
-          )}
+          {/* Status + capacity container */}
+          <div style={{ padding: 14, borderRadius: 14, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.18)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: status.open ? '#4CAF7D' : '#E05252' }} />
+              <span style={{ fontSize: 13, color: '#64748B' }}>
+                {status.open ? `Open - Closes ${status.closesAt}` : status.opensAt ? `Closed - Opens ${status.opensAt}` : 'Closed'}
+              </span>
+            </div>
+            {building.estimated_capacity && (
+              <p style={{ fontSize: 13, color: '#94A3B8', margin: 0 }}>Capacity: ~{building.estimated_capacity} people</p>
+            )}
+            {occupancy && <DataSourceBadge source={occupancy.source} />}
+          </div>
 
-          {/* Amenity chips always visible */}
+          {/* Amenities container */}
           {amenities.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
-              {amenities.map((a) => (
-                <span key={a.label} style={{ fontSize: 12, padding: '3px 10px', borderRadius: 8, backgroundColor: '#F0F2F5', color: '#64748B' }}>{a.label}</span>
+            <div style={{ padding: 14, borderRadius: 14, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.18)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <h3 style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', letterSpacing: '1px', marginBottom: 10, margin: '0 0 10px' }}>AMENITIES</h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {amenities.map((a) => (
+                  <span key={a.label} style={{ fontSize: 11, padding: '3px 10px', borderRadius: 6, backgroundColor: '#FFFFFF', color: '#64748B', border: '1px solid #EDF0F4' }}>
+                    {a.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Photos */}
+          {meta?.photos && meta.photos.length > 0 && (
+            <div style={{ padding: 14, borderRadius: 14, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.18)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <h3 style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', letterSpacing: '1px', margin: '0 0 10px' }}>PHOTOS</h3>
+              <PhotoCarousel photos={meta.photos} alt={building.name} />
+            </div>
+          )}
+
+          {/* Floor breakdown */}
+          {floors.length > 0 && (
+            <div style={{ padding: 14, borderRadius: 14, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.18)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <FloorBreakdown floors={floors} />
+            </div>
+          )}
+
+          {/* Predictions container */}
+          {predictions && predictions.length > 0 && (
+            <div style={{ padding: 14, borderRadius: 14, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.18)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <PredictionSection predictions={predictions} />
+            </div>
+          )}
+
+          {/* Tips */}
+          {meta?.tips && meta.tips.length > 0 && (
+            <div style={{ padding: 14, borderRadius: 14, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.18)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <h3 style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', letterSpacing: '1px', margin: '0 0 10px' }}>TIPS</h3>
+              <TipsList tips={meta.tips} />
+            </div>
+          )}
+
+          {/* Nearby food */}
+          {meta?.nearbyFood && meta.nearbyFood.length > 0 && (
+            <div style={{ padding: 14, borderRadius: 14, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.18)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <h3 style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', letterSpacing: '1px', margin: '0 0 10px' }}>NEARBY FOOD</h3>
+              {meta.nearbyFood.map((food, i) => (
+                <p key={i} style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 4 }}>- {food}</p>
               ))}
             </div>
           )}
 
-          {/* Nearby food + directions (always visible) */}
-          {meta?.nearbyFood?.[0] && (
-            <p style={{ fontSize: 13, color: '#94A3B8', marginTop: 8 }}>Nearby: {meta.nearbyFood[0]}</p>
-          )}
-
-          <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-            <a href={`https://www.google.com/maps/dir/?api=1&destination=${building.entrance_lat},${building.entrance_lng}`}
-              target="_blank" rel="noopener noreferrer"
-              style={{ flex: 1, textAlign: 'center', padding: '10px 0', borderRadius: 10, fontSize: 14, fontWeight: 600, backgroundColor: '#003865', color: '#FFFFFF', textDecoration: 'none' }}>
-              Directions
-            </a>
-            <button onClick={() => { setIsExpanded(true); animate(y, -(expandedH - COLLAPSED), SPRING) }}
-              style={{ flex: 1, padding: '10px 0', borderRadius: 10, fontSize: 14, fontWeight: 600, backgroundColor: '#F0F2F5', color: '#003865', border: '1px solid #EDF0F4', cursor: 'pointer' }}>
-              More Info
+          {/* Report button */}
+          {onReport && (
+            <button
+              onClick={onReport}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                width: '100%', padding: '14px 16px',
+                borderRadius: 14, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.18)',
+                fontSize: 14, color: '#64748B', cursor: 'pointer',
+              }}
+            >
+              <span>How busy is it? Report now</span>
+              {reportCount > 0 && (
+                <span style={{ fontSize: 12, padding: '2px 8px', borderRadius: 12, backgroundColor: '#003865', color: '#FFFFFF' }}>
+                  {reportCount}
+                </span>
+              )}
             </button>
-          </div>
-
-          {/* Expanded content */}
-          {isExpanded && (
-            <div className="mt-4 border-t pt-4" style={{ borderColor: 'var(--color-border)' }}>
-              {occupancy && <div className="mb-3"><DataSourceBadge source={occupancy.source} /></div>}
-
-              <FloorBreakdown floors={floors} />
-
-              {amenities.length > 0 && (<div className="mb-4">
-                <h3 className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Amenities</h3>
-                <div className="flex flex-wrap gap-1.5">
-                  {amenities.map((a) => <AmenityChip key={a.label} icon={a.icon} label={a.label} />)}
-                </div>
-              </div>)}
-
-              {/* Tips */}
-              {meta?.tips && meta.tips.length > 0 && (
-                <div style={{ marginBottom: 16 }}>
-                  <h3 style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', letterSpacing: '0.5px', marginBottom: 8 }}>TIPS</h3>
-                  {meta.tips.map((tip, i) => (
-                    <p key={i} style={{ fontSize: 13, color: '#64748B', lineHeight: 1.5, marginBottom: 4 }}>• {tip}</p>
-                  ))}
-                </div>
-              )}
-
-              {/* Nearby Food */}
-              {meta?.nearbyFood && meta.nearbyFood.length > 0 && (
-                <div style={{ marginBottom: 16 }}>
-                  <h3 style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', letterSpacing: '0.5px', marginBottom: 8 }}>NEARBY FOOD</h3>
-                  {meta.nearbyFood.map((food, i) => (
-                    <p key={i} style={{ fontSize: 13, color: '#64748B', lineHeight: 1.5, marginBottom: 4 }}>• {food}</p>
-                  ))}
-                </div>
-              )}
-
-              {/* Quick Links */}
-              <div style={{ marginTop: 16 }}>
-                <h3 style={{ fontSize: 12, fontWeight: 700, color: '#94A3B8', letterSpacing: '0.5px', marginBottom: 10 }}>QUICK LINKS</h3>
-                <a href={`https://www.google.com/maps/dir/?api=1&destination=${building.entrance_lat},${building.entrance_lng}`}
-                  target="_blank" rel="noopener noreferrer"
-                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 12, backgroundColor: '#FAFBFD', border: '1px solid #EDF0F4', textDecoration: 'none', marginBottom: 8, fontSize: 14, color: '#1E293B', fontWeight: 500 }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#003865" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  Get Directions
-                </a>
-                <a href={`https://maps.unimelb.edu.au/parkville/building`}
-                  target="_blank" rel="noopener noreferrer"
-                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 12, backgroundColor: '#FAFBFD', border: '1px solid #EDF0F4', textDecoration: 'none', marginBottom: 8, fontSize: 14, color: '#1E293B', fontWeight: 500 }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#003865" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
-                  Building Info
-                </a>
-              </div>
-
-              {/* Main Action */}
-              <a href={`https://www.google.com/maps/dir/?api=1&destination=${building.entrance_lat},${building.entrance_lng}`}
-                target="_blank" rel="noopener noreferrer"
-                style={{ display: 'block', textAlign: 'center', padding: '14px 0', borderRadius: 14, fontSize: 16, fontWeight: 600, backgroundColor: '#003865', color: '#FFFFFF', textDecoration: 'none', marginTop: 16 }}>
-                Navigate to {building.short_name || building.name}
-              </a>
-            </div>
           )}
+
+          {/* Directions button */}
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${building.entrance_lat},${building.entrance_lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '100%', padding: '14px 0',
+              borderRadius: 14, backgroundColor: '#003865', color: '#FFFFFF',
+              fontSize: 15, fontWeight: 600, textDecoration: 'none',
+            }}
+          >
+            Directions
+          </a>
         </div>
       </motion.div>
     </>

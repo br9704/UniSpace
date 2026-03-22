@@ -1,13 +1,18 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useBuildings } from '@/hooks/useBuildings'
 import { useZones } from '@/hooks/useZones'
 import { useBlendedOccupancy } from '@/hooks/useBlendedOccupancy'
 import { useGeolocation } from '@/hooks/useGeolocation'
 import { useRecommendations } from '@/hooks/useRecommendations'
+import { useRecentReports } from '@/hooks/useRecentReports'
+import { aggregateNoise } from '@/lib/noiseAggregation'
 import { DEFAULT_FILTERS } from '@/types'
 import type { FilterState } from '@/types'
 import FilterChips from '@/components/FilterChips'
 import RecommendationCard from '@/components/RecommendationCard'
+import PageHeader from '@/components/ui/PageHeader'
+import Button from '@/components/ui/Button'
+import { SkeletonBuildingRow } from '@/components/ui/SkeletonLoader'
 
 export default function FindPage() {
   const { buildings } = useBuildings()
@@ -15,8 +20,19 @@ export default function FindPage() {
   const { occupancyMap } = useBlendedOccupancy(buildings, zones)
   const { position } = useGeolocation()
   const [filters, setFilters] = useState<FilterState>({ ...DEFAULT_FILTERS })
+  const reportsMap = useRecentReports()
 
-  const results = useRecommendations(buildings, occupancyMap, filters, position)
+  const noiseMap = useMemo(() => {
+    const map = new Map<string, { level: number; count: number }>()
+    for (const [buildingId, reports] of reportsMap) {
+      const noise = aggregateNoise(reports)
+      if (noise) map.set(buildingId, noise)
+    }
+    return map
+  }, [reportsMap])
+
+  const results = useRecommendations(buildings, occupancyMap, filters, position, noiseMap)
+  const isLoading = buildings.length === 0
 
   const handleToggle = useCallback((key: keyof FilterState) => {
     setFilters((prev) => {
@@ -27,38 +43,34 @@ export default function FindPage() {
   }, [])
 
   return (
-    <div className="h-full flex flex-col" style={{ backgroundColor: '#F0F2F5' }}>
-      {/* Header */}
-      <div style={{ background: 'linear-gradient(145deg, #001F3F 0%, #003865 50%, #005A8C 100%)', padding: '56px 24px 32px' }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.5px' }}>Find a Spot</h1>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginTop: 6 }}>Filter by amenities, distance, and availability</p>
-      </div>
+    <div className="h-full flex flex-col bg-[var(--color-bg-page)]">
+      <PageHeader title="Find a Spot" subtitle="Filter by amenities, distance, and availability" />
 
-      {/* Filter chips */}
-      <div style={{ padding: '16px 20px', backgroundColor: '#FFFFFF', borderBottom: '1px solid #EDF0F4' }}>
+      <div className="py-4 px-5 bg-[var(--color-bg-elevated)] border-b border-[var(--color-border)]">
         <FilterChips filters={filters} onToggle={handleToggle} onOpenSheet={() => {}} />
       </div>
 
-      {/* Results */}
-      <div className="flex-1 overflow-y-auto" style={{ padding: '16px 20px 24px' }}>
-        {results.length > 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <p style={{ fontSize: 13, color: '#94A3B8', fontWeight: 600 }}>{results.length} RESULTS</p>
+      <div className="flex-1 overflow-y-auto px-5 py-4 pb-6 max-w-2xl mx-auto w-full">
+        {isLoading ? (
+          <div className="flex flex-col gap-3.5">
+            <p className="text-[13px] text-[var(--color-text-tertiary)] font-semibold">Loading...</p>
+            {Array.from({ length: 3 }).map((_, i) => <SkeletonBuildingRow key={i} />)}
+          </div>
+        ) : results.length > 0 ? (
+          <div className="flex flex-col gap-3.5">
+            <p className="text-[13px] text-[var(--color-text-tertiary)] font-semibold">{results.length} RESULTS</p>
             {results.map((r) => <RecommendationCard key={r.building.id} ranked={r} />)}
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
-            <div style={{ width: 72, height: 72, borderRadius: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', border: '1px solid #EDF0F4', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: 20 }}>
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <div className="flex flex-col items-center justify-center pt-20">
+            <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center bg-[var(--color-bg-elevated)] border border-[var(--color-border)] shadow-card mb-5">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-tertiary)" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             </div>
-            <p style={{ fontSize: 17, fontWeight: 600, color: '#1E293B' }}>No spaces match</p>
-            <p style={{ fontSize: 14, color: '#94A3B8', marginTop: 6, textAlign: 'center' }}>Try removing some filters to see more results</p>
-            <button
-              onClick={() => setFilters({ ...DEFAULT_FILTERS })}
-              style={{ marginTop: 20, padding: '10px 24px', borderRadius: 12, fontSize: 14, fontWeight: 600, backgroundColor: '#003865', color: '#FFFFFF', border: 'none', cursor: 'pointer' }}
-            >
+            <p className="text-[17px] font-semibold text-[var(--color-text-primary)]">No spaces match</p>
+            <p className="text-sm text-[var(--color-text-tertiary)] mt-1.5 text-center">Try removing some filters to see more results</p>
+            <Button onClick={() => setFilters({ ...DEFAULT_FILTERS })} className="mt-5">
               Reset Filters
-            </button>
+            </Button>
           </div>
         )}
       </div>

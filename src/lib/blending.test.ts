@@ -11,6 +11,7 @@ import type {
   GooglePopularityCache,
   GooglePopularTime,
   OccupancyPrediction,
+  OccupancyReport,
   ZoneOccupancy,
 } from '@/types'
 
@@ -349,5 +350,73 @@ describe('blendOccupancy', () => {
     // (50*200 + 80*100) / 300 = 60
     expect(result.pct).toBe(60)
     expect(result.floor_occupancies).toHaveLength(2)
+  })
+
+  it('returns crowd-report when reports exist but no live data', () => {
+    const report: OccupancyReport = {
+      id: 'r1',
+      building_id: 'building-1',
+      occupancy_level: 4,
+      noise_level: null,
+      created_at: new Date(NOW.getTime() - 5 * 60 * 1000).toISOString(),
+      expires_at: new Date(NOW.getTime() + 25 * 60 * 1000).toISOString(),
+    }
+    const input: BlendingInput = {
+      zoneOccupancies: [],
+      zones: [],
+      googleCache: makeGoogleCache(),
+      prediction: makePrediction(),
+      googleTypical: makeGoogleTypical(),
+      reports: [report],
+      now: NOW,
+    }
+    const result = blendOccupancy(input)
+    expect(result.source).toBe('crowd-report')
+    expect(result.pct).toBe(77) // level 4 = 77%
+  })
+
+  it('returns live when both live and reports exist (live wins)', () => {
+    const report: OccupancyReport = {
+      id: 'r1',
+      building_id: 'building-1',
+      occupancy_level: 5,
+      noise_level: null,
+      created_at: new Date(NOW.getTime() - 2 * 60 * 1000).toISOString(),
+      expires_at: new Date(NOW.getTime() + 28 * 60 * 1000).toISOString(),
+    }
+    const input: BlendingInput = {
+      zoneOccupancies: [makeZoneOccupancy()],
+      zones: [makeZone()],
+      googleCache: null,
+      prediction: null,
+      googleTypical: null,
+      reports: [report],
+      now: NOW,
+    }
+    const result = blendOccupancy(input)
+    expect(result.source).toBe('live')
+  })
+
+  it('falls through to Google when all reports expired', () => {
+    const expiredReport: OccupancyReport = {
+      id: 'r1',
+      building_id: 'building-1',
+      occupancy_level: 3,
+      noise_level: null,
+      created_at: new Date(NOW.getTime() - 45 * 60 * 1000).toISOString(),
+      expires_at: new Date(NOW.getTime() - 15 * 60 * 1000).toISOString(),
+    }
+    const input: BlendingInput = {
+      zoneOccupancies: [],
+      zones: [],
+      googleCache: makeGoogleCache({ current_popularity: 42 }),
+      prediction: null,
+      googleTypical: null,
+      reports: [expiredReport],
+      now: NOW,
+    }
+    const result = blendOccupancy(input)
+    expect(result.source).toBe('google')
+    expect(result.pct).toBe(42)
   })
 })

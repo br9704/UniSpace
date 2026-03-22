@@ -1,4 +1,6 @@
-export const MAPBOX_STYLE = 'mapbox://styles/mapbox/light-v11'
+export const MAPBOX_STYLE_LIGHT = 'mapbox://styles/mapbox/light-v11'
+export const MAPBOX_STYLE_DARK = 'mapbox://styles/mapbox/dark-v11'
+export const MAPBOX_STYLE = MAPBOX_STYLE_LIGHT
 export const DEFAULT_CAMPUS_CENTER: [number, number] = [144.9631, -37.7964] // UoM Parkville
 export const DEFAULT_ZOOM = 15.5
 export const MIN_ZOOM = 14

@@ -34,6 +34,10 @@ export function getOccupancyLabel(pct: number | null): string {
   return labels[level]
 }
 
+export function getOccupancyColour(pct: number | null): string {
+  return OCCUPANCY_COLOURS[getOccupancyLevel(pct)]
+}
+
 export const REALTIME_UPDATE_INTERVAL_MS = 10_000
 export const STALE_DATA_THRESHOLD_MS = 60_000
 export const SESSION_ROTATION_MS = 30 * 60 * 1000  // 30 minutes

@@ -65,7 +65,19 @@ export interface BuildingZone {
 
 // ── Occupancy ──────────────────────────────────────────────────────
 
-export type DataQuality = 'live' | 'google' | 'predicted' | 'stale' | 'none'
+export type ReportLevel = 1 | 2 | 3 | 4 | 5
+export type NoiseLevel = 1 | 2 | 3 | 4 | 5
+
+export interface OccupancyReport {
+  id: string
+  building_id: string
+  occupancy_level: ReportLevel
+  noise_level: NoiseLevel | null
+  created_at: string
+  expires_at: string
+}
+
+export type DataQuality = 'live' | 'crowd-report' | 'google' | 'predicted' | 'stale' | 'none'
 export type OccupancyTrend = 'filling' | 'emptying' | 'stable'
 export type PredictionConfidence = 'high' | 'medium' | 'low' | 'google-estimated'
 export type PredictionSource = 'pulse' | 'google'
@@ -137,6 +149,13 @@ export interface OccupancyPrediction {
   computed_at: string
 }
 
+export interface HourlyPrediction {
+  hour: number
+  pct: number
+  source: PredictionSource
+  confidence: PredictionConfidence
+}
+
 // ── Alerts ────────────────────────────────────────────────────────
 
 export interface UserAlert {
@@ -159,6 +178,7 @@ export interface FilterState {
   has_group_seating: boolean
   is_ground_floor_accessible: boolean
   has_elevator: boolean
+  low_noise: boolean
   currently_open: boolean
   max_occupancy_pct: number
   max_walk_minutes: number
@@ -172,6 +192,7 @@ export const DEFAULT_FILTERS: FilterState = {
   has_group_seating: false,
   is_ground_floor_accessible: false,
   has_elevator: false,
+  low_noise: false,
   currently_open: true,
   max_occupancy_pct: 100,
   max_walk_minutes: 15,

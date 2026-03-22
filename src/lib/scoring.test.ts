@@ -109,4 +109,50 @@ describe('rankBuildings', () => {
     const result = rankBuildings([], new Map(), DEFAULT_FILTERS, null)
     expect(result).toHaveLength(0)
   })
+
+  it('filters out noisy buildings when low_noise is true', () => {
+    const buildings = [
+      makeBuilding({ id: 'noisy' }),
+      makeBuilding({ id: 'quiet' }),
+    ]
+    const occ = new Map([
+      ['noisy', makeOcc(30)],
+      ['quiet', makeOcc(30)],
+    ])
+    const noiseMap = new Map([
+      ['noisy', { level: 4, count: 5 }],
+      ['quiet', { level: 1.5, count: 3 }],
+    ])
+    const filters = { ...DEFAULT_FILTERS, low_noise: true, currently_open: false }
+    const result = rankBuildings(buildings, occ, filters, null, noiseMap)
+    expect(result).toHaveLength(1)
+    expect(result[0].building.id).toBe('quiet')
+  })
+
+  it('keeps quiet buildings when low_noise is true', () => {
+    const buildings = [makeBuilding({ id: 'b1' })]
+    const occ = new Map([['b1', makeOcc(30)]])
+    const noiseMap = new Map([['b1', { level: 1.5, count: 4 }]])
+    const filters = { ...DEFAULT_FILTERS, low_noise: true, currently_open: false }
+    const result = rankBuildings(buildings, occ, filters, null, noiseMap)
+    expect(result).toHaveLength(1)
+  })
+
+  it('applies noise score weight when low_noise is active', () => {
+    const buildings = [
+      makeBuilding({ id: 'silent' }),
+      makeBuilding({ id: 'moderate' }),
+    ]
+    const occ = new Map([
+      ['silent', makeOcc(50)],
+      ['moderate', makeOcc(50)],
+    ])
+    const noiseMap = new Map([
+      ['silent', { level: 1, count: 3 }],  // noiseScore = 1 - 0.2 = 0.8
+      ['moderate', { level: 2, count: 3 }], // noiseScore = 1 - 0.4 = 0.6
+    ])
+    const filters = { ...DEFAULT_FILTERS, low_noise: true, currently_open: false }
+    const result = rankBuildings(buildings, occ, filters, null, noiseMap)
+    expect(result[0].building.id).toBe('silent')
+  })
 })

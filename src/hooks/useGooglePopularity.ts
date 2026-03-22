@@ -29,15 +29,18 @@ export function useGooglePopularity(): UseGooglePopularityResult {
     let cancelled = false
 
     async function fetchAll() {
-      const [cacheResult, typicalResult, predictionResult] = await Promise.all([
+      // Supabase PostgREST caps at 1000 rows per request.
+      // google_popular_times has ~1500 rows, so fetch in two pages.
+      const [cacheResult, typicalPage1, typicalPage2, predictionResult] = await Promise.all([
         supabase.from('google_popularity_cache').select('*'),
-        supabase.from('google_popular_times').select('*'),
+        supabase.from('google_popular_times').select('*').range(0, 999),
+        supabase.from('google_popular_times').select('*').range(1000, 1999),
         supabase.from('occupancy_predictions').select('*'),
       ])
 
       if (cancelled) return
 
-      const firstError = cacheResult.error || typicalResult.error || predictionResult.error
+      const firstError = cacheResult.error || typicalPage1.error || predictionResult.error
       if (firstError) {
         setError(firstError.message)
       }
@@ -51,9 +54,11 @@ export function useGooglePopularity(): UseGooglePopularityResult {
         setCacheMap(map)
       }
 
-      if (typicalResult.data) {
-        setTypicalRows(typicalResult.data as GooglePopularTime[])
-      }
+      const allTypical = [
+        ...((typicalPage1.data as GooglePopularTime[]) ?? []),
+        ...((typicalPage2.data as GooglePopularTime[]) ?? []),
+      ]
+      setTypicalRows(allTypical)
 
       if (predictionResult.data) {
         setPredictionRows(predictionResult.data as OccupancyPrediction[])

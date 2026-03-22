@@ -11,21 +11,28 @@
   --color-uom-gold: #C8A951;
   --color-uom-gold-light: #E8C97A;
 
-  /* Backgrounds — Light Theme */
+  /* Backgrounds */
   --color-bg-primary: #FFFFFF;
   --color-bg-secondary: #F5F7FA;
   --color-bg-elevated: #FFFFFF;
   --color-bg-overlay: rgba(0,0,0,0.3);
+  --color-bg-card: #FAFBFD;
+  --color-bg-chip: #F0F2F5;
+  --color-bg-input: #FAFBFD;
+  --color-bg-page: #F0F2F5;
   --color-border: #E2E8F0;
   --color-border-bright: #CBD5E1;
 
-  /* Text — Dark on Light */
+  /* Text */
   --color-text-primary: #1E293B;
   --color-text-secondary: #64748B;
   --color-text-tertiary: #94A3B8;
   --color-text-accent: #003865;
+  --color-text-on-navy: #FFFFFF;
+  --color-text-on-navy-muted: rgba(255,255,255,0.55);
+  --color-text-on-navy-subtle: rgba(255,255,255,0.4);
 
-  /* Occupancy scale (unchanged — works on both themes) */
+  /* Occupancy scale */
   --color-empty: #4CAF7D;
   --color-quiet: #A8C44E;
   --color-moderate: #F5A623;
@@ -48,11 +55,14 @@
   --radius-lg: 20px;
   --radius-full: 9999px;
 
-  /* Shadows — Light */
-  --shadow-card: 0 2px 12px rgba(0,56,101,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,56,101,0.06);
   --shadow-elevated: 0 8px 30px rgba(0,56,101,0.12), 0 2px 8px rgba(0,0,0,0.06);
   --glow-gold: 0 0 20px rgba(200,169,81,0.15);
   --glow-live: 0 0 12px rgba(76,175,125,0.2);
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 2px var(--color-bg-primary), 0 0 0 4px var(--color-uom-blue);
 
   /* Typography */
   --font-display: 'Neue Haas Grotesk Display', 'Helvetica Neue', sans-serif;
@@ -77,4 +87,16 @@ html, body, #root {
   color: var(--color-text-primary);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Global focus ring */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background-color: rgba(0, 128, 164, 0.3);
+  color: var(--color-text-primary);
 }

@@ -22,8 +22,7 @@ export default function TabBar() {
       className="flex items-center justify-around shrink-0"
       style={{
         height: 56,
-        backgroundColor: 'var(--color-bg-primary)',
-        borderTop: '1px solid var(--color-border)',
+        backgroundColor: '#003865',
       }}
     >
       {TABS.map(({ to, icon: Icon, label }) => (
@@ -33,13 +32,13 @@ export default function TabBar() {
           end={to === '/'}
           className="flex flex-col items-center justify-center gap-0.5 py-1 px-4 no-underline relative"
           style={({ isActive }) => ({
-            color: isActive ? 'var(--color-uom-navy)' : 'var(--color-text-tertiary)',
+            color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
           })}
         >
           {({ isActive }) => (
             <>
               {isActive && (
-                <div className="absolute top-0 left-2 right-2 h-0.5 rounded-full" style={{ backgroundColor: 'var(--color-uom-navy)' }} />
+                <div className="absolute top-0 left-2 right-2 h-0.5 rounded-full" style={{ backgroundColor: '#FFFFFF' }} />
               )}
               <Icon />
               <span className="text-xs" style={{ fontWeight: isActive ? 600 : 400 }}>{label}</span>

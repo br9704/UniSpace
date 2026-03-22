@@ -242,14 +242,22 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 - [x] **Sprint 4:** Realtime geolocation broadcasting
 - [x] **Sprint 5:** Zone aggregation Edge Function
 - [x] **Sprint 6:** Occupancy blending (live + Google + predicted)
-- [x] **Sprint 7:** Live heatmap rendering + building expansion (5 → 20 buildings)
+- [x] **Sprint 7:** Live heatmap rendering + building expansion (5 → 18 buildings)
 - [x] **Sprint 8:** Building cards (bottom sheet)
 - [x] **Sprint 9:** Floor-level breakdown
 - [x] **Sprint 10:** Smart recommendations + full UI revamp
-- [ ] **Sprint 11:** Prediction engine (Google baseline)
-- [ ] **Sprint 12:** PWA install flow + service worker
-- [ ] **Sprint 13:** Seed data accuracy verification
-- [ ] **Sprint 14:** MVP integration testing + Vercel deploy
+- [x] **Sprint 11:** Prediction engine (Google baseline, 24h chart, sparkline, insights)
+- [x] **Sprint 12:** UI polish, theming & production readiness
+
+### Phase 1.5 — Competitive Edge
+- [x] **Sprint 13:** Manual crowd reporting (1-5 scale, decay, blending)
+- [x] **Sprint 14:** Noise levels & favourites
+- [x] **Sprint 15:** Building photos & tips (components ready, photo assets pending)
+
+### Phase 1 (continued)
+- [ ] **Sprint 16:** PWA install flow + service worker
+- [ ] **Sprint 17:** Seed data accuracy verification
+- [ ] **Sprint 18:** MVP integration testing + Vercel deploy
 
 ### Phase 2 — Polish & Reliability
 - [ ] Accessibility compliance (WCAG 2.1 AA)

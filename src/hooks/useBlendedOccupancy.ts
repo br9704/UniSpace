@@ -1,12 +1,15 @@
 import { useMemo } from 'react'
-import type { BlendedOccupancy, Building, BuildingZone } from '@/types'
+import type { BlendedOccupancy, Building, BuildingZone, GooglePopularTime, OccupancyPrediction } from '@/types'
 import { blendOccupancy } from '@/lib/blending'
 import { getCurrentPrediction, getCurrentTypical } from '@/lib/occupancyHelpers'
 import { useOccupancyRealtime } from './useOccupancyRealtime'
 import { useGooglePopularity } from './useGooglePopularity'
+import { useRecentReports } from './useRecentReports'
 
 interface UseBlendedOccupancyResult {
   occupancyMap: Map<string, BlendedOccupancy>
+  allTypicalRows: GooglePopularTime[]
+  allPredictionRows: OccupancyPrediction[]
   isLoading: boolean
   error: string | null
 }
@@ -36,6 +39,8 @@ export function useBlendedOccupancy(
     error: gError,
   } = useGooglePopularity()
 
+  const reportsMap = useRecentReports()
+
   const occupancyMap = useMemo(() => {
     const map = new Map<string, BlendedOccupancy>()
     if (buildings.length === 0) return map
@@ -53,14 +58,17 @@ export function useBlendedOccupancy(
         googleCache,
         prediction,
         googleTypical,
+        reports: reportsMap.get(building.id) ?? [],
       }))
     }
 
     return map
-  }, [buildings, zones, zoneOccupancyMap, googleCacheMap, allTypicalRows, allPredictionRows])
+  }, [buildings, zones, zoneOccupancyMap, googleCacheMap, allTypicalRows, allPredictionRows, reportsMap])
 
   return {
     occupancyMap,
+    allTypicalRows,
+    allPredictionRows,
     isLoading: rtLoading || gLoading,
     error: rtError || gError,
   }

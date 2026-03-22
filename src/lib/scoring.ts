@@ -1,5 +1,6 @@
 import { point, distance } from '@turf/turf'
 import type { BlendedOccupancy, Building, FilterState, RankedBuilding } from '@/types'
+import type { NoiseAggregation } from '@/lib/noiseAggregation'
 import { isOpenNow } from './buildingHours'
 
 const WALK_SPEED_MS = 1.4 // metres per second
@@ -43,6 +44,7 @@ export function rankBuildings(
   occupancyMap: Map<string, BlendedOccupancy>,
   filters: FilterState,
   userPosition: { latitude: number; longitude: number } | null,
+  noiseMap?: Map<string, NoiseAggregation>,
 ): RankedBuilding[] {
   const results: RankedBuilding[] = []
 
@@ -57,6 +59,12 @@ export function rankBuildings(
 
     // Filter: max occupancy
     if (occupancy.pct !== null && occupancy.pct > filters.max_occupancy_pct) continue
+
+    // Filter: low noise
+    if (filters.low_noise && noiseMap) {
+      const noise = noiseMap.get(building.id)
+      if (noise && noise.level > 2) continue
+    }
 
     // Filter: amenity requirements (must have ALL active filters)
     const amenityMatch = calculateAmenityMatch(building, filters)
@@ -78,7 +86,15 @@ export function rankBuildings(
     // Score
     const occNorm = occupancy.pct !== null ? occupancy.pct / 100 : 0.5
     const walkNorm = walkMinutes !== null ? Math.min(1, walkMinutes / MAX_WALK_MINUTES) : 0.5
-    const score = (1 - occNorm) * 0.5 + (1 - walkNorm) * 0.3 + amenityMatch * 0.2
+
+    let score: number
+    if (filters.low_noise && noiseMap) {
+      const noise = noiseMap.get(building.id)
+      const noiseScore = noise ? 1 - (noise.level / 5) : 0.5
+      score = (1 - occNorm) * 0.5 + (1 - walkNorm) * 0.3 + amenityMatch * 0.1 + noiseScore * 0.1
+    } else {
+      score = (1 - occNorm) * 0.5 + (1 - walkNorm) * 0.3 + amenityMatch * 0.2
+    }
 
     results.push({
       building,

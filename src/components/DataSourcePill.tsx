@@ -6,7 +6,8 @@ interface DataSourcePillProps {
 
 const CONFIG: Record<DataQuality, { label: string; color: string }> = {
   live: { label: 'Live', color: 'var(--color-source-live)' },
-  google: { label: 'Google estimate', color: 'var(--color-source-google)' },
+  'crowd-report': { label: 'Crowd reports', color: 'var(--color-source-live)' },
+  google: { label: 'Google data', color: 'var(--color-source-google)' },
   predicted: { label: 'Predicted', color: 'var(--color-source-predicted)' },
   stale: { label: 'Stale data', color: 'var(--color-source-stale)' },
   none: { label: 'No data', color: 'var(--color-source-stale)' },

@@ -5,6 +5,7 @@ export interface BuildingMeta {
   tips: string[]
   nearbyFood: string[]
   capacityNote: string
+  photos?: string[]
 }
 
 export const BUILDING_META: Record<string, BuildingMeta> = {

@@ -1,21 +1,39 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 import TabBar from '@/components/TabBar'
 import HomePage from '@/pages/HomePage'
 import MapPage from '@/pages/MapPage'
-// FindPage removed — functionality merged into HomePage
 import AlertsPage from '@/pages/AlertsPage'
+
+function AnimatedRoutes() {
+  const location = useLocation()
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        className="h-full"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15 }}
+      >
+        <Routes location={location}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/alerts" element={<AlertsPage />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
 
 export default function App() {
   return (
     <BrowserRouter>
       <div className="h-full flex flex-col">
         <div className="flex-1 overflow-hidden">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/map" element={<MapPage />} />
-            {/* Find page removed — search/sort in HomePage */}
-            <Route path="/alerts" element={<AlertsPage />} />
-          </Routes>
+          <AnimatedRoutes />
         </div>
         <TabBar />
       </div>
