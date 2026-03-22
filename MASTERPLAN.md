@@ -706,11 +706,11 @@
 - Google Place IDs verified against Google Places API
 
 **Subtasks:**
-- [ ] S17.1 — Verify building hours from UoM website
-- [ ] S17.2 — Verify amenity flags (WiFi, power, quiet zones, accessibility)
-- [ ] S17.3 — Verify Google Place IDs return valid results
-- [ ] S17.4 — Adjust floor zone capacity estimates based on building size
-- [ ] S17.5 — Update seed script with refined data
+- [x] S17.1 — Verify building hours from UoM website ✅ (added Sunday hours for libraries: ERC, Law, Alan Gilbert; teaching buildings correctly closed weekends)
+- [x] S17.2 — Verify amenity flags (WiFi, power, quiet zones, accessibility) ✅ (confirmed: WiFi/power universal, quiet zones in 4 libraries, food nearby in 11, accessibility verified)
+- [x] S17.3 — Verify Google Place IDs return valid results ✅ (filled 12 missing Place IDs via migration 013)
+- [⏭️] S17.4 — Adjust floor zone capacity estimates ⏭️ DEFERRED: current estimates are directional and sufficient for MVP
+- [x] S17.5 — Update seed script with refined data ✅ (migration 013_data_verification_fixes applied)
 
 **Test criteria:**
 - All 18 buildings visible on map at correct positions (already done in S7)
