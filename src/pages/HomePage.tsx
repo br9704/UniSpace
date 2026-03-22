@@ -1,5 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { staggerContainer, fadeInUp } from '@/constants/animations'
 import { useBuildings } from '@/hooks/useBuildings'
 import { useZones } from '@/hooks/useZones'
 import { useBlendedOccupancy } from '@/hooks/useBlendedOccupancy'
@@ -46,8 +48,12 @@ export default function HomePage() {
   const campusLabel = quietCount > sorted.length / 2 ? 'Quiet' : 'Moderate'
   const campusColor = campusLabel === 'Quiet' ? '#4CAF7D' : '#F5A623'
 
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ container: scrollRef })
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -20])
+
   return (
-    <div className="h-full overflow-y-auto" style={{ backgroundColor: '#F0F2F5' }}>
+    <div ref={scrollRef} className="h-full overflow-y-auto" style={{ backgroundColor: '#F0F2F5' }}>
 
       {/* Header */}
       <div style={{ background: 'linear-gradient(145deg, #001F3F 0%, #003865 50%, #005A8C 100%)', padding: '56px 24px 40px', position: 'relative' }}>
@@ -59,7 +65,7 @@ export default function HomePage() {
       </div>
 
       {/* Campus At a Glance + Quiet Right Now — side by side */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20, margin: '20px 24px 0' }}>
+      <motion.div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20, margin: '20px 24px 0', y: parallaxY }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
 
         {/* Left: Campus At a Glance */}
         <CampusAtAGlance sorted={sorted} quietCount={quietCount} campusLabel={campusLabel} campusColor={campusColor} allTypicalRows={allTypicalRows} />
@@ -67,39 +73,51 @@ export default function HomePage() {
         {/* Right: Quiet Right Now */}
         {quiet.length > 0 && (
           <SectionCard title="QUIET RIGHT NOW">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+            <motion.div variants={staggerContainer} initial="hidden" animate="visible" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
               {quiet.slice(0, 9).map((x) => (
-                <CompactCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} />
+                <motion.div key={x.building.id} variants={fadeInUp}>
+                  <CompactCard building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </SectionCard>
         )}
-      </div>
+      </motion.div>
 
       {/* Your Favourites */}
       {favourites.length > 0 && (
-        <SectionCard title="YOUR FAVOURITES" style={{ margin: '20px 24px 0' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center' }}>
-            {favourites.slice(0, 8).map((x) => (
-              <CompactCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} />
-            ))}
-          </div>
-        </SectionCard>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} style={{ margin: '20px 24px 0' }}>
+          <SectionCard title="YOUR FAVOURITES">
+            <motion.div variants={staggerContainer} initial="hidden" animate="visible" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center' }}>
+              {favourites.slice(0, 8).map((x) => (
+                <motion.div key={x.building.id} variants={fadeInUp}>
+                  <CompactCard building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </SectionCard>
+        </motion.div>
       )}
 
       {/* Filling Up */}
       {filling.length > 0 && (
-        <SectionCard title="FILLING UP" style={{ margin: '16px 24px 0' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center' }}>
-            {filling.slice(0, 8).map((x) => (
-              <CompactCard key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} />
-            ))}
-          </div>
-        </SectionCard>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.3 }} style={{ margin: '16px 24px 0' }}>
+          <SectionCard title="FILLING UP">
+            <motion.div variants={staggerContainer} initial="hidden" animate="visible" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center' }}>
+              {filling.slice(0, 8).map((x) => (
+                <motion.div key={x.building.id} variants={fadeInUp}>
+                  <CompactCard building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </SectionCard>
+        </motion.div>
       )}
 
       {/* All Buildings */}
-      <AllBuildingsSection sorted={sorted} navigate={navigate} isFavourite={isFavourite} toggleFavourite={toggleFavourite} allTypicalRows={allTypicalRows} />
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.35 }}>
+        <AllBuildingsSection sorted={sorted} navigate={navigate} isFavourite={isFavourite} toggleFavourite={toggleFavourite} allTypicalRows={allTypicalRows} />
+      </motion.div>
     </div>
   )
 }
@@ -185,7 +203,7 @@ function CompactCard({ building, occ, walkMin, onClick, isFav, onToggleFav }: { 
   const status = isOpenNow(building)
 
   return (
-    <div role="button" tabIndex={0} onClick={onClick} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick() } }} style={{ width: '100%', padding: 18, backgroundColor: '#FAFBFD', borderRadius: 16, border: '2px solid rgba(0,56,101,0.65)', borderLeft: `4px solid ${colour}`, textAlign: 'left', transition: 'transform 150ms', cursor: 'pointer', position: 'relative', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <motion.div role="button" tabIndex={0} onClick={onClick} onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick() } }} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ duration: 0.15 }} style={{ width: '100%', padding: 18, backgroundColor: '#FAFBFD', borderRadius: 16, border: '2px solid rgba(0,56,101,0.65)', borderLeft: `4px solid ${colour}`, textAlign: 'left', cursor: 'pointer', position: 'relative', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <div style={{ position: 'absolute', top: 6, right: 2 }}>
         <FavouriteButton isFavourite={isFav} onToggle={onToggleFav} size={16} />
       </div>
@@ -200,7 +218,7 @@ function CompactCard({ building, occ, walkMin, onClick, isFav, onToggleFav }: { 
         </div>
         {walkMin !== null && <span style={{ fontSize: 12, color: '#94A3B8' }}>~{Math.round(walkMin)}m</span>}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -245,12 +263,14 @@ function AllBuildingsSection({ sorted, navigate, isFavourite, toggleFavourite, a
       </div>
 
       {/* List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <motion.div variants={staggerContainer} initial="hidden" animate="visible" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {filtered.map((x) => (
-          <BuildingRow key={x.building.id} building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} allTypicalRows={allTypicalRows} />
+          <motion.div key={x.building.id} variants={fadeInUp}>
+            <BuildingRow building={x.building} occ={x.occ} walkMin={x.walk?.minutes ?? null} onClick={() => navigate(`/map?building=${x.building.id}`)} isFav={isFavourite(x.building.id)} onToggleFav={() => toggleFavourite(x.building.id)} allTypicalRows={allTypicalRows} />
+          </motion.div>
         ))}
         {filtered.length === 0 && <p style={{ fontSize: 14, color: '#94A3B8', textAlign: 'center', padding: 20 }}>No buildings match your search</p>}
-      </div>
+      </motion.div>
     </div>
   )
 }
@@ -278,7 +298,7 @@ function BuildingRow({ building, occ, walkMin, onClick, isFav, onToggleFav, allT
   const peakRow = todayRows[0]
 
   return (
-    <div role="button" tabIndex={0} onClick={onClick} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick() } }} style={{ display: 'flex', flexDirection: 'column', width: '100%', padding: 22, textAlign: 'left', borderRadius: 18, backgroundColor: '#FAFBFD', border: '2px solid rgba(0,56,101,0.65)', borderLeft: `4px solid ${colour}`, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <motion.div role="button" tabIndex={0} onClick={onClick} onKeyDown={(e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick() } }} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} transition={{ duration: 0.15 }} style={{ display: 'flex', flexDirection: 'column', width: '100%', padding: 22, textAlign: 'left', borderRadius: 18, backgroundColor: '#FAFBFD', border: '2px solid rgba(0,56,101,0.65)', borderLeft: `4px solid ${colour}`, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       {/* Header: name + percentage + heart */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
@@ -345,6 +365,6 @@ function BuildingRow({ building, occ, walkMin, onClick, isFav, onToggleFav, allT
           Directions
         </a>
       </div>
-    </div>
+    </motion.div>
   )
 }

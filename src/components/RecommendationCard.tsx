@@ -18,7 +18,7 @@ export default function RecommendationCard({ ranked }: RecommendationCardProps) 
   const amenities = getActiveAmenities(building)
 
   return (
-    <Card>
+    <Card className="!border-2 !border-[rgba(0,56,101,0.65)]" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <div className="flex items-start justify-between mb-3.5">
         <div>
           <h3 className="text-[17px] font-bold text-[var(--color-text-primary)]">{building.name}</h3>

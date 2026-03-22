@@ -19,7 +19,7 @@ export default function AlertsPage() {
       </div>
 
       {/* Alerts preview */}
-      <div style={{ margin: '20px 24px 0', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '1px solid rgba(0,56,101,0.06)' }}>
+      <div style={{ margin: '20px 24px 0', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '2px solid rgba(0,56,101,0.65)' }}>
         <h2 style={{ fontSize: 17, fontWeight: 700, color: '#1E293B' }}>Occupancy Alerts</h2>
         <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.6 }}>
           Get notified when a building drops below your chosen occupancy threshold. Set alerts from any building card on the map.
@@ -38,7 +38,7 @@ export default function AlertsPage() {
       </div>
 
       {/* About */}
-      <div style={{ margin: '20px 24px 32px', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '1px solid rgba(0,56,101,0.06)' }}>
+      <div style={{ margin: '20px 24px 32px', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '2px solid rgba(0,56,101,0.65)' }}>
         <h2 style={{ fontSize: 17, fontWeight: 700, color: '#1E293B' }}>About UniSpace</h2>
         <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.6 }}>
           UniSpace gives university students real-time visibility into campus occupancy so they never waste time walking to a full building again.
@@ -55,7 +55,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div style={{ borderRadius: 16, backgroundColor: '#FFFFFF', border: '1px solid rgba(0,56,101,0.06)', boxShadow: '0 2px 8px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
+    <div style={{ borderRadius: 16, backgroundColor: '#FFFFFF', border: '2px solid rgba(0,56,101,0.65)', boxShadow: '0 2px 8px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
       <button
         onClick={() => setOpen(!open)}
         aria-expanded={open}
