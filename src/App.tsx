@@ -5,6 +5,8 @@ import HomePage from '@/pages/HomePage'
 import MapPage from '@/pages/MapPage'
 import AlertsPage from '@/pages/AlertsPage'
 import FindPage from '@/pages/FindPage'
+import InstallBanner from '@/components/InstallBanner'
+import OfflineBanner from '@/components/OfflineBanner'
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -34,10 +36,12 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="h-full flex flex-col">
+        <OfflineBanner />
         <div className="flex-1 overflow-hidden">
           <AnimatedRoutes />
         </div>
         <TabBar />
+        <InstallBanner />
       </div>
     </BrowserRouter>
   )

@@ -29,6 +29,11 @@ export default defineConfig({
             urlPattern: /^https:\/\/api\.mapbox\.com\/.*/i,
             handler: 'CacheFirst',
             options: { cacheName: 'mapbox-tiles', expiration: { maxAgeSeconds: 60 * 60 * 24 * 7 } }
+          },
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/v1\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'supabase-api', expiration: { maxAgeSeconds: 300 } }
           }
         ]
       }
