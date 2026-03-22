@@ -185,7 +185,7 @@ function CompactCard({ building, occ, walkMin, onClick, isFav, onToggleFav }: { 
   const status = isOpenNow(building)
 
   return (
-    <button onClick={onClick} style={{ width: '100%', padding: 18, backgroundColor: '#FAFBFD', borderRadius: 16, border: '2px solid rgba(0,56,101,0.65)', borderLeft: `4px solid ${colour}`, textAlign: 'left', transition: 'transform 150ms', cursor: 'pointer', position: 'relative', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <div role="button" tabIndex={0} onClick={onClick} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick() } }} style={{ width: '100%', padding: 18, backgroundColor: '#FAFBFD', borderRadius: 16, border: '2px solid rgba(0,56,101,0.65)', borderLeft: `4px solid ${colour}`, textAlign: 'left', transition: 'transform 150ms', cursor: 'pointer', position: 'relative', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       <div style={{ position: 'absolute', top: 6, right: 2 }}>
         <FavouriteButton isFavourite={isFav} onToggle={onToggleFav} size={16} />
       </div>
@@ -200,7 +200,7 @@ function CompactCard({ building, occ, walkMin, onClick, isFav, onToggleFav }: { 
         </div>
         {walkMin !== null && <span style={{ fontSize: 12, color: '#94A3B8' }}>~{Math.round(walkMin)}m</span>}
       </div>
-    </button>
+    </div>
   )
 }
 
@@ -278,7 +278,7 @@ function BuildingRow({ building, occ, walkMin, onClick, isFav, onToggleFav, allT
   const peakRow = todayRows[0]
 
   return (
-    <button onClick={onClick} style={{ display: 'flex', flexDirection: 'column', width: '100%', padding: 22, textAlign: 'left', borderRadius: 18, backgroundColor: '#FAFBFD', border: '2px solid rgba(0,56,101,0.65)', borderLeft: `4px solid ${colour}`, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+    <div role="button" tabIndex={0} onClick={onClick} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick() } }} style={{ display: 'flex', flexDirection: 'column', width: '100%', padding: 22, textAlign: 'left', borderRadius: 18, backgroundColor: '#FAFBFD', border: '2px solid rgba(0,56,101,0.65)', borderLeft: `4px solid ${colour}`, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
       {/* Header: name + percentage + heart */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
@@ -345,6 +345,6 @@ function BuildingRow({ building, occ, walkMin, onClick, isFav, onToggleFav, allT
           Directions
         </a>
       </div>
-    </button>
+    </div>
   )
 }

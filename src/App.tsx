@@ -4,6 +4,7 @@ import TabBar from '@/components/TabBar'
 import HomePage from '@/pages/HomePage'
 import MapPage from '@/pages/MapPage'
 import AlertsPage from '@/pages/AlertsPage'
+import FindPage from '@/pages/FindPage'
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -21,6 +22,7 @@ function AnimatedRoutes() {
         <Routes location={location}>
           <Route path="/" element={<HomePage />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/find" element={<FindPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
         </Routes>
       </motion.div>

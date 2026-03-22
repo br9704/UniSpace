@@ -2,7 +2,6 @@ import type { HourlyPrediction } from '@/types'
 import PredictionChart from './PredictionChart'
 import SparklineChart from './SparklineChart'
 import PredictionSourceBadge from './PredictionSourceBadge'
-import SectionHeader from './ui/SectionHeader'
 import {
   formatHour,
   getAvoidWindow,
