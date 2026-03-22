@@ -225,6 +225,40 @@ A sprint is done when **all** of the following are complete, **in this order:**
 ### Step 4: Commit and push
 - [ ] All changes (code + audit fixes + docs) committed and pushed to GitHub
 
+### Step 5: Manual actions for Bruno
+After every sprint, **list all manual actions Bruno needs to take**. These are things Claude cannot do automatically. Always include this section at the end of the sprint summary.
+
+Common manual actions (include only those relevant to the sprint):
+
+#### Supabase
+- [ ] Deploy new/updated Edge Functions: `supabase functions deploy <function-name>`
+- [ ] Set new Supabase secrets (dashboard → Edge Functions → Secrets): list each key
+- [ ] Verify new migration was applied correctly (check tables in Supabase dashboard)
+- [ ] Add Vercel/production domain to Supabase CORS allowed origins (if deploying)
+
+#### Environment Variables
+- [ ] Add new env vars to `.env.local` (list each with description)
+- [ ] Add new env vars to Vercel dashboard (if deployed)
+
+#### External Services
+- [ ] Generate VAPID keys: `npx web-push generate-vapid-keys`
+- [ ] Set up Vercel project + link GitHub repo
+- [ ] Configure custom domain (if applicable)
+- [ ] Set up pg_cron schedule for recurring Edge Functions (e.g., send-alerts every 2 min)
+
+#### Testing
+- [ ] Manual browser test on mobile (375px viewport)
+- [ ] Test PWA install flow on iOS / Android
+- [ ] Test push notification delivery (requires HTTPS / deployed environment)
+- [ ] Verify GPS permission flow (grant + deny)
+
+#### Assets
+- [ ] Provide real building photos (CC-licensed WebP, drop into `public/photos/`)
+- [ ] Provide real PWA icons (replace placeholders in `public/icons/`)
+- [ ] Provide real UniMelb logo (replace `public/unimelb-logo.svg` if needed)
+
+> **Claude must always generate this checklist at the end of every sprint**, including only the items relevant to that sprint. If a sprint has zero manual actions, state "No manual actions required."
+
 ---
 
 *This file is maintained by Bruno Jaamaa. Do not modify without instruction.*
