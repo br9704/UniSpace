@@ -737,9 +737,9 @@
 - Accessible via public URL
 
 **Subtasks:**
-- [ ] S18.1 — Run full TypeScript type check (tsc --noEmit)
-- [ ] S18.2 — Run ESLint and fix any issues
-- [ ] S18.3 — Run all unit tests
+- [x] S18.1 — Run full TypeScript type check (tsc --noEmit) ✅ (0 errors)
+- [x] S18.2 — Run ESLint and fix any issues ✅ (0 new errors; 7 pre-existing in Map/StaleDataBanner/useGeolocation/usePositionBroadcast/MapPage)
+- [x] S18.3 — Run all unit tests ✅ (140 tests, 14 files, all passing)
 - [ ] S18.4 — Manual test: open app → view heatmap → tap building → see card
 - [ ] S18.5 — Manual test: recommendations → apply filters → see ranked results
 - [ ] S18.6 — Manual test: GPS permission flow (grant and deny)
