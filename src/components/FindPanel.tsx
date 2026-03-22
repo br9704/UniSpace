@@ -33,7 +33,7 @@ const OCCUPANCY_CHIPS: { key: CustomFilter; label: string }[] = [
 ]
 
 export default function FindPanel({ visible, onDismiss, buildings, occupancyMap, userPosition, onBuildingSelect }: FindPanelProps) {
-  const [filters, setFilters] = useState<FilterState>({ ...DEFAULT_FILTERS, currently_open: false })
+  const [filters, setFilters] = useState<FilterState>({ ...DEFAULT_FILTERS, currently_open: false, max_walk_minutes: 999 })
   const [customFilters, setCustomFilters] = useState<Record<CustomFilter, boolean>>({ under50: false, under30: false })
   const reportsMap = useRecentReports()
 
@@ -175,7 +175,7 @@ export default function FindPanel({ visible, onDismiss, buildings, occupancyMap,
                 <div style={{ textAlign: 'center', padding: '32px 0' }}>
                   <p style={{ fontSize: 15, fontWeight: 600, color: '#1E293B' }}>No spots match</p>
                   <p style={{ fontSize: 13, color: '#94A3B8', marginTop: 4 }}>Try removing some filters</p>
-                  <button onClick={() => { setFilters({ ...DEFAULT_FILTERS, currently_open: false }); setCustomFilters({ under50: false, under30: false }) }} style={{ marginTop: 12, padding: '8px 20px', borderRadius: 10, border: 'none', backgroundColor: '#003865', color: '#FFFFFF', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                  <button onClick={() => { setFilters({ ...DEFAULT_FILTERS, currently_open: false, max_walk_minutes: 999 }); setCustomFilters({ under50: false, under30: false }) }} style={{ marginTop: 12, padding: '8px 20px', borderRadius: 10, border: 'none', backgroundColor: '#003865', color: '#FFFFFF', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
                     Reset Filters
                   </button>
                 </div>
