@@ -4,7 +4,6 @@ import TabBar from '@/components/TabBar'
 import HomePage from '@/pages/HomePage'
 import MapPage from '@/pages/MapPage'
 import AlertsPage from '@/pages/AlertsPage'
-import FindPage from '@/pages/FindPage'
 import InstallBanner from '@/components/InstallBanner'
 import OfflineBanner from '@/components/OfflineBanner'
 
@@ -24,7 +23,6 @@ function AnimatedRoutes() {
         <Routes location={location}>
           <Route path="/" element={<HomePage />} />
           <Route path="/map" element={<MapPage />} />
-          <Route path="/find" element={<FindPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
         </Routes>
       </motion.div>

@@ -20,6 +20,7 @@ import { getDominantDataSource, getLatestUpdate } from '@/lib/occupancyHelpers'
 import { getDayPredictions } from '@/lib/predictionInsights'
 import { aggregateNoise } from '@/lib/noiseAggregation'
 import type { Building } from '@/types'
+import FindPanel from '@/components/FindPanel'
 
 const BuildingCard = lazy(() => import('@/components/BuildingCard'))
 
@@ -34,6 +35,7 @@ export default function MapPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null)
   const [reportTarget, setReportTarget] = useState<Building | null>(null)
+  const [showFind, setShowFind] = useState(false)
 
   useEffect(() => {
     const bid = searchParams.get('building')
@@ -119,7 +121,35 @@ export default function MapPage() {
       <div className="absolute bottom-2 left-4" style={{ zIndex: 50 }}>
         <DataSourcePill source={dominantSource} />
       </div>
-      <ReportFAB visible={!selectedBuilding} onClick={handleFABClick} />
+      <ReportFAB visible={!selectedBuilding && !showFind} onClick={handleFABClick} />
+
+      {/* Find a Spot button */}
+      {!selectedBuilding && !showFind && (
+        <button
+          onClick={() => setShowFind(true)}
+          style={{
+            position: 'absolute', top: 16, left: 16, zIndex: 50,
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '10px 18px', borderRadius: 14, border: 'none',
+            backgroundColor: '#003865', color: '#FFFFFF',
+            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+            boxShadow: '0 4px 16px rgba(0,56,101,0.3)',
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Find a Spot
+        </button>
+      )}
+
+      {/* Find panel */}
+      <FindPanel
+        visible={showFind}
+        onDismiss={() => setShowFind(false)}
+        buildings={buildings}
+        occupancyMap={occupancyMap}
+        userPosition={position}
+        onBuildingSelect={handleBuildingClick}
+      />
       <AnimatePresence>
         {selectedBuilding && (
           <Suspense fallback={null}>
