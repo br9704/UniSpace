@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useWebPush } from '@/hooks/useWebPush'
+import { useAlerts } from '@/hooks/useAlerts'
+import { useBuildings } from '@/hooks/useBuildings'
 
 const FAQ = [
   { q: 'How does UniSpace know how busy a building is?', a: 'UniSpace combines crowdsourced location data from active users with Google Maps popularity data. When enough students use UniSpace, we show live occupancy. Otherwise, we use Google\'s typical busyness patterns.' },
@@ -10,23 +13,60 @@ const FAQ = [
 ]
 
 export default function AlertsPage() {
+  const { isSupported, permission, subscription, subscribe } = useWebPush()
+  const { alerts, deleteAlert } = useAlerts(subscription)
+  const { buildings } = useBuildings()
+
+  const buildingName = (id: string) => buildings.find((b) => b.id === id)?.short_name ?? buildings.find((b) => b.id === id)?.name ?? 'Unknown'
+
   return (
     <div className="h-full overflow-y-auto" style={{ backgroundColor: '#F0F2F5' }}>
       {/* Header */}
       <div style={{ background: 'linear-gradient(145deg, #001F3F 0%, #003865 50%, #005A8C 100%)', padding: '56px 24px 32px' }}>
         <h1 style={{ fontSize: 28, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.5px' }}>More</h1>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', marginTop: 6 }}>FAQ, alerts, and about</p>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', marginTop: 6 }}>Alerts, FAQ, and about</p>
       </div>
 
-      {/* Alerts preview */}
+      {/* Alerts section */}
       <div style={{ margin: '20px 24px 0', padding: 24, backgroundColor: '#FFFFFF', borderRadius: 20, boxShadow: '0 4px 20px rgba(0,56,101,0.06)', border: '2px solid rgba(0,56,101,0.65)' }}>
         <h2 style={{ fontSize: 17, fontWeight: 700, color: '#1E293B' }}>Occupancy Alerts</h2>
-        <p style={{ fontSize: 14, color: '#64748B', marginTop: 8, lineHeight: 1.6 }}>
-          Get notified when a building drops below your chosen occupancy threshold. Set alerts from any building card on the map.
-        </p>
-        <div style={{ display: 'inline-block', marginTop: 16, padding: '8px 20px', borderRadius: 12, fontSize: 13, fontWeight: 600, backgroundColor: '#C8A951', color: '#FFFFFF' }}>
-          Coming Soon
-        </div>
+
+        {!isSupported ? (
+          <p style={{ fontSize: 14, color: '#94A3B8', marginTop: 8 }}>Your browser doesn't support push notifications.</p>
+        ) : permission === 'denied' ? (
+          <p style={{ fontSize: 14, color: '#94A3B8', marginTop: 8 }}>Notifications are blocked. Enable them in your browser settings to use alerts.</p>
+        ) : alerts.length === 0 ? (
+          <div style={{ marginTop: 12 }}>
+            <p style={{ fontSize: 14, color: '#64748B', lineHeight: 1.6 }}>
+              Get notified when a building drops below your chosen occupancy threshold. Set alerts from any building card on the map.
+            </p>
+            {permission === 'default' && (
+              <button
+                onClick={() => subscribe()}
+                style={{ marginTop: 14, padding: '10px 20px', borderRadius: 12, border: 'none', backgroundColor: '#003865', color: '#FFFFFF', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+              >
+                Enable Notifications
+              </button>
+            )}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 14 }}>
+            {alerts.map((alert) => (
+              <div key={alert.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderRadius: 14, backgroundColor: '#F8FAFC', border: '1.5px solid rgba(0,56,101,0.15)' }}>
+                <div>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: '#1E293B', margin: 0 }}>{buildingName(alert.building_id)}</p>
+                  <p style={{ fontSize: 12, color: '#94A3B8', margin: '2px 0 0' }}>Alert when below {alert.threshold_pct}%</p>
+                </div>
+                <button
+                  onClick={() => deleteAlert(alert.id)}
+                  style={{ fontSize: 12, fontWeight: 600, color: '#E05252', background: 'none', border: 'none', cursor: 'pointer', padding: '6px 12px' }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* FAQ */}

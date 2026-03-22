@@ -20,6 +20,8 @@ import { getDominantDataSource, getLatestUpdate } from '@/lib/occupancyHelpers'
 import { getDayPredictions } from '@/lib/predictionInsights'
 import { aggregateNoise } from '@/lib/noiseAggregation'
 import type { Building } from '@/types'
+import { useWebPush } from '@/hooks/useWebPush'
+import { useAlerts } from '@/hooks/useAlerts'
 import FindPanel from '@/components/FindPanel'
 
 const BuildingCard = lazy(() => import('@/components/BuildingCard'))
@@ -32,6 +34,8 @@ export default function MapPage() {
   const { submit, isSubmitting, error: reportError, canReport } = useReportSubmit()
   const reportsMap = useRecentReports()
   const { toggle: toggleFavourite, isFavourite } = useFavourites()
+  const { isSupported: pushSupported, permission: notifPermission, subscription: pushSub, subscribe: subscribePush } = useWebPush()
+  const { createAlert, deleteAlert, getAlertForBuilding } = useAlerts(pushSub)
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null)
   const [reportTarget, setReportTarget] = useState<Building | null>(null)
@@ -165,6 +169,12 @@ export default function MapPage() {
               noiseCount={selectedNoise?.count}
               isFavourite={isFavourite(selectedBuilding.id)}
               onToggleFavourite={() => toggleFavourite(selectedBuilding.id)}
+              existingAlert={selectedBuildingId ? getAlertForBuilding(selectedBuildingId) : undefined}
+              onCreateAlert={async (t) => { if (selectedBuildingId) await createAlert(selectedBuildingId, t) }}
+              onDeleteAlert={async (id) => await deleteAlert(id)}
+              onRequestPermission={async () => { await subscribePush() }}
+              notificationPermission={notifPermission}
+              pushSupported={pushSupported}
             />
           </Suspense>
         )}

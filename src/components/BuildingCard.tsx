@@ -17,6 +17,8 @@ import TipsList from './TipsList'
 import { getActiveAmenities } from '@/lib/amenityHelpers'
 import { shareBuilding } from '@/lib/shareBuilding'
 import { formatRelativeTime } from '@/lib/relativeTime'
+import AlertSetup from './AlertSetup'
+import type { UserAlert } from '@/types'
 
 interface BuildingCardProps {
   building: Building
@@ -29,6 +31,12 @@ interface BuildingCardProps {
   noiseCount?: number
   isFavourite?: boolean
   onToggleFavourite?: () => void
+  existingAlert?: UserAlert
+  onCreateAlert?: (threshold: number) => Promise<void>
+  onDeleteAlert?: (alertId: string) => Promise<void>
+  onRequestPermission?: () => Promise<void>
+  notificationPermission?: NotificationPermission
+  pushSupported?: boolean
 }
 
 const SPRING = { type: 'spring' as const, stiffness: 280, damping: 28 }
@@ -36,6 +44,8 @@ const SPRING = { type: 'spring' as const, stiffness: 280, damping: 28 }
 export default function BuildingCard({
   building, occupancy, predictions, onDismiss, onReport,
   reportCount = 0, noiseLevel, noiseCount, isFavourite, onToggleFavourite,
+  existingAlert, onCreateAlert, onDeleteAlert, onRequestPermission,
+  notificationPermission = 'default', pushSupported = false,
 }: BuildingCardProps) {
   const y = useMotionValue(0)
   const [shareToast, setShareToast] = useState(false)
@@ -230,6 +240,20 @@ export default function BuildingCard({
                 <p key={i} style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 4 }}>- {food}</p>
               ))}
             </div>
+          )}
+
+          {/* Alert setup */}
+          {onCreateAlert && onDeleteAlert && onRequestPermission && (
+            <AlertSetup
+              buildingName={building.short_name || building.name}
+              currentPct={pct}
+              existingAlert={existingAlert}
+              permissionState={notificationPermission}
+              isSupported={pushSupported}
+              onCreateAlert={(t) => onCreateAlert(t)}
+              onDeleteAlert={(id) => onDeleteAlert(id)}
+              onRequestPermission={onRequestPermission}
+            />
           )}
 
           {/* Report button */}

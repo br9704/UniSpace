@@ -158,13 +158,26 @@ export interface HourlyPrediction {
 
 // ── Alerts ────────────────────────────────────────────────────────
 
+export interface PushSubscriptionKeys {
+  p256dh: string
+  auth: string
+}
+
+export interface PushSubscriptionJSON {
+  endpoint: string
+  keys: PushSubscriptionKeys
+}
+
 export interface UserAlert {
   id: string
   building_id: string
-  push_token: string
+  push_token: string | null
+  push_subscription: PushSubscriptionJSON | null
   threshold_pct: number
+  is_active: boolean
   expires_at: string
   triggered_at: string | null
+  last_notified_at: string | null
   created_at: string
 }
 
