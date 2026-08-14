@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import type { Building, ReportLevel, NoiseLevel } from '@/types'
 import Button from './ui/Button'
+import BottomSheet from './ui/BottomSheet'
 import ReportLevelPicker from './ReportLevelPicker'
 import TerminalLoader from './TerminalLoader'
 
@@ -54,34 +54,7 @@ export default function ReportSheet({
   const [showNoise, setShowNoise] = useState(false)
 
   return (
-    <>
-      <motion.div
-        className="fixed inset-0 z-[95]"
-        style={{ backgroundColor: 'var(--color-bg-overlay)' }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onDismiss}
-      />
-
-      <motion.div
-        role="dialog"
-        aria-label={`Report how busy ${building.short_name ?? building.name} is`}
-        className="fixed left-0 right-0 bottom-0 z-[100] max-w-[420px] mx-auto"
-        style={{
-          backgroundColor: 'var(--color-bg)',
-          borderTop: '1px solid var(--color-steel)',
-        }}
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        // Ease-out, 280ms — no spring anywhere in this system.
-        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <div className="flex items-center justify-center pt-3 pb-1">
-          <div style={{ width: 32, height: 2, backgroundColor: 'var(--color-steel)' }} />
-        </div>
-
+    <BottomSheet label={`Report how busy ${building.short_name ?? building.name} is`} onDismiss={onDismiss}>
         <div className="px-5 pb-6 pt-2">
           <h2 className="mono text-sm tracking-wide" style={{ color: 'var(--color-text-primary)' }}>
             &gt; HOW BUSY IS {(building.short_name ?? building.name).toUpperCase()}?
@@ -159,7 +132,6 @@ export default function ReportSheet({
             </>
           )}
         </div>
-      </motion.div>
-    </>
+    </BottomSheet>
   )
 }

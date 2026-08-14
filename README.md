@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-in%20development-orange" alt="Status: In Development" />
-  <img src="https://img.shields.io/badge/phase-recovery%20(R3%20of%20R5)-blue" alt="Phase: Recovery, R3 of R5" />
+  <img src="https://img.shields.io/badge/status-awaiting%20deploy-yellow" alt="Status: Awaiting deploy" />
+  <img src="https://img.shields.io/badge/phase-feature%20complete-blue" alt="Phase: Feature complete" />
   <img src="https://img.shields.io/badge/pilot-UoM%20Parkville-003366" alt="Pilot: UoM Parkville" />
   <img src="https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey" alt="License" />
 </p>
@@ -26,7 +26,12 @@
 
 ---
 
-> **This project is under active development.** Core infrastructure is in place — features are being built sprint-by-sprint. See the [roadmap](#roadmap) below for what's done and what's next.
+> **Status:** feature-complete and not yet deployed. Every sprint through Sprint 25 is done; what
+> remains is provisioning — a Supabase project, API keys, a Vercel deploy — plus real-world data
+> that cannot be verified from inside a repo. The full checklist is in
+> [`MASTERPLAN.md`](MASTERPLAN.md) § *Owner-Gated Ship Runbook*.
+>
+> The app runs today with no backend at all: `pnpm install && pnpm dev`.
 
 ---
 
@@ -255,42 +260,55 @@ Those curves are UniSpace's own modelled estimates of campus rhythm, not measure
 
 ### Phase 0 — Foundation
 - [x] **Sprint 0:** Project scaffolding (Vite + React + TypeScript + Tailwind + PWA)
-- [x] **Sprint 1:** Supabase infrastructure (schema, migrations, seed data, Edge Function scaffolds)
-- [x] **Sprint 2:** Google Places integration and occupancy blending logic
+- [x] **Sprint 1:** Supabase schema, migrations, seed data, Edge Function scaffolds
+- [x] **Sprint 2:** Occupancy blending logic and fallback hierarchy
 
 ### Phase 1 — MVP
 - [x] **Sprint 3:** Mapbox map with building polygons
-- [x] **Sprint 4:** Realtime geolocation broadcasting
+- [x] **Sprint 4:** Realtime geolocation broadcasting (zone IDs only)
 - [x] **Sprint 5:** Zone aggregation Edge Function
-- [x] **Sprint 6:** Occupancy blending (live + Google + predicted)
-- [x] **Sprint 7:** Live heatmap rendering + building expansion (5 → 18 buildings)
+- [x] **Sprint 6:** Occupancy blending (live → crowd reports → predicted → estimated)
+- [x] **Sprint 7:** Live heatmap rendering, expanded to 18 buildings
 - [x] **Sprint 8:** Building cards (bottom sheet)
 - [x] **Sprint 9:** Floor-level breakdown
-- [x] **Sprint 10:** Smart recommendations + full UI revamp
-- [x] **Sprint 11:** Prediction engine (Google baseline, 24h chart, sparkline, insights)
-- [x] **Sprint 12:** UI polish, theming & production readiness
+- [x] **Sprint 10:** Smart recommendations
+- [x] **Sprint 11:** Prediction engine (24h chart, sparkline, insights)
+- [x] **Sprint 12:** UI primitives and production readiness
 
-### Phase 1.5 — Competitive Edge
-- [x] **Sprint 13:** Manual crowd reporting (1-5 scale, decay, blending)
+### Phase 1.5 — Competitive edge
+- [x] **Sprint 13:** Manual crowd reporting (1–5 scale, decay, blending)
 - [x] **Sprint 14:** Noise levels & favourites
-- [x] **Sprint 15:** Building photos & tips (components ready, photo assets pending)
-
-### Phase 1 (continued)
+- [x] **Sprint 15:** Building photos & tips *(components ready; photo assets pending)*
 - [x] **Sprint 16:** PWA install flow + service worker
-- [x] **Sprint 17:** Seed data accuracy verification
-- [ ] **Sprint 18:** MVP integration testing + Vercel deploy
+- [x] **Sprint 17:** Seed data verification
 
-### Phase 2 — Polish & Reliability
-- [ ] Accessibility compliance (WCAG 2.1 AA)
+### Phase 1.9 — Recovery
+> A forensic audit in August 2026 found that the previously-recorded progress overstated reality:
+> the Supabase project had been deleted, Tailwind had silently stopped emitting most of its CSS,
+> and the project had not compiled since Sprint 20. The audit is in
+> [`WIRING-AUDIT.md`](WIRING-AUDIT.md); these six sprints fixed what it found.
+
+- [x] **R0:** Forensic audit and honest correction of 22 falsely-marked tasks
+- [x] **R1:** Foundation repair — Tailwind v4 migration, build fixed, fail-soft config
+- [x] **R2:** Local fixture layer — the whole app runs with no backend
+- [x] **R3:** SIGNAL design system + component decomposition
+- [x] **R4:** MOTION.md implementation — breathing heatmap, counting numbers, confidence tiers
+- [x] **R5:** Re-verification of Sprints 13–17 against observation
+
+### Phase 2 — Polish & reliability
+- [x] **Sprint 19:** Accessibility (WCAG 2.1 AA, contrast computed and enforced)
 - [x] **Sprint 20:** Push notifications & alerts
-- [ ] Offline graceful degradation
-- [ ] Performance optimisation
-- [ ] Error states & edge cases
+- [x] **Sprint 21:** Offline graceful degradation
+- [x] **Sprint 22:** Performance — landing route cut from 637 KB to 189 KB gzip
+- [x] **Sprint 23:** Error states & edge cases
+- [x] **Sprint 24:** Room directory & cross-building room search
+- [x] **Sprint 25:** Anonymous feedback system
+- [ ] **Sprint 18:** Deploy — the only thing left, and it needs credentials rather than code
 
-### Phase 3+ — Intelligence, Scale, Social
-- [ ] EWMA prediction engine, anomaly detection, personalised recommendations
-- [ ] Multi-campus support, university analytics dashboard
-- [ ] Friend presence, study group matchmaking
+### Phase 3+ — Roadmap, not scheduled
+EWMA predictions, anomaly detection, personalised recommendations, multi-campus, an analytics
+dashboard, friend presence. Deliberately unscheduled: the last three would require user accounts,
+which contradicts this app's core promise.
 
 > Full sprint details in [`MASTERPLAN.md`](MASTERPLAN.md)
 

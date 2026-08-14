@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import type { FeedbackCategory } from '@/types'
 import { useFeedbackSubmit } from '@/hooks/useFeedbackSubmit'
 import Button from './ui/Button'
+import BottomSheet from './ui/BottomSheet'
 import TerminalLoader from './TerminalLoader'
 
 interface FeedbackSheetProps {
@@ -48,29 +48,7 @@ export default function FeedbackSheet({
   }
 
   return (
-    <>
-      <motion.div
-        className="fixed inset-0 z-[95]"
-        style={{ backgroundColor: 'var(--color-bg-overlay)' }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onDismiss}
-      />
-
-      <motion.div
-        role="dialog"
-        aria-label={`Report incorrect information about ${buildingName}`}
-        className="fixed left-0 right-0 bottom-0 z-[100] max-w-[420px] mx-auto"
-        style={{
-          backgroundColor: 'var(--color-bg)',
-          borderTop: '1px solid var(--color-steel)',
-        }}
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-      >
+    <BottomSheet label={`Report incorrect information about ${buildingName}`} onDismiss={onDismiss}>
         <div className="px-5 py-5">
           <h2 className="mono text-sm tracking-wide" style={{ color: 'var(--color-text-primary)' }}>
             &gt; REPORT AN ERROR
@@ -160,7 +138,6 @@ export default function FeedbackSheet({
             </>
           )}
         </div>
-      </motion.div>
-    </>
+    </BottomSheet>
   )
 }

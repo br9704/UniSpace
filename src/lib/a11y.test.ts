@@ -118,11 +118,33 @@ describe('accessibility', () => {
     expect(offenders).toEqual([])
   })
 
-  it('gives dialogs a role and a name', () => {
-    for (const name of ['BuildingCard.tsx', 'ReportSheet.tsx', 'FindPanel.tsx']) {
+  it('gives every sheet a dialog role and an accessible name', () => {
+    // Sheets either declare the semantics themselves or delegate to
+    // `BottomSheet`, which requires a `label` prop — so both routes guarantee a
+    // named dialog. Checked as an either/or rather than pinned to one shape,
+    // so extracting shared chrome does not look like a regression.
+    const SHEETS = [
+      'BuildingCard.tsx',
+      'ReportSheet.tsx',
+      'FeedbackSheet.tsx',
+      'FindPanel.tsx',
+    ]
+
+    for (const name of SHEETS) {
       const file = FILES.find(({ path }) => path.endsWith(name))!
-      expect(file.code, `${name} is not a labelled dialog`).toMatch(/role="dialog"/)
-      expect(file.code, `${name} has no accessible name`).toMatch(/aria-label/)
+      const declaresOwn = /role="dialog"/.test(file.code) && /aria-label/.test(file.code)
+      const delegates = /<BottomSheet[\s\S]{0,200}?label=/.test(file.code)
+      expect(
+        declaresOwn || delegates,
+        `${name} is neither a labelled dialog nor a labelled BottomSheet`,
+      ).toBe(true)
     }
+  })
+
+  it('makes the shared sheet require a label rather than defaulting to none', () => {
+    // A `label?:` here would let a caller silently ship an unnamed dialog.
+    const sheet = FILES.find(({ path }) => path.endsWith('ui/BottomSheet.tsx'))!
+    expect(sheet.code).toMatch(/label:\s*string/)
+    expect(sheet.code).toMatch(/aria-label=\{label\}/)
   })
 })
