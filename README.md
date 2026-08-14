@@ -9,7 +9,16 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-awaiting%20deploy-yellow" alt="Status: Awaiting deploy" />
+  <a href="https://unispace-tawny.vercel.app"><strong>unispace-tawny.vercel.app →</strong></a>
+</p>
+
+<p align="center">
+  <em>Currently running on modelled estimates for 18 real UoM buildings — the app says so on
+  screen. Live occupancy switches on when the backend is provisioned.</em>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/status-live-brightgreen" alt="Status: Live" />
   <img src="https://img.shields.io/badge/phase-feature%20complete-blue" alt="Phase: Feature complete" />
   <img src="https://img.shields.io/badge/pilot-UoM%20Parkville-003366" alt="Pilot: UoM Parkville" />
   <img src="https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey" alt="License" />
@@ -26,12 +35,12 @@
 
 ---
 
-> **Status:** feature-complete and not yet deployed. Every sprint through Sprint 25 is done; what
-> remains is provisioning — a Supabase project, API keys, a Vercel deploy — plus real-world data
-> that cannot be verified from inside a repo. The full checklist is in
-> [`MASTERPLAN.md`](MASTERPLAN.md) § *Owner-Gated Ship Runbook*.
+> **Status: live.** Every sprint through Sprint 25 is complete and deployed. The public build runs
+> on modelled occupancy estimates for 18 real UoM buildings, and labels itself as such — live
+> crowdsourced data switches on once the Supabase backend is provisioned
+> ([`MASTERPLAN.md`](MASTERPLAN.md) § *Owner-Gated Ship Runbook*).
 >
-> The app runs today with no backend at all: `pnpm install && pnpm dev`.
+> Runs locally with no backend at all: `pnpm install && pnpm dev`.
 
 ---
 
@@ -303,7 +312,7 @@ Those curves are UniSpace's own modelled estimates of campus rhythm, not measure
 - [x] **Sprint 23:** Error states & edge cases
 - [x] **Sprint 24:** Room directory & cross-building room search
 - [x] **Sprint 25:** Anonymous feedback system
-- [ ] **Sprint 18:** Deploy — the only thing left, and it needs credentials rather than code
+- [x] **Sprint 18:** Deployed — [unispace-tawny.vercel.app](https://unispace-tawny.vercel.app)
 
 ### Phase 3+ — Roadmap, not scheduled
 EWMA predictions, anomaly detection, personalised recommendations, multi-campus, an analytics

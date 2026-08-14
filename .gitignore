@@ -11,3 +11,5 @@ opencode.json
 
 # Local agent settings
 .claude/settings.local.json
+.vercel
+.env*

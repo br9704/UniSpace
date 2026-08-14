@@ -1858,12 +1858,25 @@ The previous project (`kvagntgpiylxhjntexml`) is **gone**, not paused. This is a
 - [ ] Mapbox: **restrict the public token to the production domain.** Unrestricted, a public deploy
       hands anyone a usable token.
 
-### 3. Vercel
-- [ ] Create the project, link the GitHub repo. `vercel.json` is already correct for a Vite SPA.
-- [ ] Add env vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_MAPBOX_TOKEN`,
-      `VITE_VAPID_PUBLIC_KEY`.
-- [ ] Deploy. Confirm `pnpm build` passes in CI (it does **not** today — R1 fixes this).
-- [ ] Domain: subdomain of `brunojaamaa.dev`, custom domain, or the Vercel URL.
+### 3. Vercel — **DONE 2026-08-14**
+
+> **Live: https://unispace-tawny.vercel.app**
+
+- [x] Project created and linked to `github.com/br9704/UniSpace` ✅
+- [x] Production env vars set: `VITE_MAPBOX_TOKEN`, `VITE_VAPID_PUBLIC_KEY`,
+      `VITE_USE_FIXTURES=true` ✅ Supabase vars are deliberately absent, which switches the app to
+      fixtures automatically and makes it say so on screen.
+- [x] Deployed to production ✅ Build passes in CI. Verified live: 149 KB gzipped entry over the
+      wire, no Mapbox chunk on the landing route, SPA fallback resolving for `/map`, `/find` and
+      `/alerts`, manifest and icons serving.
+- [ ] **Restrict the Mapbox token to `unispace-tawny.vercel.app`** in the Mapbox dashboard. It is a
+      `pk.` token, which is public by design and safe to ship — but unrestricted, anyone can spend
+      your quota with it. *Do this one first.*
+- [ ] Optional: custom domain, or a subdomain of `brunojaamaa.dev`.
+- [ ] Optional: turn off Deployment Protection for the `*-bruno-jaamaas-projects` alias if you want
+      that URL public too. The `unispace-tawny` alias is already open.
+- [ ] Once Supabase exists: add `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`, remove
+      `VITE_USE_FIXTURES`, redeploy. That is the whole switch from demo to live.
 
 ### 4. Manual verification on the live URL
 - [ ] Mobile browser test at 375 px.
