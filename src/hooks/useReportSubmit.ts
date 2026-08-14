@@ -2,13 +2,13 @@ import { useCallback, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { isFixtureMode } from '@/lib/dataSource'
 import { submitFixtureReport } from '@/lib/fixtures'
+import { canReportAgain, markReported } from '@/lib/localStore'
 import type { ReportLevel, NoiseLevel } from '@/types'
 
-const THROTTLE_MS = 5 * 60 * 1000 // 5 minutes
-
-function throttleKey(buildingId: string): string {
-  return `pulse_report_${buildingId}`
-}
+/** One report per building per 5 minutes, enforced client-side. The Edge
+ *  Function applies its own IP-based limit server-side; this one exists to stop
+ *  honest double-taps, not abuse. */
+const THROTTLE_MS = 5 * 60 * 1000
 
 interface UseReportSubmitResult {
   submit: (buildingId: string, level: ReportLevel, noise?: NoiseLevel) => Promise<boolean>
@@ -21,11 +21,10 @@ export function useReportSubmit(): UseReportSubmitResult {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const canReport = useCallback((buildingId: string): boolean => {
-    const lastReport = localStorage.getItem(throttleKey(buildingId))
-    if (!lastReport) return true
-    return Date.now() - Number(lastReport) >= THROTTLE_MS
-  }, [])
+  const canReport = useCallback(
+    (buildingId: string): boolean => canReportAgain(buildingId, THROTTLE_MS),
+    [],
+  )
 
   const submit = useCallback(async (
     buildingId: string,
@@ -44,7 +43,7 @@ export function useReportSubmit(): UseReportSubmitResult {
           occupancy_level: level,
           noise_level: noise ?? null,
         })
-        localStorage.setItem(throttleKey(buildingId), String(Date.now()))
+        markReported(buildingId)
         return true
       }
 
@@ -66,7 +65,7 @@ export function useReportSubmit(): UseReportSubmitResult {
         return false
       }
 
-      localStorage.setItem(throttleKey(buildingId), String(Date.now()))
+      markReported(buildingId)
       return true
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')

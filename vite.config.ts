@@ -10,11 +10,13 @@ export default defineConfig({
       manifest: {
         name: 'UniSpace',
         short_name: 'UniSpace',
-        description: 'Campus occupancy, live.',
+        description: 'Live campus occupancy. Your GPS never leaves your device.',
         start_url: '/',
         display: 'standalone',
-        background_color: '#030D1A',
-        theme_color: '#003865',
+        // SIGNAL: the splash and OS chrome must match the app, not the
+        // retired UoM palette they were left on.
+        background_color: '#050505',
+        theme_color: '#050505',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },

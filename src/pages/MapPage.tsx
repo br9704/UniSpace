@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Map from '@/components/Map'
 import StaleDataBanner from '@/components/StaleDataBanner'
@@ -31,7 +32,19 @@ export default function MapPage() {
   const { toggle: toggleFavourite, isFavourite } = useFavourites()
   const report = useCrowdReporting(buildings, position)
   const { selectedId: selectedBuildingId, select, clear } = useBuildingSelection()
-  const [showFind, setShowFind] = useState(false)
+
+  /*
+   * PRD § 12.5 specifies a `/find` route; commit daf18af replaced it with a
+   * panel over the map without updating the spec, and the plan claimed a
+   * FindPage.tsx that has never existed (see MASTERPLAN S10.1).
+   *
+   * Resolved in favour of both: the panel stays — on a phone, sliding it over
+   * the map beats a full navigation away from the thing you are choosing
+   * between — and `/find` renders this same page with it already open, so the
+   * route is real, deep-linkable and shareable.
+   */
+  const isFindRoute = useLocation().pathname === '/find'
+  const [showFind, setShowFind] = useState(isFindRoute)
 
   // Batched to one visual pass per 5s, and frozen entirely while a card is
   // open — MOTION.md forbids the map reflowing under something being read.

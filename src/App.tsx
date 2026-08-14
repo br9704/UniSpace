@@ -26,6 +26,9 @@ function AnimatedRoutes() {
         <Routes location={location}>
           <Route path="/" element={<HomePage />} />
           <Route path="/map" element={<MapPage />} />
+          {/* Same screen as /map, with the recommendations panel already open.
+              PRD § 12.5 specifies this route; see MapPage for the full note. */}
+          <Route path="/find" element={<MapPage />} />
           <Route path="/alerts" element={<AlertsPage />} />
         </Routes>
       </motion.div>

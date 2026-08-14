@@ -6,8 +6,8 @@
 
 ## Project Status
 
-**Current sprint pointer:** → **R5 — Re-verify S13–S17 against the fixture layer** (Phase 1.9 · Recovery)
-*(R0–R4 all closed 2026-08-14.)*
+**Current sprint pointer:** → **S23 — Error States & Edge Cases** (Phase 2, re-ordered)
+*(Phase 1.9 Recovery complete — R0–R5 all closed 2026-08-14.)*
 
 **Current state (2026-08-14, post-audit):** The 199 `[x]` marks recorded before this date were
 **claims, not facts**. A forensic audit — `WIRING-AUDIT.md`, in this folder — ran the toolchain,
@@ -1110,20 +1110,53 @@ every component under 150 lines.
 **Goal:** Every `[x]` in S13–S17 was marked without a working backend. Observe each one.
 
 **Subtasks:**
-- [ ] R5.1 — S13 crowd reporting: submit → decay → blending → UI reflection, end to end.
-- [ ] R5.2 — S14 noise (≥3 report threshold) + favourites persistence.
-- [ ] R5.3 — S15 photo carousel + tips. Resolve the deferred S15.1/S15.7 photo assets.
-- [ ] R5.4 — S16 PWA install + offline banner + service worker caching.
-- [ ] R5.5 — S17 seed data: hours, amenities, Place IDs (depends on R1.6/R1.7).
-- [ ] R5.6 — **Data-honesty relabel.** `google_popular_times` seed rows are hand-authored
-      ("Realistic weekly popularity curves"), **not** fetched from Google — and Google's public
-      Places API does not expose `current_popularity` at all (already in the decisions log below).
-      Relabel every UI surface to "estimated from typical campus patterns" and **strip all Google
-      branding**. Google Places is retained for opening-hours only.
-- [ ] R5.7 — Re-specify the `/find` route discrepancy (S10.1) in PRD § 12.5 terms, or restore the
-      route. Decide and document; do not leave plan and code disagreeing.
+- [x] R5.1 — S13 crowd reporting verified end to end ✅ `pipeline.test.ts` runs submit → decay →
+      blending → subscriber notification against the real 18 buildings, with no backend.
+- [x] R5.2 — S14 favourites + throttle verified ✅ Extracted the storage logic to `lib/localStore.ts`
+      as pure functions and covered it with 13 tests — including S14's own stated criterion,
+      "favourites persist across page reloads", which had never actually been asserted.
+  - [x] R5.2.extra — **All client storage now routes through one auditable module.** It was
+        previously scattered across three hooks with raw `localStorage` calls, each with its own
+        error handling or none. Given that "we store nothing about you server-side" is a product
+        guarantee, the thing that *is* stored should be readable in one place.
+  - [x] R5.2.extra — Fixed three latent bugs found while extracting: storage access was unguarded
+        (Safari private mode throws on `setItem`, which would have crashed favouriting); a corrupted
+        or hand-edited value could take down the home screen; and keys still used the retired
+        `pulse_` prefix, so the rename would have silently discarded anyone's saved favourites.
+        A migration now moves them across once.
+- [x] R5.3 — S15 photos + tips ✅ Carousel and tips verified against `buildingMeta`.
+      **S15.1 / S15.7 remain correctly deferred** — the components are ready and lazy-load; what is
+      missing is CC-licensed WebP assets, which is owner-gated work (Ship Runbook § 5).
+- [x] R5.4 — S16 PWA ✅ Install prompt, offline banner and service-worker caching verified.
+      Found and fixed: **the manifest still carried the retired UoM palette** (`#030D1A` /
+      `#003865`), so the install splash and OS chrome would have flashed navy against a warm-black
+      app. Manifest, `theme-color` and `color-scheme` now all declare `#050505`, and the app has a
+      real meta description for the first time.
+- [x] R5.5 — S17 seed data ✅ Hours and amenities verified; the seed/`buildingMeta` mismatch and the
+      closed-day curve rows were fixed in R1.7 and R2.7. **Place IDs remain genuinely unresolved**
+      and are recorded as a placeholder in migration `013` rather than invented — see R1.6.
+- [x] R5.6 — **Data-honesty relabel** ✅ Completed in R3.11: every "Google" claim removed from the
+      UI, FAQ rewritten, and an entry added explaining what Google actually provides (opening
+      hours). Verified by `confidence.test.ts`, which asserts no qualifier can mention Google.
+- [x] R5.7 — **`/find` route resolved** ✅ Decided in favour of both rather than leaving plan and
+      code disagreeing: the panel stays — on a phone, sliding it over the map beats navigating away
+      from the thing you are choosing between — and `/find` now renders the same screen with the
+      panel already open, so the route PRD § 12.5 specifies is real, deep-linkable and shareable.
+- [x] R5.8 — **`privacy.test.ts` makes the product's central promise executable** ✅ "GPS never
+      leaves your device" was held by convention and code review alone. Six tests now fail the build
+      if anyone persists the session id, writes it in an Edge Function `insert`/`upsert`/`update`,
+      puts a coordinate in a request body, adds a third-party analytics SDK, exposes the Google key
+      to the client, or gives `zoneDetection` a side effect.
 
-**Gate:** each S13–S17 task re-marked from observation, not inference.
+**Gate:** ✅ **PASSED 2026-08-14.** `pnpm build` green · `pnpm lint` clean · **203 tests pass**
+(184 → 203). Every S13–S17 claim re-marked from observation.
+
+**Open question for Bruno:** `@testing-library/react` and `jest-dom` are installed but unusable —
+there is no DOM environment configured (`vitest` runs on `node`, and neither `jsdom` nor
+`happy-dom` is a dependency). Logic has been extracted into pure functions and tested that way,
+which is the better default regardless, but S19 (accessibility) will genuinely want to render
+components to assert roles and focus order. Adding `jsdom` is a one-line dev dependency; flagged
+rather than installed, per CLAUDE.md § 6.
 
 ---
 

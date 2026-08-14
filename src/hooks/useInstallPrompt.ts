@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { canReportAgain, markReported } from '@/lib/localStore'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
-const DISMISS_KEY = 'unispace-install-dismissed'
+const DISMISS_KEY = 'install-dismissed'
 const DISMISS_DAYS = 7
 const ENGAGEMENT_MS = 30_000
 
@@ -14,10 +15,9 @@ function isIOS(): boolean {
 }
 
 function isDismissed(): boolean {
-  const raw = localStorage.getItem(DISMISS_KEY)
-  if (!raw) return false
-  const dismissedAt = parseInt(raw, 10)
-  return Date.now() - dismissedAt < DISMISS_DAYS * 24 * 60 * 60 * 1000
+  // Dismissing is not permanent — someone who says "not now" in week one may
+  // well want it in week three. But re-asking sooner than a week is nagging.
+  return !canReportAgain(DISMISS_KEY, DISMISS_DAYS * 24 * 60 * 60 * 1000)
 }
 
 export function useInstallPrompt() {
@@ -62,7 +62,7 @@ export function useInstallPrompt() {
   }, [])
 
   const dismiss = useCallback(() => {
-    localStorage.setItem(DISMISS_KEY, String(Date.now()))
+    markReported(DISMISS_KEY)
     setShowBanner(false)
   }, [])
 

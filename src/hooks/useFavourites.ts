@@ -1,15 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-
-const STORAGE_KEY = 'pulse_favourites'
-
-function readFavourites(): string[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
-}
+import { readFavourites, toggleFavourite, writeFavourites } from '@/lib/localStore'
 
 interface UseFavouritesReturn {
   favouriteIds: string[]
@@ -17,17 +7,23 @@ interface UseFavouritesReturn {
   isFavourite: (buildingId: string) => boolean
 }
 
+/**
+ * Favourite buildings, stored on the device only.
+ *
+ * No account, no server record — PRD § 13.1 makes that a product guarantee
+ * rather than an implementation detail. The storage logic lives in
+ * `lib/localStore.ts` so it can be tested as pure functions, including the
+ * migration from the app's former name.
+ */
 export function useFavourites(): UseFavouritesReturn {
   const [favouriteIds, setFavouriteIds] = useState<string[]>(readFavourites)
 
   const favouriteSet = useMemo(() => new Set(favouriteIds), [favouriteIds])
 
   const toggle = useCallback((buildingId: string) => {
-    setFavouriteIds((prev) => {
-      const next = prev.includes(buildingId)
-        ? prev.filter((id) => id !== buildingId)
-        : [...prev, buildingId]
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+    setFavouriteIds((previous) => {
+      const next = toggleFavourite(previous, buildingId)
+      writeFavourites(next)
       return next
     })
   }, [])
