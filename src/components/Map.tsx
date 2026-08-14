@@ -1,21 +1,28 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import type { BlendedOccupancy, Building } from '@/types'
 import { buildingsToFeatureCollection } from '@/lib/mapHelpers'
 import { getFillLayerConfig, getOutlineLayerConfig, getLabelLayerConfig } from '@/lib/mapLayers'
 import { MAPBOX_STYLE, DEFAULT_CAMPUS_CENTER, DEFAULT_ZOOM, MIN_ZOOM, MAX_ZOOM, MAX_BOUNDS } from '@/constants/map'
+import { useBreathingLayer } from '@/hooks/useBreathingLayer'
+import { getConfidence } from '@/lib/confidence'
 
 interface MapProps {
   buildings: Building[]
   occupancyMap?: Map<string, BlendedOccupancy>
   onBuildingClick: (buildingId: string) => void
+  /** True while a real value change is cross-fading — breathing holds. */
+  isChanging?: boolean
 }
 
 const BUILDINGS_SOURCE = 'buildings'
 const FILL_LAYER = 'building-fills'
 
-export default function Map({ buildings, occupancyMap, onBuildingClick }: MapProps) {
+/** Must match `fill-opacity` in mapLayers.ts — breathing oscillates around it. */
+const BASE_FILL_OPACITY = 0.88
+
+export default function Map({ buildings, occupancyMap, onBuildingClick, isChanging = false }: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<mapboxgl.Map | null>(null)
   // Latest props, readable from Mapbox callbacks that outlive a single render.
@@ -109,10 +116,32 @@ export default function Map({ buildings, occupancyMap, onBuildingClick }: MapPro
     source.setData(buildingsToFeatureCollection(buildings, occupancyMap))
   }, [buildings, occupancyMap])
 
+  /**
+   * The map only breathes when something on it is genuinely live.
+   *
+   * With no broadcasts and no crowd reports the whole campus is an estimate,
+   * and animating it would assert a liveness the data does not have — the same
+   * dishonesty as the "Live · 0%" bug this project already fixed once.
+   */
+  const hasLiveData = useMemo(() => {
+    if (!occupancyMap) return false
+    for (const occupancy of occupancyMap.values()) {
+      if (getConfidence(occupancy.source).breathes) return true
+    }
+    return false
+  }, [occupancyMap])
+
+  const getMap = useCallback(() => mapRef.current, [])
+  useBreathingLayer(getMap, FILL_LAYER, BASE_FILL_OPACITY, hasLiveData, isChanging)
+
   if (!import.meta.env.VITE_MAPBOX_TOKEN) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-bg-primary text-[var(--color-text-secondary)]">
-        <p>VITE_MAPBOX_TOKEN is not set. Add it to .env.local to load the map.</p>
+      <div
+        role="alert"
+        className="mono h-full w-full flex items-center justify-center p-6 text-center text-sm"
+        style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text-secondary)' }}
+      >
+        <p>&gt; VITE_MAPBOX_TOKEN is not set — add it to .env.local to load the map</p>
       </div>
     )
   }

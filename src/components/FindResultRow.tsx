@@ -2,6 +2,7 @@ import type { Building } from '@/types'
 import { getOccupancyLabel } from '@/constants/occupancy'
 import { isOpenNow } from '@/lib/buildingHours'
 import OccupancyBar from './OccupancyBar'
+import CountUpValue from './CountUpValue'
 import StatusDot from './ui/StatusDot'
 
 interface FindResultRowProps {
@@ -49,7 +50,7 @@ export default function FindResultRow({
           data-count
           style={{ color: isTop ? 'var(--color-amber)' : 'var(--color-text-primary)' }}
         >
-          {pct !== null ? `${Math.round(pct)}%` : '--'}
+          <CountUpValue value={pct} suffix="%" />
         </p>
         <p className="mono text-[10px] mt-1" style={{ color: 'var(--color-text-dim)' }}>
           {getOccupancyLabel(pct).toUpperCase()}

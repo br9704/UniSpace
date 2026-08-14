@@ -6,6 +6,7 @@ import { getCurrentTypical } from '@/lib/occupancyHelpers'
 import { formatHour } from '@/lib/predictionInsights'
 import { isOpenNow } from '@/lib/buildingHours'
 import OccupancyBar from '../OccupancyBar'
+import CountUpValue from '../CountUpValue'
 import FavouriteButton from '../FavouriteButton'
 import StatusDot from '../ui/StatusDot'
 
@@ -66,7 +67,7 @@ export default function BuildingRow({
             data-count
             style={{ color: 'var(--color-text-primary)' }}
           >
-            {pct !== null ? `${Math.round(pct)}%` : '--'}
+            <CountUpValue value={pct} suffix="%" />
           </span>
         </div>
 

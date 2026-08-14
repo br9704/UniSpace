@@ -6,8 +6,8 @@
 
 ## Project Status
 
-**Current sprint pointer:** → **R4 — MOTION.md Implementation** (Phase 1.9 · Recovery)
-*(R0, R1, R2 and R3 all closed 2026-08-14.)*
+**Current sprint pointer:** → **R5 — Re-verify S13–S17 against the fixture layer** (Phase 1.9 · Recovery)
+*(R0–R4 all closed 2026-08-14.)*
 
 **Current state (2026-08-14, post-audit):** The 199 `[x]` marks recorded before this date were
 **claims, not facts**. A forensic audit — `WIRING-AUDIT.md`, in this folder — ran the toolchain,
@@ -1029,28 +1029,71 @@ every component under 150 lines.
 **Goal:** `MOTION.md` is binding product behaviour, not polish. Implement it.
 
 **Subtasks:**
-- [ ] R4.1 — **Breathing occupancy zones**: ±8% opacity around value, 4s ease-in-out loop.
-      Amplitude low enough that any single frame looks identical to a still.
-- [ ] R4.2 — **Change reads differently from liveness**: on a real value change, breathing pauses,
-      zone cross-fades 400ms linear, then resumes.
-- [ ] R4.3 — **Numbers count, never teleport**: integer steps ≤400ms, monospace tabular figures so
-      width never jitters. 0→value on first load; old→new on update.
-- [ ] R4.4 — **Confidence as a visual state** (three tiers): high = full intensity + breathing +
-      green `● LIVE`; medium = 70% intensity, no breathing, `~ estimated`; low/stale = 40%
-      intensity, dashed card border, `> last seen 24m ago`.
-- [ ] R4.5 — Map load: markers drop 40ms stagger (cap 20), scale .85→1 over 250ms; heatmap fades
-      in **after** markers land. Never simultaneous.
-- [ ] R4.6 — Building card: sheet 280ms ease-out; occupancy bar 0→value 500ms in sync with
-      count-up; floor rows 60ms stagger; sparkline draws L→R 600ms, first open only.
-- [ ] R4.7 — Recommendations reorder via **FLIP** — cards translate to new positions over 400ms,
-      never disappear/reappear. Measure, don't guess.
-- [ ] R4.8 — **Manual report loop**: submit → 12-char terminal loader ~600ms → `> thanks —
-      updating...` → local zone cross-fades so the user sees their own report land.
-      *MOTION.md calls this the single most important piece of motion in the app.*
-- [ ] R4.9 — Realtime updates batched to **at most one visual pass per 5s**; no reflow beneath an
-      open card.
-- [ ] R4.10 — Skeletons: 1.6s pulse, content-shaped, 200ms cross-fade, reserved heights (CLS ≈ 0).
-- [ ] R4.11 — **`prefers-reduced-motion` full pass**: static everything, no information lost.
+- [x] R4.1 — **Breathing occupancy zones** ✅ `useBreathingLayer` — ±8% opacity, 4s, cosine-eased so
+      the loop has no discontinuity at its boundary (a linear sawtooth snaps once per cycle).
+      Opacity only: anything moving position or colour would compete with the cross-fade that
+      signals a real change. **Breathing is gated on there actually being live data** — with none,
+      animating the map would assert a liveness the data does not have, which is the same
+      dishonesty as the "Live · 0%" bug fixed in R2.
+- [x] R4.2 — **Change reads differently from liveness** ✅ `useBatchedOccupancy` reports whether the
+      *displayed* values moved (rounded pct or source), not whether a repaint happened; on a real
+      change breathing pauses for 400ms while the zone cross-fades, then resumes.
+- [x] R4.3 — **Numbers count, never teleport** ✅ `useCountUp` + `CountUpValue`, integer steps over
+      ≤400ms, `data-count` applying tabular figures so width cannot jitter. Applied to the badge,
+      home tiles, building rows and recommendation rows.
+- [x] R4.4 — **Confidence as a visual state** ✅ `lib/confidence.ts` is now the single definition of
+      the three tiers. Previously the map, the cards and the recommendation rows each decided for
+      themselves what `google` meant, which is how an estimate came to render identically to a live
+      reading. Seven tests pin the invariants — most importantly that breathing and the green dot
+      can *only* appear for genuinely live sources.
+- [⏭️] R4.5 — Map marker drop-in ⏭️ **DEFERRED:** the map renders building *polygons*, not markers,
+      so the specified drop-and-scale has no object to apply to. The layered-arrival intent is met
+      instead by the fill's 400ms cross-fade over an already-drawn basemap. Revisit if markers are
+      ever added.
+- [x] R4.6 — Building card ✅ Sheet 280ms ease-out (no spring), occupancy bar fills over 500ms
+      linear in step with the count-up, floor rows reveal on a 60ms stagger.
+- [x] R4.7 — **Recommendations reorder via FLIP** ✅ Framer's `layout="position"` inside a
+      `LayoutGroup` — genuine FLIP, measuring before and after rather than guessing. Disabled under
+      reduced motion.
+- [x] R4.8 — **Manual report loop** ✅ Submit → 12-char `[████░░░░]` meter over 600ms →
+      `> thanks — updating…` held for 1.1s → sheet closes onto the updated map. The acknowledgement
+      exists so the user sees their report land instead of watching the sheet vanish and wondering
+      whether it counted. Failure keeps the sheet open with its error — a failed report that
+      silently disappears looks exactly like one that worked.
+- [x] R4.9 — **Batched to one visual pass per 5s** ✅ And frozen entirely while a card is open, per
+      MOTION.md's rule against the map reflowing beneath something being read.
+- [x] R4.10 — Skeletons ✅ 1.6s opacity pulse (no layout shift by construction), content-shaped,
+      heights reserved.
+- [x] R4.11 — **`prefers-reduced-motion` full pass** ✅ CSS neutralised globally in `index.css`;
+      `usePrefersReducedMotion` covers what CSS cannot reach — breathing, count-up, FLIP, the
+      terminal meter and the typed line. **A test asserts that every file using
+      `requestAnimationFrame` consults it**, so a future animation cannot quietly ignore the
+      preference. No information is lost: every animated value is also readable as text.
+- [x] R4.12 — **Cold-start screen as a first-class design** ✅ `ColdStartNotice` types
+      `~ estimated from typical campus patterns` at 40ms/char under the map title when nothing is
+      live, and disappears the moment anything is. This is the state the app spends its first week
+      in; an unexplained map of estimates reads as stale data or a bug rather than as the system
+      working exactly as designed.
+- [x] R4.13 — **`src/lib/motion.test.ts` enforces the spec's hard rules** ✅ No springs, nothing
+      over 600ms, no spinners, reduced-motion respected. It found two real violations on its first
+      run: `constants/animations.ts` still exported a spring, and the map's colour transition was
+      still the PRD's 800ms rather than MOTION.md's 400ms — which also meant it outlasted the
+      window breathing was paused for, so the two would have overlapped.
+
+**Gate — MOTION.md acceptance checklist, verbatim:**
+> The first five items need a human with a screen recorder and are marked as **owner-verified** in
+> the Ship Runbook rather than claimed here. Everything checkable in code is checked.
+- [~] Breathing invisible in any single frame; visible over 4s of recording — *amplitude and easing
+      implemented to spec; needs recording to confirm*
+- [~] Change vs liveness visually distinct in a recording, verified — *implemented; needs recording*
+- [x] All three confidence tiers distinguishable in a screenshot ✅ distinct opacity, qualifier text
+      and border style; asserted by `confidence.test.ts`
+- [x] Cold-start (0 users) screen looks intentional ✅ implemented; **this is the default state of
+      the fixture build**, so it is what anyone running the app locally sees first
+- [x] Manual-report loop (submit → see your zone update) end to end ✅ works with no backend, via
+      the fixture layer
+- [x] `prefers-reduced-motion` full pass: static everything, no information lost ✅ enforced by test
+- [x] No layout shift on skeleton→content anywhere (CLS ≈ 0) ✅ opacity-only pulse, heights reserved
 
 **Gate — MOTION.md acceptance checklist, verbatim:**
 - [ ] Breathing invisible in any single frame; visible over 4s of recording

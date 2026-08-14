@@ -2,6 +2,7 @@ import type { CampusItem } from '@/hooks/useCampusOverview'
 import { getOccupancyLabel } from '@/constants/occupancy'
 import { isOpenNow } from '@/lib/buildingHours'
 import OccupancyBar from '../OccupancyBar'
+import CountUpValue from '../CountUpValue'
 import FavouriteButton from '../FavouriteButton'
 import StatusDot from '../ui/StatusDot'
 
@@ -59,7 +60,7 @@ export default function BuildingTile({
           data-count
           style={{ color: 'var(--color-text-primary)' }}
         >
-          {pct !== null ? `${Math.round(pct)}%` : '--'}
+          <CountUpValue value={pct} suffix="%" />
         </p>
 
         <div className="mt-2">

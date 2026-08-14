@@ -4,6 +4,7 @@ import { BUILDING_META } from '@/constants/buildingMeta'
 import { getActiveAmenities } from '@/lib/amenityHelpers'
 import { formatRelativeTime } from '@/lib/relativeTime'
 import Card from './ui/Card'
+import { getConfidence } from '@/lib/confidence'
 import SectionLabel from './SectionLabel'
 import StatusDot from './ui/StatusDot'
 import OccupancyBar from './OccupancyBar'
@@ -37,6 +38,9 @@ export default function BuildingCardSummary({
   const meta = BUILDING_META[building.slug]
   const amenities = getActiveAmenities(building)
   const pct = occupancy?.pct ?? null
+  // Low-confidence readings get a dashed edge, per MOTION.md's three tiers, so
+  // a stale number never presents itself with the same authority as a live one.
+  const confidence = getConfidence(occupancy?.source ?? 'none')
 
   return (
     <>
@@ -57,9 +61,9 @@ export default function BuildingCardSummary({
         )}
       </Card>
 
-      <Card>
+      <Card style={{ borderStyle: confidence.borderStyle }}>
         <div className="flex items-baseline justify-between gap-3 mb-2">
-          <OccupancyBadge pct={pct} />
+          <OccupancyBadge pct={pct} source={occupancy?.source} />
           <TrendArrow trend={occupancy?.trend ?? 'stable'} />
         </div>
 

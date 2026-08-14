@@ -3,6 +3,9 @@ import { useReportSubmit } from './useReportSubmit'
 import { findNearestBuilding } from '@/lib/geoHelpers'
 import type { Building, NoiseLevel, ReportLevel } from '@/types'
 
+/** How long the acknowledgement holds before the sheet closes. */
+const CONFIRMATION_MS = 1100
+
 interface Position {
   latitude: number
   longitude: number
@@ -20,6 +23,7 @@ interface Position {
 export function useCrowdReporting(buildings: Building[], position: Position | null) {
   const { submit, isSubmitting, error, canReport } = useReportSubmit()
   const [target, setTarget] = useState<Building | null>(null)
+  const [confirmed, setConfirmed] = useState(false)
 
   /** Open the sheet for the building the user is standing closest to. */
   const reportNearest = useCallback(() => {
@@ -32,18 +36,29 @@ export function useCrowdReporting(buildings: Building[], position: Position | nu
     async (level: ReportLevel, noise?: NoiseLevel) => {
       if (!target) return
       const succeeded = await submit(target.id, level, noise)
-      // Only close on success — a failed report that silently vanishes looks
-      // exactly like one that worked.
-      if (succeeded) setTarget(null)
+
+      // A failed report that silently vanishes looks exactly like one that
+      // worked, so failure keeps the sheet open with its error.
+      if (!succeeded) return
+
+      // Hold on an acknowledgement before closing. MOTION.md: the user should
+      // see their own report land, not have the sheet disappear and leave them
+      // guessing whether it counted. The delay is what makes the loop legible.
+      setConfirmed(true)
+      setTimeout(() => {
+        setConfirmed(false)
+        setTarget(null)
+      }, CONFIRMATION_MS)
     },
     [target, submit],
   )
 
   return {
     target,
+    confirmed,
     reportNearest,
     reportBuilding: setTarget,
-    dismiss: useCallback(() => setTarget(null), []),
+    dismiss: useCallback(() => { setConfirmed(false); setTarget(null) }, []),
     handleSubmit,
     isSubmitting,
     error,

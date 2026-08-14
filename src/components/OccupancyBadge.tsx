@@ -1,19 +1,26 @@
 import { getOccupancyLabel } from '@/constants/occupancy'
+import { getConfidence } from '@/lib/confidence'
+import CountUpValue from './CountUpValue'
+import type { DataQuality } from '@/types'
 
 interface OccupancyBadgeProps {
   pct: number | null
+  /** Where the reading came from, so its confidence can be shown alongside it. */
+  source?: DataQuality
 }
 
 /**
- * The reading itself: `38% · QUIET`.
+ * The reading itself: `38% · QUIET`, with its confidence attached.
  *
- * Monospace with tabular figures so the width never shifts as the number
- * counts — a value that jitters reads as a glitch rather than a measurement.
+ * The number counts rather than jumping — MOTION.md: "A number that teleports
+ * reads as a glitch; a number that counts reads as measurement." Monospace
+ * tabular figures keep the width fixed while it runs.
+ *
  * The label is not decoration: WCAG forbids conveying occupancy by shade alone,
- * and the ramp here is monochrome, so the word is doing real work.
+ * and the ramp here is monochrome, so the word carries real weight.
  */
-export default function OccupancyBadge({ pct }: OccupancyBadgeProps) {
-  const label = getOccupancyLabel(pct)
+export default function OccupancyBadge({ pct, source }: OccupancyBadgeProps) {
+  const confidence = source ? getConfidence(source) : null
 
   if (pct === null) {
     return (
@@ -25,8 +32,11 @@ export default function OccupancyBadge({ pct }: OccupancyBadgeProps) {
 
   return (
     <span className="mono text-sm" style={{ color: 'var(--color-text-primary)' }}>
-      <span data-count>{Math.round(pct)}%</span>
-      <span style={{ color: 'var(--color-text-dim)' }}> · {label.toUpperCase()}</span>
+      <CountUpValue value={pct} suffix="%" />
+      <span style={{ color: 'var(--color-text-dim)' }}> · {getOccupancyLabel(pct).toUpperCase()}</span>
+      {confidence?.qualifier && (
+        <span style={{ color: 'var(--color-text-dim)' }}> · {confidence.qualifier}</span>
+      )}
     </span>
   )
 }

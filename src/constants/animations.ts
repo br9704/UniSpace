@@ -1,6 +1,19 @@
 import type { Variants, Transition } from 'framer-motion'
 
-export const SPRING: Transition = { type: 'spring', stiffness: 280, damping: 28 }
+/**
+ * Shared motion values.
+ *
+ * MOTION.md permits ease-out or linear only — no bounce, no spring, nothing
+ * over 600ms. `src/lib/motion.test.ts` enforces both rules across the codebase.
+ *
+ * The scroll reveal below is the spec's standard: fade plus a 16px rise over
+ * 400ms, staggered 60ms.
+ */
+
+/** Ease-out. Replaces the spring this file previously exported. */
+export const EASE_OUT = [0.16, 1, 0.3, 1] as const
+
+export const SHEET_TRANSITION: Transition = { duration: 0.28, ease: EASE_OUT }
 
 export const staggerContainer: Variants = {
   hidden: {},
@@ -9,15 +22,21 @@ export const staggerContainer: Variants = {
 
 export const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
 }
 
 export const fadeIn: Variants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3 } },
+  visible: { opacity: 1, transition: { duration: 0.3, ease: 'easeOut' } },
 }
 
-export const cardHover = {
-  whileHover: { scale: 1.015, transition: { duration: 0.2 } },
-  whileTap: { scale: 0.98 },
+/**
+ * Press feedback only — no hover scale.
+ *
+ * A card that grows under the cursor is decoration, and on the map it would
+ * compete with the breathing that means "live". Touch feedback stays, because
+ * it confirms a tap registered.
+ */
+export const cardPress = {
+  whileTap: { scale: 0.99, transition: { duration: 0.1, ease: 'easeOut' } },
 }

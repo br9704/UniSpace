@@ -1,10 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useMemo, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import Map from '@/components/Map'
-import DataSourcePill from '@/components/DataSourcePill'
 import StaleDataBanner from '@/components/StaleDataBanner'
-import ReportFAB from '@/components/ReportFAB'
 import ReportSheet from '@/components/ReportSheet'
 import { useBuildings } from '@/hooks/useBuildings'
 import { useZones } from '@/hooks/useZones'
@@ -14,37 +11,34 @@ import { useBlendedOccupancy } from '@/hooks/useBlendedOccupancy'
 import { useBuildingCard } from '@/hooks/useBuildingCard'
 import { useRecentReports } from '@/hooks/useRecentReports'
 import { useCrowdReporting } from '@/hooks/useCrowdReporting'
+import { useBatchedOccupancy } from '@/hooks/useBatchedOccupancy'
+import { useBuildingSheetData } from '@/hooks/useBuildingSheetData'
+import { useBuildingSelection } from '@/hooks/useBuildingSelection'
 import { useFavourites } from '@/hooks/useFavourites'
 import { detectZone } from '@/lib/zoneDetection'
 import { getDominantDataSource, getLatestUpdate } from '@/lib/occupancyHelpers'
-import { getDayPredictions } from '@/lib/predictionInsights'
-import { aggregateNoise } from '@/lib/noiseAggregation'
 import FindPanel from '@/components/FindPanel'
-import FindTrigger from '@/components/FindTrigger'
 import MapBuildingSheet from '@/components/MapBuildingSheet'
+import MapOverlays from '@/components/MapOverlays'
 
 export default function MapPage() {
   const { buildings, error } = useBuildings()
   const { zones } = useZones()
   const { position, isWatching } = useGeolocation()
-  const { occupancyMap, allTypicalRows, allPredictionRows } = useBlendedOccupancy(buildings, zones)
+  const { occupancyMap: liveOccupancy, allTypicalRows, allPredictionRows } =
+    useBlendedOccupancy(buildings, zones)
   const reportsMap = useRecentReports()
   const { toggle: toggleFavourite, isFavourite } = useFavourites()
   const report = useCrowdReporting(buildings, position)
-  const [searchParams, setSearchParams] = useSearchParams()
-  // A `?building=` deep link (from a Share link) seeds the selection directly,
-  // rather than being copied into state by an effect after first paint.
-  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(
-    () => searchParams.get('building'),
-  )
+  const { selectedId: selectedBuildingId, select, clear } = useBuildingSelection()
   const [showFind, setShowFind] = useState(false)
 
-  // Clear the param once consumed so dismissing the card doesn't reopen it, and
-  // so the URL is shareable as the plain map. The router is an external system,
-  // which is what an effect is for.
-  useEffect(() => {
-    if (searchParams.has('building')) setSearchParams({}, { replace: true })
-  }, [searchParams, setSearchParams])
+  // Batched to one visual pass per 5s, and frozen entirely while a card is
+  // open — MOTION.md forbids the map reflowing under something being read.
+  const { occupancyMap, isChanging } = useBatchedOccupancy(
+    liveOccupancy,
+    selectedBuildingId !== null,
+  )
 
   const { building: selectedBuilding, occupancy: selectedOccupancy } = useBuildingCard(
     selectedBuildingId, buildings, occupancyMap,
@@ -61,26 +55,12 @@ export default function MapPage() {
     enabled: isWatching && zones.length > 0,
   })
 
-  const dayPredictions = useMemo(() => {
-    if (!selectedBuildingId) return []
-    return getDayPredictions(allPredictionRows, allTypicalRows, selectedBuildingId, new Date().getDay())
-  }, [selectedBuildingId, allPredictionRows, allTypicalRows])
-
-  const selectedNoise = useMemo(() => {
-    if (!selectedBuildingId) return null
-    return aggregateNoise(reportsMap.get(selectedBuildingId) ?? [])
-  }, [selectedBuildingId, reportsMap])
+  const { predictions, noise } = useBuildingSheetData(
+    selectedBuildingId, allPredictionRows, allTypicalRows, reportsMap,
+  )
 
   const dominantSource = useMemo(() => getDominantDataSource(occupancyMap), [occupancyMap])
   const latestUpdate = useMemo(() => getLatestUpdate(occupancyMap), [occupancyMap])
-
-  const handleBuildingClick = useCallback((id: string) => {
-    setSelectedBuildingId(id)
-  }, [])
-
-  const handleDismiss = useCallback(() => {
-    setSelectedBuildingId(null)
-  }, [])
 
 
   if (error) {
@@ -98,13 +78,20 @@ export default function MapPage() {
   return (
     <div className="h-full w-full relative">
       <StaleDataBanner lastUpdated={latestUpdate} />
-      <Map buildings={buildings} occupancyMap={occupancyMap} onBuildingClick={handleBuildingClick} />
-      <div className="absolute bottom-2 left-4" style={{ zIndex: 50 }}>
-        <DataSourcePill source={dominantSource} lastUpdated={latestUpdate} />
-      </div>
-      <ReportFAB visible={!selectedBuilding && !showFind} onClick={report.reportNearest} />
-
-      {!selectedBuilding && !showFind && <FindTrigger onClick={() => setShowFind(true)} />}
+      <Map
+        buildings={buildings}
+        occupancyMap={occupancyMap}
+        onBuildingClick={select}
+        isChanging={isChanging}
+      />
+      <MapOverlays
+        occupancyMap={occupancyMap}
+        dominantSource={dominantSource}
+        lastUpdated={latestUpdate}
+        visible={!selectedBuilding && !showFind}
+        onFind={() => setShowFind(true)}
+        onReport={report.reportNearest}
+      />
 
       {/* Find panel */}
       <FindPanel
@@ -113,18 +100,18 @@ export default function MapPage() {
         buildings={buildings}
         occupancyMap={occupancyMap}
         userPosition={position}
-        onBuildingSelect={handleBuildingClick}
+        onBuildingSelect={select}
       />
       <MapBuildingSheet
         building={selectedBuilding}
         occupancy={selectedOccupancy}
-        predictions={dayPredictions}
+        predictions={predictions}
         reportCount={occupancyMap.get(selectedBuildingId ?? '')?.source === 'crowd-report' ? 1 : 0}
-        noiseLevel={selectedNoise?.level ?? null}
-        noiseCount={selectedNoise?.count}
+        noiseLevel={noise?.level ?? null}
+        noiseCount={noise?.count}
         isFavourite={selectedBuildingId ? isFavourite(selectedBuildingId) : false}
         onToggleFavourite={() => { if (selectedBuildingId) toggleFavourite(selectedBuildingId) }}
-        onDismiss={handleDismiss}
+        onDismiss={clear}
         onReport={report.reportBuilding}
       />
       <AnimatePresence>
@@ -133,6 +120,7 @@ export default function MapPage() {
             building={report.target}
             canReport={report.canReport(report.target.id)}
             isSubmitting={report.isSubmitting}
+            confirmed={report.confirmed}
             error={report.error}
             onSubmit={report.handleSubmit}
             onDismiss={report.dismiss}

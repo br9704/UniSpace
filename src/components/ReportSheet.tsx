@@ -3,11 +3,14 @@ import { motion } from 'framer-motion'
 import type { Building, ReportLevel, NoiseLevel } from '@/types'
 import Button from './ui/Button'
 import ReportLevelPicker from './ReportLevelPicker'
+import TerminalLoader from './TerminalLoader'
 
 interface ReportSheetProps {
   building: Building
   canReport: boolean
   isSubmitting: boolean
+  /** True once the report has landed, while the acknowledgement holds. */
+  confirmed?: boolean
   error: string | null
   onSubmit: (level: ReportLevel, noise?: NoiseLevel) => void
   onDismiss: () => void
@@ -41,6 +44,7 @@ export default function ReportSheet({
   building,
   canReport,
   isSubmitting,
+  confirmed = false,
   error,
   onSubmit,
   onDismiss,
@@ -83,7 +87,11 @@ export default function ReportSheet({
             &gt; HOW BUSY IS {(building.short_name ?? building.name).toUpperCase()}?
           </h2>
 
-          {!canReport ? (
+          {confirmed ? (
+            <p className="mono text-sm mt-4" style={{ color: 'var(--color-amber)' }} role="status">
+              &gt; thanks — updating&hellip;
+            </p>
+          ) : !canReport ? (
             <p className="mono text-xs mt-4" style={{ color: 'var(--color-text-secondary)' }}>
               You reported this recently — try again in a few minutes.
             </p>
@@ -129,6 +137,12 @@ export default function ReportSheet({
                 </p>
               )}
 
+              {/*
+                MOTION.md calls this the single most important piece of motion
+                in the app: the user submits, watches the meter fill, and then
+                sees their own report land on the map. That closed loop is what
+                makes contributing feel worth doing a second time.
+              */}
               <Button
                 variant="primary"
                 size="lg"
@@ -136,7 +150,11 @@ export default function ReportSheet({
                 disabled={!level || isSubmitting}
                 onClick={() => level && onSubmit(level, noise ?? undefined)}
               >
-                {isSubmitting ? 'SUBMITTING' : 'SUBMIT REPORT'}
+                {isSubmitting ? (
+                  <TerminalLoader width={12} durationMs={600} label="Submitting your report" />
+                ) : (
+                  'SUBMIT REPORT'
+                )}
               </Button>
             </>
           )}

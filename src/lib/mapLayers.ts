@@ -46,9 +46,11 @@ export function getFillLayerConfig(): FillLayerSpecification {
       // Near-opaque: the ramp is already low-contrast by design, so letting the
       // basemap show through would collapse the middle of it.
       'fill-opacity': 0.88,
-      // A change in value must read as a change, not a flicker. 800ms matches
-      // the transition MOTION.md specifies for the heatmap.
-      'fill-color-transition': { duration: 800, delay: 0 },
+      // A change in value must read as a change, not a flicker. 400ms linear,
+      // matching MOTION.md ("cross-fades to its new intensity over 400ms") and
+      // the window useBatchedOccupancy holds the breathing paused for, so the
+      // two never overlap. PRD 11.6 said 800ms; MOTION.md supersedes it.
+      'fill-color-transition': { duration: 400, delay: 0 },
     },
   }
 }
