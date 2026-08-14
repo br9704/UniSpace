@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { fetchRows, subscribeRows } from '@/lib/dataSource'
 import type { ZoneOccupancy } from '@/types'
 import { groupByBuildingId, mergeZoneOccupancy } from '@/lib/occupancyHelpers'
 
@@ -10,8 +10,8 @@ interface UseOccupancyRealtimeResult {
 }
 
 /**
- * Subscribes to zone_occupancy changes via Supabase Realtime.
- * Fetches initial snapshot on mount, then merges live updates.
+ * Subscribes to zone_occupancy changes.
+ * Fetches an initial snapshot on mount, then merges live updates.
  * Returns zone occupancies grouped by building_id.
  */
 export function useOccupancyRealtime(): UseOccupancyRealtimeResult {
@@ -22,45 +22,32 @@ export function useOccupancyRealtime(): UseOccupancyRealtimeResult {
   useEffect(() => {
     let cancelled = false
 
-    // 1. Initial fetch
     async function fetchInitial() {
-      const { data, error: fetchError } = await supabase
-        .from('zone_occupancy')
-        .select('*')
-
+      const { data, error: fetchError } = await fetchRows<ZoneOccupancy>('zone_occupancy')
       if (cancelled) return
 
       if (fetchError) {
-        setError(fetchError.message)
+        setError(fetchError)
         setIsLoading(false)
         return
       }
 
-      setMap(groupByBuildingId((data as ZoneOccupancy[]) ?? []))
+      setMap(groupByBuildingId(data))
       setIsLoading(false)
     }
 
     fetchInitial()
 
-    // 2. Realtime subscription
-    const channel = supabase
-      .channel('zone-occupancy-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'zone_occupancy' },
-        (payload) => {
-          if (cancelled) return
-          const updated = payload.new as ZoneOccupancy
-          if (updated?.zone_id && updated?.building_id) {
-            setMap((prev) => mergeZoneOccupancy(prev, updated))
-          }
-        },
-      )
-      .subscribe()
+    const unsubscribe = subscribeRows<ZoneOccupancy>('zone_occupancy', '*', (updated) => {
+      if (cancelled) return
+      if (updated?.zone_id && updated?.building_id) {
+        setMap((prev) => mergeZoneOccupancy(prev, updated))
+      }
+    })
 
     return () => {
       cancelled = true
-      supabase.removeChannel(channel)
+      unsubscribe()
     }
   }, [])
 

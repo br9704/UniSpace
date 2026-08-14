@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { fetchRows, subscribeRows } from '@/lib/dataSource'
 import type { OccupancyReport } from '@/types'
 
 /**
- * Fetches non-expired occupancy reports and subscribes to new inserts via Realtime.
+ * Fetches non-expired occupancy reports and subscribes to new inserts.
  * Prunes expired reports from local state every 60 seconds.
  * Returns reports grouped by building_id.
  */
@@ -14,39 +14,28 @@ export function useRecentReports(): Map<string, OccupancyReport[]> {
     let cancelled = false
 
     async function fetchInitial() {
-      const { data, error } = await supabase
-        .from('occupancy_reports')
-        .select('id, building_id, occupancy_level, noise_level, created_at, expires_at')
-        .gt('expires_at', new Date().toISOString())
-
+      const { data, error } = await fetchRows<OccupancyReport>('occupancy_reports', {
+        unexpiredOnly: true,
+      })
       if (cancelled || error) return
-      setReportsMap(groupByBuilding(data as OccupancyReport[]))
+      setReportsMap(groupByBuilding(data))
     }
 
     fetchInitial()
 
-    // Realtime subscription for new inserts
-    const channel = supabase
-      .channel('occupancy-reports-realtime')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'occupancy_reports' },
-        (payload) => {
-          if (cancelled) return
-          const report = payload.new as OccupancyReport
-          if (report?.id && report?.building_id) {
-            setReportsMap((prev) => {
-              const next = new Map(prev)
-              const group = [...(next.get(report.building_id) ?? []), report]
-              next.set(report.building_id, group)
-              return next
-            })
-          }
-        },
-      )
-      .subscribe()
+    const unsubscribe = subscribeRows<OccupancyReport>('occupancy_reports', 'INSERT', (report) => {
+      if (cancelled) return
+      if (report?.id && report?.building_id) {
+        setReportsMap((prev) => {
+          const next = new Map(prev)
+          next.set(report.building_id, [...(next.get(report.building_id) ?? []), report])
+          return next
+        })
+      }
+    })
 
-    // Prune expired reports every 60 seconds
+    // Reports carry a 30-minute lifespan; drop them as they lapse so stale
+    // crowd data never keeps influencing the blend.
     const pruneInterval = setInterval(() => {
       setReportsMap((prev) => {
         const now = Date.now()
@@ -61,7 +50,7 @@ export function useRecentReports(): Map<string, OccupancyReport[]> {
 
     return () => {
       cancelled = true
-      supabase.removeChannel(channel)
+      unsubscribe()
       clearInterval(pruneInterval)
     }
   }, [])

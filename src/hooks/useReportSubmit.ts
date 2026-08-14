@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { isFixtureMode } from '@/lib/dataSource'
+import { submitFixtureReport } from '@/lib/fixtures'
 import type { ReportLevel, NoiseLevel } from '@/types'
 
 const THROTTLE_MS = 5 * 60 * 1000 // 5 minutes
@@ -34,6 +36,18 @@ export function useReportSubmit(): UseReportSubmitResult {
     setIsSubmitting(true)
 
     try {
+      // Submit → see your own zone update is the loop that earns contributions,
+      // so it has to be exercisable with no backend, not just described.
+      if (isFixtureMode) {
+        submitFixtureReport({
+          building_id: buildingId,
+          occupancy_level: level,
+          noise_level: noise ?? null,
+        })
+        localStorage.setItem(throttleKey(buildingId), String(Date.now()))
+        return true
+      }
+
       const { data, error: fnError } = await supabase.functions.invoke('submit-report', {
         body: {
           building_id: buildingId,

@@ -419,4 +419,79 @@ describe('blendOccupancy', () => {
     expect(result.source).toBe('google')
     expect(result.pct).toBe(42)
   })
+
+  describe('zones with a fresh timestamp but no live sessions', () => {
+    // aggregate-occupancy runs every 10 seconds and rewrites EVERY zone row
+    // with a current `last_updated`, marking it `data_quality: 'none'` when no
+    // sessions were counted. So "fresh" is always true once the cron is
+    // running, and freshness alone must never be read as "live".
+    //
+    // Every other test in this file uses the helper default of
+    // `data_quality: 'live'`, which is why this went unnoticed: with the cron
+    // running and no users, the entire campus reported `source: 'live'` at 0%
+    // — telling students every building was empty.
+    const emptyZones = [
+      makeZoneOccupancy({ occupancy_count: 0, occupancy_pct: 0, data_quality: 'none' }),
+    ]
+
+    it('does not claim live data', () => {
+      const result = blendOccupancy({
+        zoneOccupancies: emptyZones,
+        zones: [makeZone()],
+        googleCache: null,
+        prediction: null,
+        googleTypical: makeGoogleTypical({ typical_popularity: 64 }),
+        reports: [],
+        now: NOW,
+      })
+
+      expect(result.source).not.toBe('live')
+    })
+
+    it('falls through to the estimated curve rather than reporting 0%', () => {
+      const result = blendOccupancy({
+        zoneOccupancies: emptyZones,
+        zones: [makeZone()],
+        googleCache: null,
+        prediction: null,
+        googleTypical: makeGoogleTypical({ typical_popularity: 64 }),
+        reports: [],
+        now: NOW,
+      })
+
+      expect(result.pct).toBe(64)
+    })
+
+    it('reports no data when there is no estimate to fall back to', () => {
+      const result = blendOccupancy({
+        zoneOccupancies: emptyZones,
+        zones: [makeZone()],
+        googleCache: null,
+        prediction: null,
+        googleTypical: null,
+        reports: [],
+        now: NOW,
+      })
+
+      expect(result.source).toBe('none')
+      expect(result.pct).toBeNull()
+    })
+
+    it('still reports live when at least one zone has active sessions', () => {
+      const result = blendOccupancy({
+        zoneOccupancies: [
+          makeZoneOccupancy({ zone_id: 'z1', occupancy_pct: 0, data_quality: 'none' }),
+          makeZoneOccupancy({ zone_id: 'z2', occupancy_pct: 40, data_quality: 'live' }),
+        ],
+        zones: [makeZone({ id: 'z1' }), makeZone({ id: 'z2' })],
+        googleCache: null,
+        prediction: null,
+        googleTypical: makeGoogleTypical({ typical_popularity: 64 }),
+        reports: [],
+        now: NOW,
+      })
+
+      expect(result.source).toBe('live')
+    })
+  })
 })

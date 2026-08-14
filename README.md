@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/favicon.svg" width="80" alt="Pulse logo" />
+  <img src="public/favicon.svg" width="80" alt="UniSpace logo" />
 </p>
 
 <h1 align="center">UniSpace</h1>
@@ -10,14 +10,14 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/status-in%20development-orange" alt="Status: In Development" />
-  <img src="https://img.shields.io/badge/phase-2%20in%20progress%20|%20sprint%2020%20done-blue" alt="Phase: 2 In Progress, Sprint 20 Done" />
+  <img src="https://img.shields.io/badge/phase-recovery%20(R3%20of%20R5)-blue" alt="Phase: Recovery, R3 of R5" />
   <img src="https://img.shields.io/badge/pilot-UoM%20Parkville-003366" alt="Pilot: UoM Parkville" />
   <img src="https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey" alt="License" />
 </p>
 
 <p align="center">
   <a href="#the-problem">Problem</a> &middot;
-  <a href="#how-pulse-works">How It Works</a> &middot;
+  <a href="#how-unispace-works">How It Works</a> &middot;
   <a href="#tech-stack">Tech Stack</a> &middot;
   <a href="#local-setup">Setup</a> &middot;
   <a href="#documentation">Docs</a> &middot;
@@ -32,7 +32,7 @@
 
 ## What is UniSpace?
 
-UniSpace gives every university student real-time visibility into campus occupancy so they never waste time walking to a full building again. It combines crowdsourced, privacy-preserving location data with Google Maps Popular Times to deliver a live occupancy heatmap — check it before you leave, not after you arrive.
+UniSpace gives every university student real-time visibility into campus occupancy so they never waste time walking to a full building again. It combines crowdsourced, privacy-preserving location data with anonymous crowd reports and modelled estimates of each building's weekly rhythm — check it before you leave, not after you arrive.
 
 No accounts. No hardware. No tracking. Just open the app and see where the space is.
 
@@ -47,7 +47,7 @@ This is especially costly for:
 - **Group coordinators** — finding a table for 5 requires more effort than solo study
 - **Night owls** — need to know which buildings are open and occupied (safety)
 
-## How Pulse Works
+## How UniSpace Works
 
 1. **Open the app** — no account required. A full-viewport heatmap shows every building on campus.
 2. **Check occupancy** — buildings are colour-coded from green (empty) to red (packed), with percentage labels and trend arrows (filling / emptying / stable).
@@ -57,16 +57,24 @@ This is especially costly for:
 
 ### Data Source Fallback
 
-Pulse always shows the best available data:
+UniSpace always shows the best available data, and says which it is:
 
 | Priority | Source | When it's used |
 |:--------:|--------|----------------|
-| 1 | **Live crowdsourced** | Active UniSpace users in the building |
-| 2 | **Crowd reports** | Anonymous 1-5 busyness reports (30-min decay) |
-| 3 | **Google current popularity** | Real-time busyness from Google Places API |
-| 4 | **UniSpace predicted** | EWMA model trained on historical occupancy |
-| 5 | **Google typical popularity** | Weekly busyness histogram from Google |
-| 6 | **No data** | Grey polygon — "No data available" |
+| 1 | **Live crowdsourced** | Active UniSpace users currently in the building |
+| 2 | **Crowd reports** | Anonymous 1–5 busyness reports (30-min decay) |
+| 3 | **UniSpace predicted** | Model trained on this campus's own accumulated occupancy history |
+| 4 | **Typical estimate** | UniSpace's modelled weekly rhythm for that building — an estimate, labelled as one |
+| 5 | **No data** | Grey polygon — "No data available" |
+
+> **On Google.** Google's public Places API does **not** expose live or typical busyness — the
+> Popular Times you see in Google Maps is an internal feature with no public endpoint. UniSpace
+> therefore uses Google only for opening hours. The weekly curves in tiers 3 and 4 are our own
+> modelled estimates of campus rhythm, and the UI labels them as estimates wherever they appear. We
+> would rather show an honest estimate than borrow someone else's credibility for it.
+
+Confidence is a visible state, not a footnote: live data, estimates and stale data are rendered
+differently, so "we don't really know" never looks like "it's empty".
 
 ### Privacy by Design
 
@@ -87,14 +95,14 @@ Privacy is a core architectural constraint, not an afterthought:
 | Layer | Technology |
 |-------|------------|
 | **Frontend** | React 19 + TypeScript, Vite 8 (PWA) |
-| **Styling** | Tailwind CSS v4 with UoM design tokens |
-| **Map** | Mapbox GL JS (dark-v11 base) |
+| **Styling** | Tailwind CSS v4 |
+| **Map** | Mapbox GL JS |
 | **Backend** | Supabase — Postgres, Realtime, Edge Functions (Deno) |
-| **External data** | Google Places API |
+| **External data** | Google Places API (opening hours only) |
 | **Charts** | Recharts |
 | **Animations** | Framer Motion |
 | **Geospatial** | Turf.js (client-side point-in-polygon) |
-| **State** | Zustand (where needed) |
+| **State** | React hooks — no state library |
 
 ---
 
@@ -102,38 +110,51 @@ Privacy is a core architectural constraint, not an afterthought:
 
 ### Prerequisites
 
-- Node.js 18+
-- pnpm (`npm install -g pnpm`)
-- A Supabase project
-- A Mapbox account (free tier sufficient)
-- A Google Cloud project with Places API enabled
+- Node.js 20+
+- pnpm 11 (`npm install -g pnpm`)
+- A Mapbox account (free tier is sufficient) — needed for the map tiles
+- A Supabase project — **only** if you want to run against a real backend
 
-### Quick Start
+### Quick start — no backend required
+
+The app runs entirely on local fixtures, generated from the committed seed SQL. Use this to work on
+anything that isn't the database itself.
 
 ```bash
-# 1. Clone
 git clone https://github.com/br9704/UniSpace.git
 cd UniSpace
-
-# 2. Install dependencies
 pnpm install
 
-# 3. Configure environment
 cp .env.example .env.local
-# Edit .env.local with your Supabase URL, anon key, and Mapbox token
+# Add VITE_MAPBOX_TOKEN. Leave the Supabase vars blank and fixtures switch on
+# automatically; set VITE_USE_FIXTURES=true to force them on regardless.
 
-# 4. Apply database migrations (requires Supabase CLI)
-supabase db push
-
-# 5. Seed the database (UoM Parkville — 18 buildings)
-# Run supabase/seed/001_uom_parkville.sql and 002_google_popular_times.sql via Supabase SQL Editor or CLI
-
-# 6. Run tests
 pnpm test
-
-# 7. Start dev server
 pnpm dev
 ```
+
+You get all 18 buildings, their floor zones and their weekly occupancy curves, with no live
+occupancy — which is exactly what a real deployment looks like before it has users.
+
+### Running against Supabase
+
+```bash
+supabase db push                    # migrations 001–014
+# then run supabase/seed/001–004 via the SQL editor or CLI
+supabase functions deploy <name>    # for each of the 6 Edge Functions
+```
+
+Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in `.env.local`. See
+[`MASTERPLAN.md`](MASTERPLAN.md) § *Owner-Gated Ship Runbook* for the full provisioning sequence,
+including secrets, `pg_cron` schedules and quota caps.
+
+### Regenerating fixtures
+
+```bash
+pnpm generate:fixtures   # after editing anything in supabase/seed/
+```
+
+A test fails if the generated fixtures fall out of step with the seed SQL, so the two cannot drift.
 
 ### Environment Variables
 
@@ -142,6 +163,8 @@ pnpm dev
 | `VITE_SUPABASE_URL` | `.env.local` | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | `.env.local` | Supabase anonymous/public key |
 | `VITE_MAPBOX_TOKEN` | `.env.local` | Mapbox GL JS access token |
+| `VITE_USE_FIXTURES` | `.env.local` | `true`/`false` to force local fixtures on or off. Omit to auto-detect from whether Supabase is configured. |
+| `VITE_VAPID_PUBLIC_KEY` | `.env.local` | Web Push VAPID public key (required for push subscription) |
 | `GOOGLE_PLACES_API_KEY` | Supabase secrets | Google Places API key (server-side only) |
 | `VAPID_PUBLIC_KEY` | Supabase secrets | Web Push VAPID public key |
 | `VAPID_PRIVATE_KEY` | Supabase secrets | Web Push VAPID private key |
@@ -154,17 +177,16 @@ pnpm dev
 ## Project Structure
 
 ```
-pulse/
+UniSpace/
 ├── src/
 │   ├── components/       # Reusable UI components
 │   ├── hooks/            # Custom React hooks (data fetching, realtime, geo)
-│   ├── lib/              # Supabase client, Mapbox helpers, blending utilities
+│   ├── lib/              # Data source, fixtures, Mapbox helpers, blending utilities
 │   ├── pages/            # Top-level route components (HomePage, MapPage, AlertsPage)
 │   ├── types/            # Shared TypeScript interfaces and enums
-│   ├── stores/           # Zustand state stores
 │   └── constants/        # App constants (colours, thresholds, map defaults)
 ├── supabase/
-│   ├── migrations/       # SQL migrations (001–012), applied sequentially
+│   ├── migrations/       # SQL migrations (001–014), applied sequentially
 │   ├── functions/        # Deno Edge Functions
 │   └── seed/             # Seed data scripts
 ├── PRD.md                # Product requirements document
@@ -221,7 +243,7 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 
 **University of Melbourne — Parkville**
 
-18 UoM Parkville buildings with OSM-sourced polygon outlines, amenity data, building hours, and typical-occupancy curves (1,172 rows across all 7 days).
+18 UoM Parkville buildings with OSM-sourced polygon outlines, amenity data, building hours, and typical-occupancy curves (1,156 rows, covering each building only on the days it is open).
 
 Those curves are UniSpace's own modelled estimates of campus rhythm, not measurements and not Google data — the UI labels them as estimates wherever they are shown. Google's public Places API does not expose live busyness, so it is used only for opening hours.
 

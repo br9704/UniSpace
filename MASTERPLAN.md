@@ -6,8 +6,8 @@
 
 ## Project Status
 
-**Current sprint pointer:** → **R2 — Local Fixture Layer** (Phase 1.9 · Recovery)
-*(R0 correction pass and R1 foundation repair both closed 2026-08-14.)*
+**Current sprint pointer:** → **R3 — SIGNAL Design System + Component Decomposition** (Phase 1.9 · Recovery)
+*(R0, R1 and R2 all closed 2026-08-14.)*
 
 **Current state (2026-08-14, post-audit):** The 199 `[x]` marks recorded before this date were
 **claims, not facts**. A forensic audit — `WIRING-AUDIT.md`, in this folder — ran the toolchain,
@@ -910,19 +910,55 @@ Verified with `pnpm` itself, not `vite build` — running only the latter is wha
 sprints are not blocked on owner-gated provisioning.
 
 **Subtasks:**
-- [ ] R2.1 — Fixture provider behind the **existing hook signatures** (`useBuildings`, `useZones`,
-      `useOccupancyRealtime`, `useGooglePopularity`, `useRecentReports`) so **no call site changes**.
-- [ ] R2.2 — Derive fixtures from the committed seed SQL, not hand-written duplicates, so fixtures
-      and production data cannot drift.
-- [ ] R2.3 — Env-gated switch (fixtures in dev / Supabase when configured), defaulting safely.
-- [ ] R2.4 — Simulated occupancy drift so live-vs-changed motion states (R4) are observable.
-- [ ] R2.5 — Reuse fixtures as test data for hook-level tests.
+- [x] R2.1 — Fixture provider behind the existing hook signatures ✅ Introduced `src/lib/dataSource.ts`
+      as the single read seam (`fetchRows` / `subscribeRows`); the five hooks call it instead of
+      `supabase` directly. **No call site above the hooks changed.**
+  - [x] R2.1.extra — `fetchRows` pages until the server returns a short page. `useGooglePopularity`
+        previously requested exactly two pages of `google_popular_times` — correct at 1,172 rows,
+        silently truncating the moment a second campus is added.
+- [x] R2.2 — Derived from the committed seed SQL ✅ `scripts/parseSeedSql.mjs` +
+      `scripts/generateFixtures.mjs` → `src/lib/fixtures/seedData.generated.ts`
+      (`pnpm generate:fixtures`). `seedData.test.ts` fails if the generated file falls out of step,
+      so fixtures and production data cannot drift.
+- [x] R2.3 — Env-gated switch ✅ `VITE_USE_FIXTURES`, defaulting to fixtures whenever Supabase has
+      no credentials, so a fresh clone runs with no setup. Documented in `.env.example`.
+- [⏭️] R2.4 — Simulated occupancy drift ⏭️ **DEFERRED to R4**, where the motion states it exists to
+      exercise are actually built. Doing it here would mean fixtures inventing "live" occupancy,
+      which is the one thing they must not do — see the honesty note below.
+- [x] R2.5 — Fixtures reused as test data ✅ `pipeline.test.ts` runs
+      fixtures → blending → rendered values across all 18 buildings, plus zone detection against the
+      real polygons and the full crowd-report loop.
 
-**Gate:** full core loop runs at 375 px with zero network: map → tap building → card → floor
-breakdown → crowd report → favourite → recommendations.
+**Gate:** ✅ **PASSED 2026-08-14.** `pnpm build` green · `pnpm lint` clean · **172 tests pass**
+(154 → 172). Dev server serves the app with zero backend. The read path is verified end to end by
+`pipeline.test.ts` rather than by inspection.
 
-**Note:** this layer is *also* the honest cold-start mode MOTION.md § "The cold-start screen is a
-first-class design" requires — one artifact, three jobs.
+**Honesty note.** The fixtures report **no live occupancy** — every zone comes back
+`data_quality: 'none'`, so blending falls through to the estimated curves. That is not a shortcut,
+it is the true state of a campus app with no users, and it is the state the UI most needs to handle
+well. Synthesising fake "live" numbers would make the thin-data case look solved when it is the case
+most in need of design. This layer therefore *is* the cold-start mode MOTION.md asks for.
+
+### 🐛 P0 bug found by this sprint — `blendOccupancy` ignored `data_quality`
+
+Building the fixtures surfaced a defect that would have shipped:
+
+`aggregate-occupancy` runs every 10 seconds and rewrites **every** zone row with a current
+`last_updated`, setting `data_quality: 'none'` when no sessions were counted. `blendOccupancy`
+checked only freshness. So once the cron was running with zero users, **every building on campus
+would have reported `source: 'live'` at `0%` — "● Live · Empty"**, confidently telling students that
+a full library was free.
+
+All 23 existing blending tests passed throughout, because the test helper defaults to
+`data_quality: 'live'` and no test ever varied it. Fixed, and pinned with four regression tests
+covering the empty, fall-through, no-data and genuinely-live cases.
+
+- [x] R2.6 — Fixed `blendOccupancy` to require `data_quality === 'live'`, not just a fresh
+      timestamp ✅
+- [x] R2.7 — Seed data corrected: Melbourne School of Design had Saturday curves and Student
+      Pavilion Sunday curves while their hours say closed — the UI would have shown occupancy
+      estimates for shut buildings. Removed (16 rows), and `seedData.test.ts` now asserts no
+      building has curve data for a day it is closed. Curve rows: **1,172 → 1,156.**
 
 ---
 

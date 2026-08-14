@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { fetchRows } from '@/lib/dataSource'
 import type { BuildingZone } from '@/types'
 
 interface UseZonesResult {
@@ -17,19 +17,17 @@ export function useZones(): UseZonesResult {
     let cancelled = false
 
     async function fetchZones() {
-      const { data, error: fetchError } = await supabase
-        .from('building_zones')
-        .select('*')
+      const { data, error: fetchError } = await fetchRows<BuildingZone>('building_zones')
 
       if (cancelled) return
 
       if (fetchError) {
-        setError(fetchError.message)
+        setError(fetchError)
         setIsLoading(false)
         return
       }
 
-      setZones((data as BuildingZone[]) ?? [])
+      setZones(data)
       setIsLoading(false)
     }
 

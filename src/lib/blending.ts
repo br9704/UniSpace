@@ -111,8 +111,18 @@ export function blendOccupancy(input: BlendingInput): BlendedOccupancy {
   const now = input.now ?? new Date()
 
   // ── Priority 1: Live crowdsourced data ──
+  //
+  // Both conditions are required, and the data_quality one is the load-bearing
+  // half. aggregate-occupancy runs every 10 seconds and rewrites EVERY zone
+  // row with a current `last_updated`, marking it `data_quality: 'none'` when
+  // no sessions were counted. Freshness alone is therefore always true once the
+  // cron is running, so a timestamp-only check reports `source: 'live'` with
+  // `pct: 0` for the entire campus — confidently telling students every
+  // building is empty when in truth nobody is broadcasting at all.
   const freshZones = zoneOccupancies.filter(
-    (zo) => isDataFresh(zo.last_updated, STALE_DATA_THRESHOLD_MS, now),
+    (zo) =>
+      zo.data_quality === 'live' &&
+      isDataFresh(zo.last_updated, STALE_DATA_THRESHOLD_MS, now),
   )
 
   if (freshZones.length > 0) {

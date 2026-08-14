@@ -8,6 +8,7 @@ import InstallBanner from '@/components/InstallBanner'
 import OfflineBanner from '@/components/OfflineBanner'
 import ConfigError from '@/components/ConfigError'
 import { isSupabaseConfigured, supabaseConfigError } from '@/lib/supabase'
+import { isFixtureMode } from '@/lib/dataSource'
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -34,8 +35,9 @@ function AnimatedRoutes() {
 
 export default function App() {
   // Without credentials every screen would render as an unexplained empty
-  // state. Say what is wrong once, at the top, instead.
-  if (!isSupabaseConfigured) {
+  // state. Say what is wrong once, at the top, instead — unless fixtures are
+  // standing in for the backend, in which case there is nothing wrong.
+  if (!isSupabaseConfigured && !isFixtureMode) {
     return <ConfigError detail={supabaseConfigError} />
   }
 

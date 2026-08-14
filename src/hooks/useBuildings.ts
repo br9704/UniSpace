@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { fetchRows } from '@/lib/dataSource'
 import type { Building } from '@/types'
 
 interface UseBuildingsResult {
@@ -17,19 +17,17 @@ export function useBuildings(): UseBuildingsResult {
     let cancelled = false
 
     async function fetchBuildings() {
-      const { data, error: fetchError } = await supabase
-        .from('buildings')
-        .select('*')
+      const { data, error: fetchError } = await fetchRows<Building>('buildings')
 
       if (cancelled) return
 
       if (fetchError) {
-        setError(fetchError.message)
+        setError(fetchError)
         setIsLoading(false)
         return
       }
 
-      setBuildings((data as Building[]) ?? [])
+      setBuildings(data)
       setIsLoading(false)
     }
 
