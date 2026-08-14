@@ -55,7 +55,7 @@ export default function DataSourcePill({ source, lastUpdated }: DataSourcePillPr
       <span style={{ color: live ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>
         {label}
       </span>
-      {timeLabel && <span style={{ color: 'var(--color-text-dim)' }}>· {timeLabel}</span>}
+      {timeLabel && <span style={{ color: 'var(--color-text-muted)' }}>· {timeLabel}</span>}
     </div>
   )
 }

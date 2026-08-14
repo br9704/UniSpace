@@ -19,7 +19,7 @@ interface TrendArrowProps {
 const TREND_CONFIG: Record<OccupancyTrend, { glyph: string; colour: string; label: string }> = {
   filling: { glyph: '↑', colour: 'var(--color-text-secondary)', label: 'Filling' },
   emptying: { glyph: '↓', colour: 'var(--color-live)', label: 'Emptying' },
-  stable: { glyph: '→', colour: 'var(--color-text-dim)', label: 'Stable' },
+  stable: { glyph: '→', colour: 'var(--color-text-muted)', label: 'Stable' },
 }
 
 export default function TrendArrow({ trend, size = 13 }: TrendArrowProps) {

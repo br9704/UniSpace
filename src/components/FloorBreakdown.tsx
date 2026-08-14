@@ -55,7 +55,7 @@ export default function FloorBreakdown({ floors }: FloorBreakdownProps) {
               </span>
               <span
                 className="mono text-xs w-16 shrink-0"
-                style={{ color: 'var(--color-text-dim)' }}
+                style={{ color: 'var(--color-text-muted)' }}
               >
                 {getOccupancyLabel(floor.occupancy_pct).toUpperCase()}
               </span>

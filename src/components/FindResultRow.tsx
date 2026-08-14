@@ -52,7 +52,7 @@ export default function FindResultRow({
         >
           <CountUpValue value={pct} suffix="%" />
         </p>
-        <p className="mono text-[10px] mt-1" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-[10px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
           {getOccupancyLabel(pct).toUpperCase()}
         </p>
       </div>
@@ -61,7 +61,7 @@ export default function FindResultRow({
         <p className="text-sm truncate" style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>
           {building.short_name || building.name}
         </p>
-        <div className="mono flex items-center gap-2 mt-1 text-xs" style={{ color: 'var(--color-text-dim)' }}>
+        <div className="mono flex items-center gap-2 mt-1 text-xs" style={{ color: 'var(--color-text-muted)' }}>
           <StatusDot open={status.open} size={5} />
           <span>{status.open ? 'OPEN' : 'CLOSED'}</span>
           {walkMinutes !== null && <span>· ~{Math.round(walkMinutes)} MIN</span>}

@@ -25,13 +25,13 @@ export default function AlertsList({
       <SectionLabel className="mb-3">alerts</SectionLabel>
 
       {!isSupported ? (
-        <p className="mono text-xs" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
           &gt; This browser does not support push notifications.
           {/* On iOS this is the expected state until the app is installed to the
               Home Screen — Safari tabs cannot receive Web Push at all. */}
         </p>
       ) : permission === 'denied' ? (
-        <p className="mono text-xs" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
           &gt; Notifications are blocked. Enable them in your browser settings to use alerts.
         </p>
       ) : alerts.length === 0 ? (
@@ -73,7 +73,7 @@ export default function AlertsList({
                 <p className="text-sm" style={{ color: 'var(--color-text-primary)' }}>
                   {nameFor(alert.building_id)}
                 </p>
-                <p className="mono text-xs mt-0.5" style={{ color: 'var(--color-text-dim)' }}>
+                <p className="mono text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
                   BELOW {alert.threshold_pct}%
                 </p>
               </div>

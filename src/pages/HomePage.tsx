@@ -37,7 +37,7 @@ export default function HomePage() {
   return (
     <div className="h-full overflow-y-auto" style={{ backgroundColor: 'var(--color-bg)' }}>
       <header className="px-4 pt-10 pb-6">
-        <p className="mono text-xs" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
           &gt; {greeting()}
         </p>
         <h1
@@ -51,7 +51,7 @@ export default function HomePage() {
         </p>
         {/* Stated plainly and kept visible — the UoM name appears throughout, and
             a reader should never have to wonder whether this is official. */}
-        <p className="mono text-xs mt-1" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
           Not affiliated with the University of Melbourne
         </p>
       </header>

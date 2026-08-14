@@ -36,7 +36,7 @@ export default function DataSourceBadge({ source }: DataSourceBadgeProps) {
       className="mono inline-flex items-center gap-1.5 px-2 py-0.5 text-xs tracking-wider"
       style={{
         border: '1px solid var(--color-hairline)',
-        color: live ? 'var(--color-text-primary)' : 'var(--color-text-dim)',
+        color: live ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
       }}
     >
       <span

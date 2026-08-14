@@ -108,7 +108,7 @@ export default function FindPanel({
             </div>
 
             <div className="flex-1 overflow-y-auto px-4 pb-6">
-              <p className="mono text-xs mb-3" style={{ color: 'var(--color-text-dim)' }}>
+              <p className="mono text-xs mb-3" style={{ color: 'var(--color-text-muted)' }}>
                 {results.length} {results.length === 1 ? 'RESULT' : 'RESULTS'}
               </p>
 

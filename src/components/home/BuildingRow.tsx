@@ -57,7 +57,7 @@ export default function BuildingRow({
               {building.name}
             </p>
             {meta && (
-              <p className="mono text-xs mt-1" style={{ color: 'var(--color-text-dim)' }}>
+              <p className="mono text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                 {meta.address}
               </p>
             )}
@@ -75,7 +75,7 @@ export default function BuildingRow({
           <OccupancyBar pct={pct} height={4} />
         </div>
 
-        <div className="mono flex items-center gap-2 mt-2 text-xs" style={{ color: 'var(--color-text-dim)' }}>
+        <div className="mono flex items-center gap-2 mt-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
           <StatusDot open={status.open} size={5} />
           <span>{status.open ? `OPEN · CLOSES ${status.closesAt}` : 'AFTER HOURS'}</span>
           {item.walkMinutes !== null && <span>· ~{Math.round(item.walkMinutes)} MIN</span>}
@@ -84,7 +84,7 @@ export default function BuildingRow({
         {typical && (
           // Phrased as an estimate on purpose — these curves are modelled, not
           // measured, and must never read as a live number.
-          <p className="mono text-xs mt-2" style={{ color: 'var(--color-text-dim)' }}>
+          <p className="mono text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
             ~ USUALLY {typical.typical_popularity}% NOW
             {peak && ` · PEAKS ${formatHour(peak.hour_of_day).toUpperCase()}`}
           </p>
@@ -98,7 +98,7 @@ export default function BuildingRow({
                 className="mono text-xs px-1.5 py-0.5"
                 style={{
                   border: '1px solid var(--color-hairline)',
-                  color: 'var(--color-text-dim)',
+                  color: 'var(--color-text-muted)',
                 }}
               >
                 {amenity.label}

@@ -18,7 +18,7 @@ export default function AlertsPage() {
         <h1 className="mono text-xl tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
           ~/more
         </h1>
-        <p className="mono text-xs mt-2" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
           Alerts, FAQ and about
         </p>
       </header>
@@ -44,7 +44,7 @@ export default function AlertsPage() {
             UniSpace gives university students real-time visibility into campus occupancy, so they
             never waste a trip to a building that turns out to be full.
           </p>
-          <p className="mono text-xs mt-4" style={{ color: 'var(--color-text-dim)' }}>
+          <p className="mono text-xs mt-4" style={{ color: 'var(--color-text-muted)' }}>
             v0.1.0 · BUILT BY BRUNO JAAMAA
           </p>
           {isFixtureMode && (

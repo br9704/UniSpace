@@ -38,6 +38,22 @@ export const isFixtureMode: boolean = (() => {
 /** PostgREST caps a single response at 1000 rows. */
 const PAGE_SIZE = 1000
 
+/** Retry schedule for transient failures, in milliseconds. */
+const RETRY_DELAYS_MS = [400, 1200]
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+/**
+ * Whether a failure is worth retrying.
+ *
+ * Network blips and 5xx responses are transient and usually resolve on a second
+ * attempt. A 400 or a permissions error will fail identically every time, and
+ * retrying it just delays the error the user needs to see.
+ */
+function isTransient(message: string): boolean {
+  return /network|fetch|timeout|502|503|504|econn/i.test(message)
+}
+
 /**
  * Read every row of a table.
  *
@@ -54,6 +70,23 @@ export async function fetchRows<T>(
     return { data: getFixtureRows<T>(table, options), error: null }
   }
 
+  let result = await fetchAllPages<T>(table, options)
+
+  // Retry transient failures with backoff. A dropped connection on a train
+  // platform is the normal case for this app, not the exceptional one.
+  for (const delay of RETRY_DELAYS_MS) {
+    if (!result.error || !isTransient(result.error)) break
+    await sleep(delay)
+    result = await fetchAllPages<T>(table, options)
+  }
+
+  return result
+}
+
+async function fetchAllPages<T>(
+  table: ReadableTable,
+  options: { unexpiredOnly?: boolean },
+): Promise<QueryResult<T>> {
   const rows: T[] = []
 
   for (let page = 0; ; page++) {

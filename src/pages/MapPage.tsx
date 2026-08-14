@@ -1,8 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
-import Map from '@/components/Map'
-import StaleDataBanner from '@/components/StaleDataBanner'
 import ReportSheet from '@/components/ReportSheet'
 import { useBuildings } from '@/hooks/useBuildings'
 import { useZones } from '@/hooks/useZones'
@@ -20,12 +18,14 @@ import { detectZone } from '@/lib/zoneDetection'
 import { getDominantDataSource, getLatestUpdate } from '@/lib/occupancyHelpers'
 import FindPanel from '@/components/FindPanel'
 import MapBuildingSheet from '@/components/MapBuildingSheet'
-import MapOverlays from '@/components/MapOverlays'
+import MapSurface from '@/components/MapSurface'
+import LoadFailure from '@/components/LoadFailure'
+import BuildingListFallback from '@/components/BuildingListFallback'
 
 export default function MapPage() {
   const { buildings, error } = useBuildings()
   const { zones } = useZones()
-  const { position, isWatching } = useGeolocation()
+  const { position, isWatching, error: geoError } = useGeolocation()
   const { occupancyMap: liveOccupancy, allTypicalRows, allPredictionRows } =
     useBlendedOccupancy(buildings, zones)
   const reportsMap = useRecentReports()
@@ -76,32 +76,35 @@ export default function MapPage() {
   const latestUpdate = useMemo(() => getLatestUpdate(occupancyMap), [occupancyMap])
 
 
-  if (error) {
-    return (
-      <div
-        className="mono h-full w-full flex items-center justify-center p-6 text-center text-sm"
-        style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text-secondary)' }}
-        role="alert"
-      >
-        <p>&gt; could not load buildings — {error}</p>
-      </div>
+  // No Mapbox token means no tiles, but the occupancy data is unaffected — so
+  // fall back to the list rather than showing an empty screen. PRD § 6.1.
+  const mapUnavailable = !import.meta.env.VITE_MAPBOX_TOKEN && buildings.length > 0
+
+  if (error || mapUnavailable) {
+    return error ? (
+      <LoadFailure message={error} />
+    ) : (
+      <BuildingListFallback
+        buildings={buildings}
+        occupancyMap={occupancyMap}
+        onSelect={select}
+        reason="no Mapbox token configured"
+      />
     )
   }
 
   return (
     <div className="h-full w-full relative">
-      <StaleDataBanner lastUpdated={latestUpdate} />
-      <Map
+      <MapSurface
         buildings={buildings}
-        occupancyMap={occupancyMap}
-        onBuildingClick={select}
-        isChanging={isChanging}
-      />
-      <MapOverlays
         occupancyMap={occupancyMap}
         dominantSource={dominantSource}
         lastUpdated={latestUpdate}
-        visible={!selectedBuilding && !showFind}
+        isChanging={isChanging}
+        chromeVisible={!selectedBuilding && !showFind}
+        hasPosition={position !== null}
+        locationDenied={geoError?.code === 1}
+        onSelect={select}
         onFind={() => setShowFind(true)}
         onReport={report.reportNearest}
       />

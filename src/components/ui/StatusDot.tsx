@@ -21,7 +21,7 @@ export default function StatusDot({ open, size = 6 }: StatusDotProps) {
       style={{
         width: size,
         height: size,
-        backgroundColor: open ? 'var(--color-live)' : 'var(--color-text-dim)',
+        backgroundColor: open ? 'var(--color-live)' : 'var(--color-text-muted)',
       }}
     />
   )

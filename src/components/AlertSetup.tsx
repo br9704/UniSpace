@@ -54,7 +54,7 @@ export default function AlertSetup({
   if (permissionState === 'denied') {
     return (
       <Card>
-        <p className="mono text-xs" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
           &gt; NOTIFICATIONS BLOCKED — enable them in your browser settings to set alerts
         </p>
       </Card>
@@ -101,7 +101,7 @@ export default function AlertSetup({
             style={{ overflow: 'hidden' }}
           >
             <div className="px-4 pb-4">
-              <p className="mono text-xs mb-2" style={{ color: 'var(--color-text-dim)' }}>
+              <p className="mono text-xs mb-2" style={{ color: 'var(--color-text-muted)' }}>
                 ALERT ME WHEN BELOW
               </p>
               <div className="flex gap-2">

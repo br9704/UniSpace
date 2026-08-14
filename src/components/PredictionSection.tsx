@@ -36,7 +36,7 @@ export default function PredictionSection({ predictions }: PredictionSectionProp
       <dl className="mono mt-3 flex flex-col gap-1 text-xs">
         {peak && (
           <div className="flex justify-between gap-4">
-            <dt style={{ color: 'var(--color-text-dim)' }}>PEAK</dt>
+            <dt style={{ color: 'var(--color-text-muted)' }}>PEAK</dt>
             <dd style={{ color: 'var(--color-text-primary)' }}>
               {formatHour(peak.hour)} · {peak.pct}%
             </dd>
@@ -44,7 +44,7 @@ export default function PredictionSection({ predictions }: PredictionSectionProp
         )}
         {bestTime && (
           <div className="flex justify-between gap-4">
-            <dt style={{ color: 'var(--color-text-dim)' }}>BEST TIME</dt>
+            <dt style={{ color: 'var(--color-text-muted)' }}>BEST TIME</dt>
             {/* The one recommendation on this panel, so the one amber value. */}
             <dd style={{ color: 'var(--color-amber)' }}>
               {formatHour(bestTime.hour)} · {bestTime.pct}%
@@ -53,7 +53,7 @@ export default function PredictionSection({ predictions }: PredictionSectionProp
         )}
         {avoidWindow && (
           <div className="flex justify-between gap-4">
-            <dt style={{ color: 'var(--color-text-dim)' }}>AVOID</dt>
+            <dt style={{ color: 'var(--color-text-muted)' }}>AVOID</dt>
             <dd style={{ color: 'var(--color-text-secondary)' }}>
               {formatHour(avoidWindow.start)}–{formatHour(avoidWindow.end)} · ~{avoidWindow.pct}%
             </dd>
@@ -63,7 +63,7 @@ export default function PredictionSection({ predictions }: PredictionSectionProp
 
       {sparklineData.length > 1 && (
         <div className="mt-4">
-          <p className="mono text-xs mb-1" style={{ color: 'var(--color-text-dim)' }}>
+          <p className="mono text-xs mb-1" style={{ color: 'var(--color-text-muted)' }}>
             NEXT 6 HRS
           </p>
           <SparklineChart data={sparklineData} />

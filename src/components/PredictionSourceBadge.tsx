@@ -36,7 +36,7 @@ export default function PredictionSourceBadge({ source, confidence }: Prediction
         {isModelled ? '~' : '◆'}
       </span>
       <span className="tracking-wider">{label}</span>
-      <span style={{ color: 'var(--color-text-dim)' }}>· {detail}</span>
+      <span style={{ color: 'var(--color-text-muted)' }}>· {detail}</span>
     </div>
   )
 }

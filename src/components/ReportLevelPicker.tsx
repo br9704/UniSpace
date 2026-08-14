@@ -26,7 +26,7 @@ export default function ReportLevelPicker<T extends number>({
 }: ReportLevelPickerProps<T>) {
   return (
     <fieldset>
-      <legend className="mono text-xs mb-2" style={{ color: 'var(--color-text-dim)' }}>
+      <legend className="mono text-xs mb-2" style={{ color: 'var(--color-text-muted)' }}>
         {legend}
       </legend>
       <div className="flex gap-1.5" role="radiogroup" aria-label={legend}>

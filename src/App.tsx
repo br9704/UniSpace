@@ -9,6 +9,7 @@ import OfflineBanner from '@/components/OfflineBanner'
 import ConfigError from '@/components/ConfigError'
 import { isSupabaseConfigured, supabaseConfigError } from '@/lib/supabase'
 import { isFixtureMode } from '@/lib/dataSource'
+import ErrorBoundary from '@/components/ErrorBoundary'
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -49,7 +50,12 @@ export default function App() {
       <div className="h-full flex flex-col">
         <OfflineBanner />
         <div className="flex-1 overflow-hidden">
-          <AnimatedRoutes />
+          {/* Last line of defence. A render error anywhere below this leaves a
+              blank page otherwise, which for a "should I walk there?" app is
+              the worst possible answer — indistinguishable from "no". */}
+          <ErrorBoundary label="this screen">
+            <AnimatedRoutes />
+          </ErrorBoundary>
         </div>
         <TabBar />
         <InstallBanner />

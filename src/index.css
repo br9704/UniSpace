@@ -52,7 +52,20 @@
 
   --color-text-primary: #f0ece4;
   --color-text-secondary: #98928a;
+
+  /*
+   * SIGNAL's locked `--text-dim` is #55504a, which measures 2.56:1 against the
+   * warm-black ground — well under WCAG AA's 4.5:1 for text. The system's own
+   * rules make accessibility non-negotiable, so the token keeps its locked
+   * value and its locked purpose (decoration: aria-hidden glyphs, the unfilled
+   * half of a meter) while a third *text* level sits above it, at 4.79:1 on the ground and 4.65:1
+   * on raised surfaces — both clear of AA.
+   *
+   * Enforced by `contrast.test.ts`, which computes the ratios rather than
+   * trusting them.
+   */
   --color-text-dim: #55504a;
+  --color-text-muted: #807a70;
 
   --color-amber: #ffb000;
   --color-amber-bright: #ffc94d;
@@ -100,7 +113,7 @@
   --color-bg-overlay: rgba(5, 5, 5, 0.82);
   --color-border: #2c2925;
   --color-border-bright: #454039;
-  --color-text-tertiary: #55504a;
+  --color-text-tertiary: #807a70;
   --color-text-accent: #ffb000;
 
   /* ── Typography ── */

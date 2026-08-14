@@ -50,7 +50,7 @@ export default function BuildingCardHeader({
           style={{
             minWidth: 44, minHeight: 44,
             border: 'none', background: 'none', cursor: 'pointer',
-            color: copied ? 'var(--color-amber)' : 'var(--color-text-dim)',
+            color: copied ? 'var(--color-amber)' : 'var(--color-text-muted)',
           }}
         >
           {copied ? 'COPIED' : '[↗]'}

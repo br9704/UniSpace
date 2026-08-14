@@ -12,6 +12,7 @@ import OccupancyBadge from './OccupancyBadge'
 import TrendArrow from './TrendArrow'
 import DataSourceBadge from './DataSourceBadge'
 import NoiseIndicator from './NoiseIndicator'
+import OccupancyAnnouncer from './OccupancyAnnouncer'
 
 interface BuildingCardSummaryProps {
   building: Building
@@ -48,7 +49,7 @@ export default function BuildingCardSummary({
         <h2 className="text-xl" style={{ color: 'var(--color-text-primary)', fontWeight: 600 }}>
           {building.name}
         </h2>
-        <p className="mono text-xs mt-1.5" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-xs mt-1.5" style={{ color: 'var(--color-text-muted)' }}>
           {meta?.address ?? 'University of Melbourne — Parkville'}
         </p>
         {meta?.description && (
@@ -62,6 +63,7 @@ export default function BuildingCardSummary({
       </Card>
 
       <Card style={{ borderStyle: confidence.borderStyle }}>
+        <OccupancyAnnouncer buildingName={building.name} occupancy={occupancy} />
         <div className="flex items-baseline justify-between gap-3 mb-2">
           <OccupancyBadge pct={pct} source={occupancy?.source} />
           <TrendArrow trend={occupancy?.trend ?? 'stable'} />
@@ -72,7 +74,7 @@ export default function BuildingCardSummary({
         <div className="flex flex-wrap items-center gap-2 mt-3">
           {occupancy && <DataSourceBadge source={occupancy.source} />}
           {occupancy?.last_updated && (
-            <span className="mono text-xs" style={{ color: 'var(--color-text-dim)' }}>
+            <span className="mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
               {formatRelativeTime(occupancy.last_updated)}
             </span>
           )}
@@ -99,7 +101,7 @@ export default function BuildingCardSummary({
         {building.estimated_capacity && (
           // "~" is doing real work: capacities are directional estimates, and
           // PRD § 15 is explicit that they must never be presented as precise.
-          <p className="mono text-xs mt-2" style={{ color: 'var(--color-text-dim)' }}>
+          <p className="mono text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
             CAPACITY ~{building.estimated_capacity}
           </p>
         )}

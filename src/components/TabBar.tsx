@@ -61,7 +61,7 @@ export default function TabBar() {
           // each link fills it.
           className="mono flex flex-1 flex-col items-center justify-center gap-1 no-underline relative text-xs"
           style={({ isActive }) => ({
-            color: isActive ? 'var(--color-amber)' : 'var(--color-text-dim)',
+            color: isActive ? 'var(--color-amber)' : 'var(--color-text-muted)',
           })}
         >
           {({ isActive }) => (

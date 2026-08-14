@@ -11,7 +11,7 @@ interface CampusStatusProps {
 function StatRow({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className="mono flex justify-between gap-4 text-xs">
-      <dt style={{ color: 'var(--color-text-dim)' }}>{label}</dt>
+      <dt style={{ color: 'var(--color-text-muted)' }}>{label}</dt>
       <dd
         className="text-right"
         style={{ color: accent ? 'var(--color-amber)' : 'var(--color-text-primary)' }}
@@ -41,7 +41,7 @@ export default function CampusStatus({ overview }: CampusStatusProps) {
         <p className="mono text-sm" style={{ color: 'var(--color-text-primary)' }}>
           CAMPUS IS {campusIsQuiet ? 'QUIET' : 'BUSY'}
         </p>
-        <p className="mono text-xs mt-1" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
           {quietCount} of {items.length} buildings under 50%
         </p>
       </div>

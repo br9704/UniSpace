@@ -14,7 +14,7 @@ export default function SectionLabel({ children, className = '' }: SectionLabelP
   return (
     <h3
       className={`mono text-xs tracking-widest ${className}`}
-      style={{ color: 'var(--color-text-dim)', fontWeight: 400 }}
+      style={{ color: 'var(--color-text-muted)', fontWeight: 400 }}
     >
       <span aria-hidden="true">&lt;/</span>
       {children.toLowerCase()}

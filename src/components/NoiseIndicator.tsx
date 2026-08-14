@@ -31,7 +31,7 @@ export default function NoiseIndicator({ level, count }: NoiseIndicatorProps) {
         <span style={{ color: 'var(--color-hairline)' }}>{'░'.repeat(5 - filled)}</span>
       </span>
       <span>{getNoiseLabel(level).toUpperCase()}</span>
-      <span style={{ color: 'var(--color-text-dim)' }}>({count} reports)</span>
+      <span style={{ color: 'var(--color-text-muted)' }}>({count} reports)</span>
     </span>
   )
 }

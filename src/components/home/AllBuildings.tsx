@@ -93,7 +93,7 @@ export default function AllBuildings({
       </div>
 
       {visible.length === 0 ? (
-        <p className="mono text-xs text-center py-6" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-xs text-center py-6" style={{ color: 'var(--color-text-muted)' }}>
           &gt; no buildings match “{query}”
         </p>
       ) : (

@@ -67,11 +67,11 @@ export default function BuildingTile({
           <OccupancyBar pct={pct} height={3} />
         </div>
 
-        <p className="mono text-xs mt-2" style={{ color: 'var(--color-text-dim)' }}>
+        <p className="mono text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
           {getOccupancyLabel(pct).toUpperCase()}
         </p>
 
-        <div className="mono flex items-center justify-between mt-2 text-xs" style={{ color: 'var(--color-text-dim)' }}>
+        <div className="mono flex items-center justify-between mt-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
           <span className="flex items-center gap-1.5">
             <StatusDot open={status.open} size={5} />
             {status.open ? 'OPEN' : 'CLOSED'}

@@ -28,7 +28,7 @@ export default function FavouriteButton({ isFavourite, onToggle, size = 14 }: Fa
         minWidth: 44,
         minHeight: 44,
         fontSize: size,
-        color: isFavourite ? 'var(--color-amber)' : 'var(--color-text-dim)',
+        color: isFavourite ? 'var(--color-amber)' : 'var(--color-text-muted)',
         transition: 'color var(--dur-fast) linear',
       }}
     >

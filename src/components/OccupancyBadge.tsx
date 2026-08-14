@@ -24,7 +24,7 @@ export default function OccupancyBadge({ pct, source }: OccupancyBadgeProps) {
 
   if (pct === null) {
     return (
-      <span className="mono text-sm" style={{ color: 'var(--color-text-dim)' }}>
+      <span className="mono text-sm" style={{ color: 'var(--color-text-muted)' }}>
         NO DATA
       </span>
     )
@@ -33,9 +33,9 @@ export default function OccupancyBadge({ pct, source }: OccupancyBadgeProps) {
   return (
     <span className="mono text-sm" style={{ color: 'var(--color-text-primary)' }}>
       <CountUpValue value={pct} suffix="%" />
-      <span style={{ color: 'var(--color-text-dim)' }}> · {getOccupancyLabel(pct).toUpperCase()}</span>
+      <span style={{ color: 'var(--color-text-muted)' }}> · {getOccupancyLabel(pct).toUpperCase()}</span>
       {confidence?.qualifier && (
-        <span style={{ color: 'var(--color-text-dim)' }}> · {confidence.qualifier}</span>
+        <span style={{ color: 'var(--color-text-muted)' }}> · {confidence.qualifier}</span>
       )}
     </span>
   )

@@ -70,7 +70,7 @@ export default function InstallBanner() {
             style={{
               minWidth: 44, minHeight: 44,
               border: 'none', background: 'none',
-              color: 'var(--color-text-dim)', cursor: 'pointer', fontSize: 14,
+              color: 'var(--color-text-muted)', cursor: 'pointer', fontSize: 14,
             }}
           >
             ✕

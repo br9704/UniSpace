@@ -19,7 +19,7 @@ export default function AlertActive({ alert, currentPct, busy, onDelete }: Alert
           <p className="mono text-xs" style={{ color: 'var(--color-amber)' }}>
             ALERT SET · BELOW {alert.threshold_pct}%
           </p>
-          <p className="mono text-xs mt-1" style={{ color: 'var(--color-text-dim)' }}>
+          <p className="mono text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
             NOW {currentPct !== null ? `${Math.round(currentPct)}%` : '--'}
             {belowThreshold && ' · BELOW THRESHOLD'}
           </p>
