@@ -1,5 +1,16 @@
+import { lazy, Suspense } from 'react'
 import type { BlendedOccupancy, Building, DataQuality } from '@/types'
-import Map from './Map'
+
+/**
+ * Mapbox GL is 1.6 MB — by a wide margin the largest thing this app ships, and
+ * the home screen never renders it. Loading it here rather than in the entry
+ * chunk keeps the landing route light for the commuter checking their phone on
+ * a train, which is the exact scenario in PRD § 3.1.
+ *
+ * `lib/preloadMap` warms it during idle time, so navigating to the map is still
+ * instant despite the split.
+ */
+const Map = lazy(() => import('@/components/Map'))
 import MapOverlays from './MapOverlays'
 import ErrorBoundary from './ErrorBoundary'
 import BuildingListFallback from './BuildingListFallback'
@@ -57,12 +68,14 @@ export default function MapSurface({
       <StaleDataBanner lastUpdated={lastUpdated} />
 
       <ErrorBoundary label="the map" fallback={listFallback('the map failed to render')}>
-        <Map
-          buildings={buildings}
-          occupancyMap={occupancyMap}
-          onBuildingClick={onSelect}
-          isChanging={isChanging}
-        />
+        <Suspense fallback={<MapLoading />}>
+          <Map
+            buildings={buildings}
+            occupancyMap={occupancyMap}
+            onBuildingClick={onSelect}
+            isChanging={isChanging}
+          />
+        </Suspense>
       </ErrorBoundary>
 
       {!hasPosition && chromeVisible && <LocationPrompt denied={locationDenied} />}
@@ -76,5 +89,18 @@ export default function MapSurface({
         onReport={onReport}
       />
     </>
+  )
+}
+
+/** Terminal loader, matching the rest of the system — never a spinner. */
+function MapLoading() {
+  return (
+    <div
+      className="mono h-full w-full flex items-center justify-center text-xs"
+      style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text-muted)' }}
+      role="status"
+    >
+      &gt; loading map&hellip;
+    </div>
   )
 }

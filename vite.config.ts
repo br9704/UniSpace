@@ -43,5 +43,37 @@ export default defineConfig({
   ],
   resolve: {
     alias: { '@': '/src' }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        /*
+         * Split the heavy, rarely-changing dependencies into their own chunks.
+         *
+         * Without this they sit in the entry bundle, so any change to app code
+         * invalidates megabytes of vendor code a returning user already had
+         * cached. Mapbox alone is 1.6 MB and changes a few times a year.
+         */
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return undefined
+          // Mapbox is dynamically imported by MapSurface; naming it keeps it in
+          // one cacheable file instead of being split across route chunks.
+          if (id.includes('mapbox-gl')) return 'mapbox'
+          // Supabase is genuinely eager — every screen reads data — so this is
+          // purely a caching win: it survives app-code deploys untouched.
+          if (id.includes('@supabase')) return 'supabase'
+          //
+          // Recharts is deliberately NOT listed. It is only reachable through
+          // the lazily-loaded BuildingCard, and naming it here made rolldown
+          // hoist it into a *static* import of the entry chunk — adding 108 KB
+          // gzip to the landing route to "optimise" it.
+          //
+          return undefined
+        },
+      },
+    },
+    // Mapbox is irreducibly large; warning about it on every build trains the
+    // eye to ignore the warning. The other chunks stay under the default.
+    chunkSizeWarningLimit: 900,
   }
 })

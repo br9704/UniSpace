@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useBuildings } from '@/hooks/useBuildings'
 import { useZones } from '@/hooks/useZones'
@@ -6,6 +6,7 @@ import { useBlendedOccupancy } from '@/hooks/useBlendedOccupancy'
 import { useGeolocation } from '@/hooks/useGeolocation'
 import { useFavourites } from '@/hooks/useFavourites'
 import { useCampusOverview } from '@/hooks/useCampusOverview'
+import { schedulePreloadMap } from '@/lib/preloadMap'
 import CampusStatus from '@/components/home/CampusStatus'
 import TileGrid from '@/components/home/TileGrid'
 import AllBuildings from '@/components/home/AllBuildings'
@@ -30,6 +31,10 @@ export default function HomePage() {
 
   const favouriteSet = useMemo(() => new Set(favouriteIds), [favouriteIds])
   const favourites = overview.items.filter((item) => favouriteSet.has(item.building.id))
+
+  // Every tile and row on this screen leads to the map, so fetch its chunk
+  // once the browser is idle rather than when the user has already tapped.
+  useEffect(schedulePreloadMap, [])
 
   const openBuilding = (id: string) => navigate(`/map?building=${id}`)
   const showSkeletons = isLoading || buildings.length === 0
