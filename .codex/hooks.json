@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "command": "/usr/local/bin/node /Users/brunojaamaa/Desktop/hive/packages/cli/dist/cli/index.js hook codex-session-start"
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "command": "/usr/local/bin/node /Users/brunojaamaa/Desktop/hive/packages/cli/dist/cli/index.js hook codex-prompt"
+      }
+    ],
+    "Stop": [
+      {
+        "command": "/usr/local/bin/node /Users/brunojaamaa/Desktop/hive/packages/cli/dist/cli/index.js hook codex-stop"
+      }
+    ]
+  }
+}

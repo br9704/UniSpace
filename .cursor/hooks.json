@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "/usr/local/bin/node /Users/brunojaamaa/Desktop/hive/packages/cli/dist/cli/index.js hook cursor-session-start"
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "/usr/local/bin/node /Users/brunojaamaa/Desktop/hive/packages/cli/dist/cli/index.js hook cursor-post-tool-use"
+      }
+    ],
+    "stop": [
+      {
+        "command": "/usr/local/bin/node /Users/brunojaamaa/Desktop/hive/packages/cli/dist/cli/index.js hook cursor-stop"
+      }
+    ]
+  }
+}

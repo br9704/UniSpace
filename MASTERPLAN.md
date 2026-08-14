@@ -1,9 +1,35 @@
-# MASTERPLAN.md — Pulse Implementation Plan
+# MASTERPLAN.md — UniSpace Implementation Plan
 
-> Status key: [ ] Not started | [x] Complete | [~] In progress | [⏭️] Deferred
+> Status key:
+> `[ ]` not started · `[x]` complete **and observed working** · `[~]` in progress / built-but-not-wired
+> `[⏭️]` deferred (always with a one-line reason) · `[⏭ roadmap, not scheduled]` out of current scope
 
 ## Project Status
-**Current state:** Sprints 0–15 complete. S14 (Noise + Favourites) adds noise aggregation from crowd reports (min 3 threshold), localStorage favourites with animated heart toggle, "Your Favourites" section on HomePage, "Low Noise" filter chip with adjusted scoring weights. S15 (Photos + Tips) adds PhotoCarousel component (CSS scroll-snap, IntersectionObserver dots), TipsList component (expandable, show 2 by default), and photos[] field in BuildingMeta — photo assets pending curation. 135 unit tests passing. Next: S16 (PWA Install + Service Worker).
+
+**Current sprint pointer:** → **R1 — Foundation Repair** (Phase 1.9 · Recovery)
+
+**Current state (2026-08-14, post-audit):** The 199 `[x]` marks recorded before this date were
+**claims, not facts**. A forensic audit — `WIRING-AUDIT.md`, in this folder — ran the toolchain,
+probed the backend and inspected the built CSS. Findings:
+
+- **The Supabase project was deleted.** Ref `kvagntgpiylxhjntexml` returns NXDOMAIN on three
+  independent resolvers. No database, no seeds, no Realtime, no deployed Edge Functions.
+- **Tailwind v4 is installed against v3 CSS syntax**, so the theme scale never loads. `.p-4`,
+  `.gap-2`, `.text-sm`, `.font-semibold`, `.rounded-lg` **emit no CSS at all**. Only 53 non-Mapbox
+  utilities exist in the whole bundle. This is why surfaces look unstyled.
+- **`pnpm build` fails** — `tsc -b` throws 4 errors. The project has not compiled since S20.
+- Migration `013` was never committed (repo jumps `012 → 014`); that work is unrecoverable.
+
+What *is* genuinely sound: the privacy path (verified end to end — "GPS never leaves your device"
+is accurate), 140 passing unit tests, and the React-level data plumbing in `MapPage.tsx`. The
+components are real. Everything underneath them broke.
+
+**Scope decision (Bruno, 2026-08-14):** finish **S0–S25**. Sprints S26–S36 are marked
+`[⏭ roadmap, not scheduled]` — 111 unchecked boxes are **not** 111 things to do.
+
+**Owner-gated work is deferred to the very end** (Bruno's instruction) and batched into a single
+runbook: § *Owner-Gated Ship Runbook*. Nothing in this plan blocks on Bruno until then; a local
+fixture layer (Sprint R2) stands in for the backend throughout.
 
 ---
 
@@ -111,7 +137,9 @@
 - Blending utility that returns the best available data source per building
 
 **Subtasks:**
-- [x] S2.1 — Implement sync-google-popularity Edge Function ✅ (deployed to Supabase, fetches opening_hours/is_open_now per building)
+- [~] S2.1 — Implement sync-google-popularity Edge Function — ⚠️ **CORRECTED 2026-08-14:** code is
+      written and sound, but "deployed to Supabase" is no longer true — the project was deleted.
+      `[~] built, not deployed`. Re-deploy is owner-gated (see Ship Runbook).
 - [x] S2.2 — Add skip-if-unchanged logic ✅ (compares cached vs new values before writing)
 - [x] S2.3 — Implement error handling ✅ (per-building — one failure doesn't block others)
 - [x] S2.4 — Write seed script for google_popular_times ✅ (335 rows across 5 buildings, realistic weekly curves)
@@ -224,7 +252,9 @@
 - Writes 15-minute snapshots to occupancy_history
 
 **Subtasks:**
-- [x] S5.1 — Implement complete aggregate-occupancy Edge Function ✅ (v2 deployed)
+- [~] S5.1 — Implement complete aggregate-occupancy Edge Function — ⚠️ **CORRECTED 2026-08-14:**
+      code written and privacy-audited, but "v2 deployed" is no longer true — deployment target
+      deleted. `[~] built, not deployed`. Re-deploy is owner-gated (see Ship Runbook).
 - [x] S5.2 — In-memory session tracking (Map<zone_id, Map<session_id, timestamp>>) ✅
 - [x] S5.3 — Position expiry logic (30-min expiry) ✅
 - [x] S5.4 — Trend calculation (±5% threshold: filling/emptying/stable) ✅
@@ -308,7 +338,9 @@
 - [x] S7.7 — Labels update in real-time via GeoJSON source refresh ✅
   - [x] S7.extra — Expanded from 5 to 20 UoM buildings (OSM-sourced polygons)
   - [x] S7.extra — Fixed all polygon shapes using real OpenStreetMap outlines (up to 58 vertices)
-  - [x] S7.extra — Seeded google_popular_times for all 18 buildings (1,252 rows)
+  - [x] S7.extra — Seeded google_popular_times for all 18 buildings — **1,321 rows**
+        (corrected 2026-08-14: `002` = 335 + `004` = 986. The previous figure of 1,252 here and
+        1,453 in README were both unbacked by any committed artifact — honesty-rule violation.)
   - [x] S7.extra — Removed Giblin Eunson (inside FBE) and Brownless (not in OSM) — 18 buildings final
   - [x] S7.extra — Fixed combined name+% label (was hiding names on buildings without data)
 
@@ -408,7 +440,10 @@
 - Empty state when no buildings match
 
 **Subtasks:**
-- [x] S10.1 — FindPage.tsx with full implementation ✅
+- [~] S10.1 — Recommendations UI — ⚠️ **CORRECTED 2026-08-14:** `FindPage.tsx` does not exist and
+      the `/find` route specified in PRD § 12.5 was never shipped. Commit `daf18af` replaced it
+      with `FindPanel.tsx`, a slide-up panel inside `MapPage`. The implementation is sound; the
+      plan and PRD were never updated to match. Re-specified in R4.
 - [x] S10.2 — useRecommendations hook with debounced scoring ✅
 - [x] S10.3 — Walking time via Turf.js distance at 1.4 m/s ✅
 - [x] S10.4 — Amenity match percentage calculation ✅
@@ -494,11 +529,18 @@
 - Hover/focus/active states on all interactive elements
 
 **Subtasks:**
-- [x] S12.1 — Dark theme CSS custom properties in index.css ✅
-- [x] S12.2 — Tailwind config: CSS variable bridge ✅
-- [x] S12.3 — useTheme hook + unit tests ✅
-- [x] S12.4 — ThemeToggle component ✅
-- [x] S12.5 — Map dark style switching ✅
+- [ ] S12.1 — Dark theme CSS custom properties in index.css — ❌ **CORRECTED 2026-08-14:** no
+      `[data-theme]` block exists anywhere. `:root` is a **light** palette
+      (`--color-bg-primary: #FFFFFF`). `useTheme.ts` actively *strips* stale `data-theme`
+      attributes — dark mode was added and then deleted. Superseded by R3 (SIGNAL: no light theme).
+- [ ] S12.2 — Tailwind config: CSS variable bridge — ❌ **CORRECTED:** `tailwind.config.ts` is
+      never loaded. Tailwind v4 ignores JS config unless referenced via `@config`; it is not.
+      The entire bridge is dead code. Fixed in R1.
+- [ ] S12.3 — useTheme hook + unit tests — ❌ **CORRECTED:** vestigial; no dark theme to toggle to.
+      Removed in R3.
+- [ ] S12.4 — ThemeToggle component — ❌ **CORRECTED:** same. Removed in R3.
+- [ ] S12.5 — Map dark style switching — ❌ **CORRECTED:** same. Replaced by a single SIGNAL dark
+      Mapbox style in R3.
 - [x] S12.6 — Button component ✅
 - [x] S12.7 — Card component ✅
 - [x] S12.8 — SectionHeader component ✅
@@ -511,7 +553,10 @@
 - [x] S12.15 — AlertsPage style migration ✅
 - [x] S12.16 — RecommendationCard style migration ✅
 - [x] S12.17 — Prediction components style migration ✅
-- [x] S12.18 — Final color audit sweep ✅
+- [ ] S12.18 — Final color audit sweep — ❌ **CORRECTED 2026-08-14:** claim was "no hardcoded hex
+      (grep clean)". Actual: **169 hardcoded hex literals across 17 files**, including inline
+      `style={{ backgroundColor: '#003865' }}` on the "Find a Spot" button in `MapPage.tsx`.
+      Retired wholesale in R3.
 - [x] S12.19 — Hover/focus/active states ✅
 - [x] S12.20 — Touch targets + accessibility ✅
 - [x] S12.21 — HomePage responsive layout ✅
@@ -523,7 +568,10 @@
 - [x] S12.27 — Page transition animations ✅
 - [x] S12.28 — useThemeColors hook for Recharts ✅
 - [x] S12.29 — Theme integration testing ✅
-- [x] S12.30 — Final audit (tsc, tests, lint, grep) ✅ (114 tests pass, zero TS errors, zero new lint errors)
+- [ ] S12.30 — Final audit (tsc, tests, lint, grep) — ❌ **CORRECTED 2026-08-14:** this gate was
+      recorded as passing but demonstrably did not run, or ran only `vite build` (which succeeds
+      while `tsc -b` fails). **Root cause of how three fatal defects shipped unnoticed.** R1 adds
+      a build-output CSS assertion so this class of silent failure cannot recur.
 
 **Test criteria:**
 - Toggle theme: light → dark → system auto — all pages correct
@@ -708,9 +756,15 @@
 **Subtasks:**
 - [x] S17.1 — Verify building hours from UoM website ✅ (added Sunday hours for libraries: ERC, Law, Alan Gilbert; teaching buildings correctly closed weekends)
 - [x] S17.2 — Verify amenity flags (WiFi, power, quiet zones, accessibility) ✅ (confirmed: WiFi/power universal, quiet zones in 4 libraries, food nearby in 11, accessibility verified)
-- [x] S17.3 — Verify Google Place IDs return valid results ✅ (filled 12 missing Place IDs via migration 013)
+- [ ] S17.3 — Verify Google Place IDs return valid results — ❌ **CORRECTED 2026-08-14:**
+      migration `013` **does not exist in the repo** (`supabase/migrations/` jumps `012 → 014`;
+      `grep -rn "013_"` finds nothing). The 12 Place IDs were applied directly to the cloud DB,
+      which has since been deleted. **Work is unrecoverable and must be redone** — see R1.
 - [⏭️] S17.4 — Adjust floor zone capacity estimates ⏭️ DEFERRED: current estimates are directional and sufficient for MVP
-- [x] S17.5 — Update seed script with refined data ✅ (migration 013_data_verification_fixes applied)
+- [ ] S17.5 — Update seed script with refined data — ❌ **CORRECTED 2026-08-14:** same missing
+      migration `013`. Also unresolved: `003_additional_buildings.sql` still seeds `brownless-*`,
+      which S7 records as removed, so seed data and `buildingMeta.ts` (18 slugs, no Brownless)
+      disagree. Reconciled in R1.
 
 **Test criteria:**
 - All 18 buildings visible on map at correct positions (already done in S7)
@@ -737,9 +791,12 @@
 - Accessible via public URL
 
 **Subtasks:**
-- [x] S18.1 — Run full TypeScript type check (tsc --noEmit) ✅ (0 errors)
-- [x] S18.2 — Run ESLint and fix any issues ✅ (0 new errors; 7 pre-existing in Map/StaleDataBanner/useGeolocation/usePositionBroadcast/MapPage)
-- [x] S18.3 — Run all unit tests ✅ (140 tests, 14 files, all passing)
+- [ ] S18.1 — Run full TypeScript type check — ❌ **CORRECTED 2026-08-14:** claim was "0 errors";
+      `tsc -b` actually reports **4 errors** (3× `useWebPush.ts`, 1× `HomePage.tsx`). Because
+      `build` = `tsc -b && vite build`, **the project cannot deploy.** Fixed in R1.
+- [ ] S18.2 — Run ESLint and fix any issues — ❌ **CORRECTED 2026-08-14:** claim was "0 new errors";
+      `eslint .` actually reports **10 errors**. Fixed in R1.
+- [x] S18.3 — Run all unit tests ✅ (140 tests, 14 files, all passing — re-verified 2026-08-14)
 - [ ] S18.4 — Manual test: open app → view heatmap → tap building → see card
 - [ ] S18.5 — Manual test: recommendations → apply filters → see ranked results
 - [ ] S18.6 — Manual test: GPS permission flow (grant and deny)
@@ -748,9 +805,11 @@
 - [ ] S18.9 — Manual test: toggle favourite → see it on HomePage
 - [ ] S18.10 — Manual test: noise level display with sufficient reports
 - [ ] S18.11 — Manual test: photo carousel and tips in BuildingCard
-- [ ] S18.12 — Configure Vercel project with environment variables
-- [ ] S18.13 — Deploy to Vercel
-- [ ] S18.14 — Verify deployed app loads and connects to Supabase
+- [⏭️] S18.12 — Configure Vercel project with environment variables ⏭️ **MOVED** to
+      § *Owner-Gated Ship Runbook* (Bruno's instruction: defer all owner-gated work to the end)
+- [⏭️] S18.13 — Deploy to Vercel ⏭️ **MOVED** to § *Owner-Gated Ship Runbook*
+- [⏭️] S18.14 — Verify deployed app loads and connects to Supabase ⏭️ **MOVED** — and note this
+      cannot be true today: the Supabase project referenced by `.env.local` **no longer exists**
 
 **Test criteria:**
 - Zero TypeScript errors
@@ -770,7 +829,168 @@
 
 ---
 
+## Phase 1.9 — Recovery (added 2026-08-14 after the forensic audit)
+
+> These five sprints exist because `WIRING-AUDIT.md` found three independent systemic failures
+> underneath a feature set that is otherwise real. **None of this is new features.** R1–R2 are
+> prerequisites for verifying anything at all; R3–R4 apply Bruno's locked design and motion
+> systems, which the app currently implements neither of; R5 re-checks the sprints whose `[x]`
+> marks were never observed against a working backend.
+>
+> **Sprint 18 (Deploy) does not close here.** Its deploy sub-tasks move to the
+> § *Owner-Gated Ship Runbook* at the end of this document, per Bruno's instruction to defer all
+> owner-gated work to the very end.
+
+### Sprint R1: Foundation Repair — the three root causes
+**Goal:** Make the project compile, make Tailwind emit CSS, and stop the app dying on bad config.
+Nothing downstream can be verified until this passes.
+
+**Subtasks:**
+- [ ] R1.1 — **Tailwind v4 migration (RC-2).** Replace `@tailwind base/components/utilities` in
+      `src/index.css` with `@import "tailwindcss"`; port the `tailwind.config.ts` theme into a
+      `@theme` block. Delete the dead config bridge.
+- [ ] R1.2 — **CSS emission assertion.** Commit a test that builds the stylesheet and asserts
+      `.p-4`, `.gap-2`, `.text-sm`, `.font-semibold`, `.rounded-lg` are present. This is the exact
+      probe that exposed RC-2; it becomes a permanent regression gate. *Without this, S12.30's
+      failure mode recurs silently.*
+- [ ] R1.3 — **Fix the 4 `tsc` errors (RC-3).** `useWebPush.ts` × 3 (`PushSubscriptionJSON` cast
+      needs `unknown` hop; `Uint8Array<ArrayBufferLike>` → `BufferSource`), `HomePage.tsx` × 1
+      (unused `getLatestUpdate` import).
+- [ ] R1.4 — **Fix all 10 ESLint errors**, including `MapPage.tsx:47` `setState`-in-effect
+      (derive from `searchParams` during render instead) and `sync-google-popularity` unused `_req`.
+- [ ] R1.5 — **Fail-soft Supabase config (B7).** `src/lib/supabase.ts` currently `throw`s at module
+      load on missing env → white screen with no diagnostics. Replace with a typed config guard
+      that surfaces a real error state. *This is why a misconfigured deploy shows nothing.*
+- [ ] R1.6 — **Rewrite migration `013` (RC-1a).** Re-source Google Place IDs for the 18 buildings
+      and commit as `013_data_verification_fixes.sql`, closing the `012 → 014` gap. Scope is now
+      opening-hours only (see decision: Google branding dropped).
+- [ ] R1.7 — **Reconcile seed data with `buildingMeta.ts`.** 18 slugs, no Brownless;
+      `003_additional_buildings.sql` still seeds `brownless-*`.
+- [ ] R1.8 — **Fix unbacked numbers.** README says 1,453 popular-times rows; committed seeds
+      contain **1,321**. Correct README and any other public copy.
+
+**Gate:** `pnpm build` green (not `vite build` — that is what hid RC-3) · `eslint .` zero errors ·
+`vitest run` all pass · R1.2 assertion passes.
+
+---
+
+### Sprint R2: Local Fixture Layer
+**Goal:** Make the entire app runnable and verifiable with no cloud backend, so the remaining ~20
+sprints are not blocked on owner-gated provisioning.
+
+**Subtasks:**
+- [ ] R2.1 — Fixture provider behind the **existing hook signatures** (`useBuildings`, `useZones`,
+      `useOccupancyRealtime`, `useGooglePopularity`, `useRecentReports`) so **no call site changes**.
+- [ ] R2.2 — Derive fixtures from the committed seed SQL, not hand-written duplicates, so fixtures
+      and production data cannot drift.
+- [ ] R2.3 — Env-gated switch (fixtures in dev / Supabase when configured), defaulting safely.
+- [ ] R2.4 — Simulated occupancy drift so live-vs-changed motion states (R4) are observable.
+- [ ] R2.5 — Reuse fixtures as test data for hook-level tests.
+
+**Gate:** full core loop runs at 375 px with zero network: map → tap building → card → floor
+breakdown → crowd report → favourite → recommendations.
+
+**Note:** this layer is *also* the honest cold-start mode MOTION.md § "The cold-start screen is a
+first-class design" requires — one artifact, three jobs.
+
+---
+
+### Sprint R3: SIGNAL Design System + Component Decomposition
+**Goal:** The app implements **neither** SIGNAL **nor** PRD § 11. Apply Bruno's locked system.
+
+**Design authority:** `~/bruno-portfolio/CLAUDE.md` § "Redesign Design Decisions (2026-07 · SIGNAL)".
+Warm black `#050505` · surface `#0b0a09` · text `#f0ece4` / `#98928a` / `#55504a` · **amber
+`#ffb000` as the single accent, used sparingly** · steel `#2c2925` · hairline `#1b1916`.
+**No light theme. No gradients. No shadows. Border-radius max 2px. No emoji in UI.**
+Monospace for data, labels and readouts. **This supersedes PRD § 11 (UoM navy/gold).**
+
+**Subtasks:**
+- [ ] R3.1 — `src/index.css` → SIGNAL tokens; delete the light palette entirely.
+- [ ] R3.2 — Remove vestigial `useTheme` / `ThemeToggle` / `useThemeColors` dark-switching
+      machinery (there is one theme now).
+- [ ] R3.3 — Retire all **169 hardcoded hex literals across 17 files**.
+- [ ] R3.4 — Radius sweep: everything to ≤2px (currently `--radius-lg: 20px`, `radius-full` pills).
+- [ ] R3.5 — Mono instrument voice: `</section>` labels, `>` prompt prefixes, `[button →]`
+      brackets, box-drawing rules, `[████░░░] 72%` loaders. **No spinners.**
+- [ ] R3.6 — Replace emoji controls (`🌐` in DataSourceBadge, etc.) with mono glyphs / labelled
+      brackets.
+- [ ] R3.7 — Occupancy colour ramp re-derived inside the SIGNAL constraint — grayscale + amber,
+      **green reserved exclusively for live/positive state** per MOTION.md.
+- [ ] R3.8 — Mapbox style → SIGNAL dark; basemap tuned to `#050505` ground.
+- [ ] R3.9 — **Decompose oversized components while these files are already open** (CLAUDE.md § 3
+      caps components at 150 lines): `HomePage` 400 → <150, `BuildingCard` 297, `FindPanel` 224,
+      `MapPage` 196.
+
+**Gate:** zero hardcoded hex in `src/` · every component < 150 lines · no light-theme CSS remains ·
+R1.2 CSS assertion still passes · visual pass at 375 / 768 / 1024 px.
+
+---
+
+### Sprint R4: MOTION.md Implementation
+**Goal:** `MOTION.md` is binding product behaviour, not polish. Implement it.
+
+**Subtasks:**
+- [ ] R4.1 — **Breathing occupancy zones**: ±8% opacity around value, 4s ease-in-out loop.
+      Amplitude low enough that any single frame looks identical to a still.
+- [ ] R4.2 — **Change reads differently from liveness**: on a real value change, breathing pauses,
+      zone cross-fades 400ms linear, then resumes.
+- [ ] R4.3 — **Numbers count, never teleport**: integer steps ≤400ms, monospace tabular figures so
+      width never jitters. 0→value on first load; old→new on update.
+- [ ] R4.4 — **Confidence as a visual state** (three tiers): high = full intensity + breathing +
+      green `● LIVE`; medium = 70% intensity, no breathing, `~ estimated`; low/stale = 40%
+      intensity, dashed card border, `> last seen 24m ago`.
+- [ ] R4.5 — Map load: markers drop 40ms stagger (cap 20), scale .85→1 over 250ms; heatmap fades
+      in **after** markers land. Never simultaneous.
+- [ ] R4.6 — Building card: sheet 280ms ease-out; occupancy bar 0→value 500ms in sync with
+      count-up; floor rows 60ms stagger; sparkline draws L→R 600ms, first open only.
+- [ ] R4.7 — Recommendations reorder via **FLIP** — cards translate to new positions over 400ms,
+      never disappear/reappear. Measure, don't guess.
+- [ ] R4.8 — **Manual report loop**: submit → 12-char terminal loader ~600ms → `> thanks —
+      updating...` → local zone cross-fades so the user sees their own report land.
+      *MOTION.md calls this the single most important piece of motion in the app.*
+- [ ] R4.9 — Realtime updates batched to **at most one visual pass per 5s**; no reflow beneath an
+      open card.
+- [ ] R4.10 — Skeletons: 1.6s pulse, content-shaped, 200ms cross-fade, reserved heights (CLS ≈ 0).
+- [ ] R4.11 — **`prefers-reduced-motion` full pass**: static everything, no information lost.
+
+**Gate — MOTION.md acceptance checklist, verbatim:**
+- [ ] Breathing invisible in any single frame; visible over 4s of recording
+- [ ] Change vs liveness visually distinct in a recording, verified
+- [ ] All three confidence tiers distinguishable in a screenshot
+- [ ] Cold-start (0 users) screen recorded and looks intentional
+- [ ] Manual-report loop (submit → see your zone update) recorded end to end
+- [ ] `prefers-reduced-motion` full pass: static everything, no information lost
+- [ ] No layout shift on skeleton→content anywhere (CLS ≈ 0)
+
+---
+
+### Sprint R5: Re-verify S13–S17 against the fixture layer
+**Goal:** Every `[x]` in S13–S17 was marked without a working backend. Observe each one.
+
+**Subtasks:**
+- [ ] R5.1 — S13 crowd reporting: submit → decay → blending → UI reflection, end to end.
+- [ ] R5.2 — S14 noise (≥3 report threshold) + favourites persistence.
+- [ ] R5.3 — S15 photo carousel + tips. Resolve the deferred S15.1/S15.7 photo assets.
+- [ ] R5.4 — S16 PWA install + offline banner + service worker caching.
+- [ ] R5.5 — S17 seed data: hours, amenities, Place IDs (depends on R1.6/R1.7).
+- [ ] R5.6 — **Data-honesty relabel.** `google_popular_times` seed rows are hand-authored
+      ("Realistic weekly popularity curves"), **not** fetched from Google — and Google's public
+      Places API does not expose `current_popularity` at all (already in the decisions log below).
+      Relabel every UI surface to "estimated from typical campus patterns" and **strip all Google
+      branding**. Google Places is retained for opening-hours only.
+- [ ] R5.7 — Re-specify the `/find` route discrepancy (S10.1) in PRD § 12.5 terms, or restore the
+      route. Decide and document; do not leave plan and code disagreeing.
+
+**Gate:** each S13–S17 task re-marked from observation, not inference.
+
+---
+
 ## Phase 2 — Polish & Reliability
+
+> **Re-ordered 2026-08-14** per ENGINEERPROMPT ("deploy → error states → accessibility →
+> performance — the ones that matter for a public URL"). Deploy is owner-gated and moves to the
+> end, giving: **S23 → S19 → S22 → S21 → S24 → S25.** Sprint numbers are retained for continuity;
+> execution follows that order.
 
 ### Sprint 19: Accessibility Compliance
 **Goal:** Achieve WCAG 2.1 AA compliance across all screens.
@@ -822,7 +1042,10 @@
 
 **Subtasks:**
 - [x] S20.1 — Create src/components/AlertSetup.tsx (threshold presets 30/50/70%) ✅
-- [x] S20.2 — Implement Web Push subscription registration ✅ (useWebPush hook with VAPID key)
+- [~] S20.2 — Implement Web Push subscription registration — ⚠️ **CORRECTED 2026-08-14:** hook
+      exists but (a) it is the source of 3 of the 4 `tsc` errors that break the build, and
+      (b) `VITE_VAPID_PUBLIC_KEY` is documented in `.env.example` but **absent from `.env.local`**,
+      so `subscribe()` silently fails. Types fixed in R1; the key itself is owner-gated.
 - [x] S20.3 — Create manage-alerts Edge Function (CRUD: create/update/delete/list) ✅ (Zod validation, filtered by push_subscription endpoint)
 - [x] S20.4 — Cancel-alert via manage-alerts DELETE action ✅
 - [x] S20.5 — Implement send-alerts Edge Function (check occupancy vs thresholds, Web Push delivery) ✅ (15-min cooldown, expired alert cleanup)
@@ -1014,9 +1237,19 @@
 
 ---
 
-## Phase 3 — Intelligence
+## Phases 3–5 — `[⏭ roadmap, not scheduled]`
 
-### Sprint 26: EWMA Prediction Engine
+> **Scope decision (Bruno, 2026-08-14): Sprints 26–36 are out of scope.** They are the product
+> roadmap, not the work queue. Every unchecked box below is deliberate — **111 unchecked boxes are
+> not 111 things to do.** Do not start any of them.
+>
+> Phases 4–5 additionally require Supabase Auth accounts and Stripe billing, which contradict the
+> PRD's own positioning (§ 13.1: *"No accounts for core features"*) and cost real money. Revisit
+> only after a public URL exists and is used.
+
+## Phase 3 — Intelligence `[⏭ roadmap, not scheduled]`
+
+### Sprint 26: EWMA Prediction Engine `[⏭]`
 **Goal:** Implement Pulse's own prediction model using Exponentially Weighted Moving Average on occupancy_history. Replace Google baseline when sample_count >= 14 days for a given day/hour slot. Add confidence scoring (high/medium/low based on sample count and variance).
 
 **Subtasks:**
@@ -1077,9 +1310,9 @@
 
 ---
 
-## Phase 4 — Scale & Monetisation
+## Phase 4 — Scale & Monetisation `[⏭ roadmap, not scheduled]`
 
-### Sprint 30: Multi-Campus Support
+### Sprint 30: Multi-Campus Support `[⏭]`
 **Goal:** Add campus selector. Seed data for 2 additional Melbourne universities (Monash Clayton, RMIT City). Same database instance, data isolated by campus_id. Campus-specific map styling.
 
 **Subtasks:**
@@ -1115,9 +1348,9 @@
 
 ---
 
-## Phase 5 — Social Layer & Community
+## Phase 5 — Social Layer & Community `[⏭ roadmap, not scheduled]`
 
-### Sprint 33: Friend Presence
+### Sprint 33: Friend Presence `[⏭]`
 **Goal:** Mutual follow system (opt-in). Show friend location at building level only (never floor or seat). Account required for social features. Anonymous viewing always remains available.
 
 **Privacy:** Building-level only. Never floor or seat. Opt-in mutual follows.
@@ -1204,6 +1437,15 @@
 | 2026-03-21 | Crowd reports as blending source | Reports inserted between 'live' (sensor/Realtime) and 'google' in the fallback hierarchy. Stronger cold-start mitigation than Google data alone — students can contribute immediately. |
 | 2026-03-21 | Gamification kept localStorage-only | Muggerino model: reporting streaks and badges stored client-side. No server profiles, no leaderboards. Privacy-safe engagement loop. |
 | 2026-03-21 | Room directory added to S23 | UniMelb Maps competitive gap. Rooms table enables cross-building room search — a feature no competitor in the campus occupancy space offers. |
+| 2026-08-14 | **Every pre-existing `[x]` treated as a claim, not a fact** | Owner override: *"it is all fucked up, it's not wired up and it doesn't work."* Forensic audit recorded in `WIRING-AUDIT.md`. **No future session may trust the pre-2026-08-14 checkmarks without re-observation.** |
+| 2026-08-14 | Scope frozen at **S0–S25**; S26–S36 `[⏭ roadmap]` | ENGINEERPROMPT: *"Those are roadmap, not work."* Confirmed by Bruno. Phases 4–5 also require accounts + Stripe, contradicting PRD § 13.1. |
+| 2026-08-14 | **SIGNAL supersedes PRD § 11** as the design system | Bruno has a locked cross-project system (`~/bruno-portfolio/CLAUDE.md`). Warm black + single amber accent, ≤2px radius, mono instrument voice, no light theme. PRD's UoM navy/gold palette is retired. Bruno is not to be asked to make design decisions answerable from that document. |
+| 2026-08-14 | `MOTION.md` is binding product behaviour | Motion encodes liveness, change and confidence — the three things this product sells. Its acceptance checklist is folded into the R4 gate verbatim. |
+| 2026-08-14 | **Local fixture layer instead of early cloud provisioning** | Supabase project deleted and Docker unavailable, so there is no backend to build against. Fixtures unblock ~20 sprints, keep owner-gated work at the end as instructed, cost nothing, and double as test data and the honest cold-start mode. |
+| 2026-08-14 | **"Google" data relabelled as modelled estimates** | `google_popular_times` seed rows are hand-authored curves, not Google data, yet the UI said "Based on Google data". Combined with the 2026-03-19 finding that Google's public API does not expose `current_popularity`, the entire Google tier was fictional. Honesty rule + PRD § 13.4 ("UI clearly labels when data comes from Google vs Pulse") both require the relabel. Google Places retained for opening-hours only. |
+| 2026-08-14 | Name standardised to **UniSpace** | Matches `package.json`, README, PWA manifest and `github.com/br9704/UniSpace`. PRD/MASTERPLAN "Pulse" references updated. |
+| 2026-08-14 | Position broadcast uses **HTTP Edge Function invoke, not a Realtime channel** | Documenting existing behaviour: implementation diverged from PRD § 7.2 and was never recorded. Functionally equivalent, one fewer moving part, and the privacy invariant holds either way. Code is correct; the PRD is what needs updating. |
+| 2026-08-14 | **Build gate must run `pnpm build`, never `vite build` alone** | `vite build` succeeds while `tsc -b` fails. That gap is precisely how three fatal defects passed the S12.30 and S18 audits. R1.2 adds a built-CSS assertion for the same reason. |
 
 ---
 
@@ -1270,3 +1512,102 @@ S15 (Photos+Tips) ────────────────────�
 | Accessibility data inaccurate | High priority | Manual verification + user reporting mechanism (S24–S25) |
 | Crowd report spam/abuse | Planned | Rate limiting: 5/hr server-side (IP), 1/building/5min client-side (localStorage). Reports auto-expire 30min. |
 | Photo licensing issues | Low | All photos CC-licensed. Static assets, no user uploads until S35. |
+| **Checkmarks drift from reality again** | **Realised once** | This is not hypothetical — it already happened at scale (see `WIRING-AUDIT.md`). Mitigations: `pnpm build` (never `vite build`) at every gate; the R1.2 built-CSS assertion in CI; mark tasks live rather than batched; re-observe, never infer. |
+| **Silent build-config failure** | **Realised once** | Tailwind emitted no theme-scale CSS for an unknown number of sprints and nothing caught it. R1.2 asserts against the *build output*, not the source. Any future framework major-version bump gets the same treatment. |
+| Backend deleted / lost again | Medium | Everything must be reproducible from committed migrations + seeds. Migration `013` proved this can fail. **Rule: no schema change is applied to a cloud DB before it exists as a committed migration.** |
+| Uncapped API bill on a public URL | Medium | Google Places quota cap + budget alert, Mapbox token domain restriction — both in the Ship Runbook, both before deploy, not after. |
+| Cold start looks broken rather than intentional | Medium | MOTION.md treats the zero-user screen as a first-class design; R2 fixtures + R4.4 confidence tiers make "estimated" a designed state instead of an empty one. |
+
+> **MOTION.md added (Aug 2026):** the animation spec in this folder is binding. Its acceptance
+> checklist is folded into the Sprint R4 gate verbatim.
+
+---
+
+## Owner-Gated Ship Runbook
+
+> **Everything here requires Bruno.** Per his instruction, all owner-gated work is deferred to the
+> very end and batched here. Nothing in Sprints R1–R5 or 19–25 blocks on any of it — the fixture
+> layer (R2) stands in throughout. Run this block only once the code work is complete.
+>
+> Ordered by dependency. Do not reorder.
+
+### 1. Supabase — recreate the backend from scratch
+The previous project (`kvagntgpiylxhjntexml`) is **gone**, not paused. This is a clean rebuild.
+
+- [ ] Create a new Supabase project. **Do not touch `jaamaabruno@gmail.coms project` or
+      `speechmax`** — CLAUDE.md § 6 puts both permanently off limits.
+- [ ] Apply migrations `001`–`014` **in order**, including the `013` rewritten in R1.6.
+- [ ] Apply seeds `001`–`004` (18 buildings; **1,321** popular-times rows).
+- [ ] Deploy all 6 Edge Functions: `aggregate-occupancy`, `sync-google-popularity`,
+      `compute-predictions`, `submit-report`, `manage-alerts`, `send-alerts`.
+- [ ] Set Edge Function secrets: `GOOGLE_PLACES_API_KEY`, `VAPID_PUBLIC_KEY`,
+      `VAPID_PRIVATE_KEY`, `VAPID_EMAIL`.
+- [ ] Create `pg_cron` schedules — `aggregate-occupancy` 10s · `sync-google-popularity` 30min ·
+      `compute-predictions` hourly · `send-alerts` 2min.
+- [ ] Verify RLS is enabled on **every** table (anon SELECT only; writes via service role).
+- [ ] Add the production domain to Supabase CORS allowed origins.
+
+### 2. Keys, quotas and the bill
+- [ ] `npx web-push generate-vapid-keys`; put `VITE_VAPID_PUBLIC_KEY` in `.env.local`
+      (**currently missing** — push subscribe silently fails without it) and the private key in
+      Supabase secrets.
+- [ ] Google Cloud: enable Places API, **set a hard quota cap and a budget alert.** A public deploy
+      without a cap is an uncapped bill. Scope is opening-hours only now, so the cap can be low.
+- [ ] Mapbox: **restrict the public token to the production domain.** Unrestricted, a public deploy
+      hands anyone a usable token.
+
+### 3. Vercel
+- [ ] Create the project, link the GitHub repo. `vercel.json` is already correct for a Vite SPA.
+- [ ] Add env vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_MAPBOX_TOKEN`,
+      `VITE_VAPID_PUBLIC_KEY`.
+- [ ] Deploy. Confirm `pnpm build` passes in CI (it does **not** today — R1 fixes this).
+- [ ] Domain: subdomain of `brunojaamaa.dev`, custom domain, or the Vercel URL.
+
+### 4. Manual verification on the live URL
+- [ ] Mobile browser test at 375 px.
+- [ ] PWA install on iOS **and** Android. iOS needs an in-UI "Share → Add to Home Screen" flow —
+      there is no programmatic install prompt, and Web Push on iOS requires Home Screen install
+      (unchanged through iOS 26).
+- [ ] Push delivery (requires HTTPS). Send **Declarative Web Push** payloads for Safari/iOS 18.4+;
+      keep the service-worker path for Chrome/Firefox.
+- [ ] GPS permission flow, both grant and deny.
+- [ ] Cold-start screen with zero users — must look intentional, not broken.
+
+### 5. Assets still outstanding
+- [ ] Real building photos (CC-licensed WebP → `public/photos/`) — unblocks deferred S15.1 / S15.7.
+- [ ] Real PWA icons replacing the placeholders in `public/icons/`.
+
+### 6. Last
+- [ ] Portfolio case-study unlock — happens in `~/bruno-portfolio`, **not** this repo.
+
+---
+
+## Post-Launch
+
+### Monitoring
+- Supabase dashboard: Realtime concurrent connections (free tier caps at **200** — polling
+  fallback is the planned mitigation), Edge Function invocation counts and error rates, DB size.
+- Vercel: build status, function logs, Web Vitals.
+- **No third-party analytics.** CLAUDE.md § 4 rule 5 and PRD § 13.1 rule 6 both forbid them.
+  Do not add Google Analytics, Hotjar, Mixpanel, PostHog or Sentry without explicit instruction.
+
+### Quota alerts
+- Google Cloud budget alert at 50% / 90% of the monthly cap.
+- Mapbox usage alert — free tier is 50k map loads/month; a front-page moment can blow through it.
+- Supabase egress + Realtime message alerts.
+
+### When the API bills spike
+1. **Check Mapbox first** — it is the likeliest source and the token is the likeliest leak. Confirm
+   the domain restriction is still in place; rotate the token if traffic is from unknown origins.
+2. **Google Places** — sync runs every 30 min across 18 buildings ≈ 864 calls/day. Anything far
+   above that means the cron is misfiring; disable the `pg_cron` job first, diagnose second.
+3. **Supabase Realtime** — if connections approach 200, switch clients to the 30s polling fallback.
+4. Kill switch: the app degrades to cached + estimated data, so disabling any single external
+   service is survivable. **Verify that is still true before launch, not after the bill arrives.**
+
+### Data hygiene
+- `occupancy_history` retention is 90 days per PRD § 13.2. Confirm a purge job exists — currently
+  it does not.
+- Re-verify the privacy invariant after any change to the broadcast path:
+  `zoneDetection` → `usePositionBroadcast` → `aggregate-occupancy`. `session_id` must never appear
+  in a DB write; raw coordinates must never leave the device.
