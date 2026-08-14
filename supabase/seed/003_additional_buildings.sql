@@ -29,7 +29,7 @@ INSERT INTO buildings (
   true, true, true, true,
   true, true, true,
   true, true,
-  '07:30-22:00', '07:30-22:00', '07:30-22:00', '07:30-22:00', '07:30-18:00', '09:00-17:00', null
+  '09:00-20:00', '09:00-20:00', '09:00-20:00', '09:00-20:00', '09:00-17:00', '11:00-17:00', '10:00-17:00'
 );
 
 -- 9. FBE Building (Building 105, 111 Barry St)
@@ -55,7 +55,7 @@ INSERT INTO buildings (
   true, true, true, false,
   true, true, true,
   true, true,
-  '07:30-21:00', '07:30-21:00', '07:30-21:00', '07:30-21:00', '07:30-18:00', null, null
+  '09:00-20:00', '09:00-20:00', '09:00-20:00', '09:00-20:00', '09:00-17:00', '11:00-17:00', '10:00-17:00'
 );
 
 -- 10. The Spot (Building 110, 198 Berkeley St corner Pelham St)
@@ -107,7 +107,7 @@ INSERT INTO buildings (
   true, true, true, false,
   true, true, true,
   true, true,
-  '07:30-21:00', '07:30-21:00', '07:30-21:00', '07:30-21:00', '07:30-18:00', null, null
+  '09:00-19:00', '09:00-19:00', '09:00-19:00', '09:00-19:00', '09:00-17:00', '13:00-17:00', '10:00-16:00'
 );
 
 -- 12. Kwong Lee Dow Building (Building 263, 234 Queensberry St)

@@ -33,10 +33,16 @@ export interface Building {
   has_food_nearby: boolean
   has_quiet_zone: boolean
   has_group_seating: boolean
-  is_ground_floor_accessible: boolean
-  has_elevator: boolean
-  has_accessible_bathrooms: boolean
-  has_accessible_parking: boolean
+  /**
+   * Accessibility flags are nullable, and NULL means **not verified** — not
+   * "no". PRD § 13.4 treats wrong accessibility data as harmful rather than
+   * merely inaccurate, so "we haven't checked" has to be expressible and has to
+   * render differently from either answer. Never coerce these to a boolean.
+   */
+  is_ground_floor_accessible: boolean | null
+  has_elevator: boolean | null
+  has_accessible_bathrooms: boolean | null
+  has_accessible_parking: boolean | null
   // Hours
   hours_mon: string | null
   hours_tue: string | null

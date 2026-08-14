@@ -1905,9 +1905,26 @@ most of its effort on.
       Commit as migration `017`. (R1.6)
 - [ ] **Room directory** — codes, floors and types per building, from UoM's Find a Room. Seeds
       table `rooms`; the UI is built and renders nothing until then. (S24.2)
-- [ ] **Accessibility data verified against UoM AccessAbility** — *the highest-priority item here.*
-      PRD § 13.4: wrong accessibility data is harmful, not merely inaccurate. (S24.7)
-- [ ] **Building hours checked against the 2026 semester calendar.** (S24.6)
+- [x] **Accessibility researched and the data model corrected** ✅ 2026-08-15. Source:
+      `unimelb.edu.au/accessibility/guides/mobility`. Every flag in the database had been invented,
+      and the schema could only say "yes" or "no" — so the true answer for most buildings, *nobody
+      has checked*, was unrepresentable. Migration `018` makes the columns nullable, seed `005`
+      restores only the one claim the source states unambiguously ("All libraries are accessible
+      with lifts and an accessible toilet"), and everything else is now explicitly unverified and
+      rendered as `[?]`. 9 tests pin it, including that no flag may ever read `false` without a
+      source. ⚠️ *Caveat:* that page states it was "written by University of Melbourne students" —
+      a student guide, not a facilities audit. Worth confirming with UoM Property directly.
+- [ ] **Step-free entry, accessible parking, and the 13 non-library buildings** — still genuinely
+      unverified, and now honestly labelled as such. Needs UoM's interactive campus map or a direct
+      enquiry. This is the highest-value remaining data item.
+- [x] **Building hours corrected against the published source** ✅ 2026-08-15. Source:
+      `library.unimelb.edu.au/library-locations-and-opening-hours`. The seeded hours were invented
+      and every one was wrong — Baillieu was seeded 08:00–22:00 and actually runs 09:00–20:00.
+      Migration `017` and the seeds now carry the published values for the five library buildings.
+      ⚠️ *Caveat:* the source publishes a **current-week** table (retrieved for Aug 10–16), not
+      year-round hours. They will be wrong over exams, summer and public holidays.
+- [ ] **Re-check hours against the 2026 semester calendar** for the non-teaching periods, and for
+      the 13 buildings with no published source. (S24.6)
 - [ ] Real building photos (CC-licensed WebP → `public/photos/`) — unblocks S15.1 / S15.7.
       The only remaining asset: photographs of real buildings cannot be generated.
 - [x] PWA icons ✅ **Generated 2026-08-14** in SIGNAL — an occupancy meter inside focus brackets,

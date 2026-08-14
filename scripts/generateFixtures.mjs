@@ -9,7 +9,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parseInserts } from './parseSeedSql.mjs'
+import { parseInserts, applyUpdates, applyGlobalUpdates } from './parseSeedSql.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = resolve(ROOT, 'src/lib/fixtures/seedData.generated.ts')
@@ -19,6 +19,18 @@ const SEED_FILES = [
   'supabase/seed/002_google_popular_times.sql',
   'supabase/seed/003_additional_buildings.sql',
   'supabase/seed/004_additional_popular_times.sql',
+  'supabase/seed/005_verified_accessibility.sql',
+]
+
+/**
+ * Migrations that change seeded values rather than schema.
+ *
+ * Applied in order after the seeds, mirroring how a real database ends up:
+ * migrations run, then seeds, then later corrective seeds. Fixtures must show
+ * the same final state or local development lies about what is deployed.
+ */
+const CORRECTIVE_MIGRATIONS = [
+  'supabase/migrations/018_accessibility_unknown.sql',
 ]
 
 /** Buildings dropped in R1.7 — belt and braces if a seed reintroduces them. */
@@ -38,6 +50,13 @@ export function buildSeedData() {
   const typicalCurves = parseInserts(sql, 'google_popular_times').filter(
     (t) => !REMOVED_BUILDING_IDS.has(t.building_id),
   )
+
+  // 018 blanks every accessibility flag to "unverified", then seed 005 restores
+  // only what a published source supports.
+  for (const file of CORRECTIVE_MIGRATIONS) {
+    applyGlobalUpdates(readFileSync(resolve(ROOT, file), 'utf8'), buildings)
+  }
+  applyUpdates(sql, buildings)
 
   const buildingIds = new Set(buildings.map((b) => b.id))
 

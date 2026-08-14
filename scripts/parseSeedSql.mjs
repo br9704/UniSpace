@@ -178,7 +178,7 @@ function splitFields(row) {
 }
 
 /** Convert one SQL literal into its JavaScript value. */
-function parseLiteral(raw) {
+export function parseLiteral(raw) {
   const value = raw.trim()
 
   if (/^NULL$/i.test(value)) return null
@@ -235,6 +235,60 @@ export function parseInserts(sql, table) {
       const row = {}
       columns.forEach((col, i) => { row[col] = parseLiteral(fields[i]) })
       rows.push(row)
+    }
+  }
+
+  return rows
+}
+
+/**
+ * Apply `UPDATE buildings SET col = val, ... WHERE slug IN (...)` statements.
+ *
+ * Seeds 005 onward correct earlier rows rather than inserting new ones, and the
+ * fixtures have to see the same final state the database will — otherwise local
+ * development shows accessibility flags the deployed app does not have, which is
+ * precisely the drift the generated-fixture approach exists to prevent.
+ *
+ * Only the narrow shape the seeds use is supported; anything else is ignored
+ * rather than half-applied.
+ */
+export function applyUpdates(sql, rows, keyColumn = 'slug') {
+  const clean = stripComments(sql)
+  const pattern = /UPDATE\s+buildings\s+SET\s+([\s\S]*?)\s+WHERE\s+(\w+)\s+IN\s*\(([^)]*)\)\s*;/gi
+
+  for (const match of clean.matchAll(pattern)) {
+    const assignments = splitFields(match[1]).map((a) => {
+      const [col, ...rest] = a.split('=')
+      return [col.trim(), parseLiteral(rest.join('='))]
+    })
+    if (match[2].trim() !== keyColumn) continue
+
+    const keys = new Set(
+      splitFields(match[3]).map((v) => parseLiteral(v)).filter((v) => typeof v === 'string'),
+    )
+
+    for (const row of rows) {
+      if (!keys.has(row[keyColumn])) continue
+      for (const [col, value] of assignments) row[col] = value
+    }
+  }
+
+  return rows
+}
+
+/** Apply `UPDATE buildings SET ... ;` with no WHERE clause — affects every row. */
+export function applyGlobalUpdates(sql, rows) {
+  const clean = stripComments(sql)
+  const pattern = /UPDATE\s+buildings\s+SET\s+([\s\S]*?)\s*;/gi
+
+  for (const match of clean.matchAll(pattern)) {
+    if (/\bWHERE\b/i.test(match[0])) continue
+    const assignments = splitFields(match[1]).map((a) => {
+      const [col, ...rest] = a.split('=')
+      return [col.trim(), parseLiteral(rest.join('='))]
+    })
+    for (const row of rows) {
+      for (const [col, value] of assignments) row[col] = value
     }
   }
 

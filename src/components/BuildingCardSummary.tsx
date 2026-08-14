@@ -2,6 +2,7 @@ import type { BlendedOccupancy, Building } from '@/types'
 import { isOpenNow } from '@/lib/buildingHours'
 import { BUILDING_META } from '@/constants/buildingMeta'
 import { getActiveAmenities } from '@/lib/amenityHelpers'
+import AccessibilityPanel from './AccessibilityPanel'
 import { formatRelativeTime } from '@/lib/relativeTime'
 import Card from './ui/Card'
 import { getConfidence } from '@/lib/confidence'
@@ -106,6 +107,8 @@ export default function BuildingCardSummary({
           </p>
         )}
       </Card>
+
+      <AccessibilityPanel building={building} />
 
       {amenities.length > 0 && (
         <Card>
