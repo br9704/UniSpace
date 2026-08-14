@@ -1849,9 +1849,10 @@ The previous project (`kvagntgpiylxhjntexml`) is **gone**, not paused. This is a
 - [ ] Add the production domain to Supabase CORS allowed origins.
 
 ### 2. Keys, quotas and the bill
-- [ ] `npx web-push generate-vapid-keys`; put `VITE_VAPID_PUBLIC_KEY` in `.env.local`
-      (**currently missing** — push subscribe silently fails without it) and the private key in
-      Supabase secrets.
+- [x] VAPID keys ✅ **Generated 2026-08-14** and written to `.env.local` (gitignored).
+      `VITE_VAPID_PUBLIC_KEY` and `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY` are all set.
+- [ ] Copy `VAPID_PRIVATE_KEY`, `VAPID_PUBLIC_KEY` and `VAPID_EMAIL` from `.env.local` into the
+      Supabase Edge Function secrets. (The keys exist; only the paste is owner-gated.)
 - [ ] Google Cloud: enable Places API, **set a hard quota cap and a budget alert.** A public deploy
       without a cap is an uncapped bill. Scope is opening-hours only now, so the cap can be low.
 - [ ] Mapbox: **restrict the public token to the production domain.** Unrestricted, a public deploy
@@ -1895,7 +1896,12 @@ most of its effort on.
       PRD § 13.4: wrong accessibility data is harmful, not merely inaccurate. (S24.7)
 - [ ] **Building hours checked against the 2026 semester calendar.** (S24.6)
 - [ ] Real building photos (CC-licensed WebP → `public/photos/`) — unblocks S15.1 / S15.7.
-- [ ] Real PWA icons replacing the placeholders in `public/icons/`.
+      The only remaining asset: photographs of real buildings cannot be generated.
+- [x] PWA icons ✅ **Generated 2026-08-14** in SIGNAL — an occupancy meter inside focus brackets,
+      drawn geometrically rather than rasterised from a font, with the maskable variant inset to
+      80% for Android's circular crop. The old placeholders were UoM navy and clashed with the
+      re-skinned app; the favicon was a purple lightning bolt in a colour that appears nowhere in
+      the system. Also removed `unimelb-logo.svg` and `icons.svg`, unreferenced since R3.
 
 ### 6. Last
 - [ ] Portfolio case-study unlock — happens in `~/bruno-portfolio`, **not** this repo.
