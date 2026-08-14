@@ -1,6 +1,10 @@
-export const MAPBOX_STYLE_LIGHT = 'mapbox://styles/mapbox/light-v11'
-export const MAPBOX_STYLE_DARK = 'mapbox://styles/mapbox/dark-v11'
-export const MAPBOX_STYLE = MAPBOX_STYLE_LIGHT
+/**
+ * SIGNAL has no light theme, so there is one map style and no switching.
+ * `dark-v11` is the closest Mapbox base to the warm-black ground; the building
+ * layer's own steel outlines and luminance ramp carry the rest.
+ */
+export const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v11'
+
 export const DEFAULT_CAMPUS_CENTER: [number, number] = [144.9631, -37.7964] // UoM Parkville
 export const DEFAULT_ZOOM = 15.5
 export const MIN_ZOOM = 14

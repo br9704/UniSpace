@@ -4,24 +4,48 @@ interface DataSourceBadgeProps {
   source: DataQuality
 }
 
-const CONFIG: Record<DataQuality, { icon: string; label: string; color: string }> = {
-  live: { icon: '\u25CF', label: 'Live', color: '#4CAF7D' },
-  'crowd-report': { icon: '\u25CF', label: 'Crowd report', color: '#4CAF7D' },
-  google: { icon: '\u25CF', label: 'Google data', color: '#0080A4' },
-  predicted: { icon: '\u25C6', label: 'Predicted', color: '#C8A951' },
-  stale: { icon: '\u25CF', label: 'Stale data', color: '#94A3B8' },
-  none: { icon: '\u25CB', label: 'No data', color: '#94A3B8' },
+/**
+ * Says where a reading came from, and how much to trust it.
+ *
+ * Confidence is a first-class visual state here, not a footnote — the whole
+ * point of the product is a number you can act on, and an estimate presented
+ * like a measurement is worse than no number at all.
+ *
+ * Only `live` and `crowd-report` get the green dot; MOTION.md reserves green
+ * exclusively for genuinely live/positive state. Everything else is dim
+ * grayscale, so an estimate never borrows the authority of a measurement.
+ *
+ * The labels avoid the word "Google" deliberately: the weekly curves are
+ * UniSpace's own modelled estimates, and Google's API does not publish busyness
+ * at all.
+ */
+const CONFIG: Record<DataQuality, { glyph: string; label: string; live: boolean }> = {
+  live: { glyph: '●', label: 'LIVE', live: true },
+  'crowd-report': { glyph: '●', label: 'REPORTED', live: true },
+  google: { glyph: '~', label: 'ESTIMATED', live: false },
+  predicted: { glyph: '~', label: 'PREDICTED', live: false },
+  stale: { glyph: '·', label: 'STALE', live: false },
+  none: { glyph: '○', label: 'NO DATA', live: false },
 }
 
 export default function DataSourceBadge({ source }: DataSourceBadgeProps) {
-  const { icon, label, color } = CONFIG[source]
+  const { glyph, label, live } = CONFIG[source]
 
   return (
     <span
-      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs"
-      style={{ backgroundColor: '#F0F2F5', color }}
+      className="mono inline-flex items-center gap-1.5 px-2 py-0.5 text-xs tracking-wider"
+      style={{
+        border: '1px solid var(--color-hairline)',
+        color: live ? 'var(--color-text-primary)' : 'var(--color-text-dim)',
+      }}
     >
-      {icon} {label}
+      <span
+        aria-hidden="true"
+        style={{ color: live ? 'var(--color-live)' : 'var(--color-text-dim)' }}
+      >
+        {glyph}
+      </span>
+      {label}
     </span>
   )
 }

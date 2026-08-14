@@ -2,6 +2,7 @@ import type { HourlyPrediction } from '@/types'
 import PredictionChart from './PredictionChart'
 import SparklineChart from './SparklineChart'
 import PredictionSourceBadge from './PredictionSourceBadge'
+import SectionLabel from './SectionLabel'
 import {
   formatHour,
   getAvoidWindow,
@@ -28,36 +29,48 @@ export default function PredictionSection({ predictions }: PredictionSectionProp
 
   return (
     <div className="mb-2">
-      <h3 style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', letterSpacing: '1px', margin: '0 0 10px' }}>TODAY&apos;S PREDICTION</h3>
+      <SectionLabel className="mb-3">today</SectionLabel>
 
       <PredictionChart predictions={predictions} currentHour={currentHour} />
 
-      <div className="mt-2.5 flex flex-col gap-1">
+      <dl className="mono mt-3 flex flex-col gap-1 text-xs">
         {peak && (
-          <p className="text-[13px] text-[var(--color-text-secondary)] leading-relaxed">
-            Peak at <strong className="text-[var(--color-text-primary)]">{formatHour(peak.hour)}</strong> ({peak.pct}%)
-          </p>
+          <div className="flex justify-between gap-4">
+            <dt style={{ color: 'var(--color-text-dim)' }}>PEAK</dt>
+            <dd style={{ color: 'var(--color-text-primary)' }}>
+              {formatHour(peak.hour)} · {peak.pct}%
+            </dd>
+          </div>
         )}
         {bestTime && (
-          <p className="text-[13px] text-[var(--color-text-secondary)] leading-relaxed">
-            Best time: <strong className="text-[var(--color-empty)]">{formatHour(bestTime.hour)}</strong> ({bestTime.pct}%)
-          </p>
+          <div className="flex justify-between gap-4">
+            <dt style={{ color: 'var(--color-text-dim)' }}>BEST TIME</dt>
+            {/* The one recommendation on this panel, so the one amber value. */}
+            <dd style={{ color: 'var(--color-amber)' }}>
+              {formatHour(bestTime.hour)} · {bestTime.pct}%
+            </dd>
+          </div>
         )}
         {avoidWindow && (
-          <p className="text-[13px] text-[var(--color-text-secondary)] leading-relaxed">
-            Avoid <strong className="text-[var(--color-busy)]">{formatHour(avoidWindow.start)}–{formatHour(avoidWindow.end)}</strong> (~{avoidWindow.pct}%)
-          </p>
+          <div className="flex justify-between gap-4">
+            <dt style={{ color: 'var(--color-text-dim)' }}>AVOID</dt>
+            <dd style={{ color: 'var(--color-text-secondary)' }}>
+              {formatHour(avoidWindow.start)}–{formatHour(avoidWindow.end)} · ~{avoidWindow.pct}%
+            </dd>
+          </div>
         )}
-      </div>
+      </dl>
 
       {sparklineData.length > 1 && (
-        <div className="mt-3">
-          <p className="text-[11px] text-[var(--color-text-tertiary)] mb-1">Predicted trend (last 6 hrs)</p>
+        <div className="mt-4">
+          <p className="mono text-xs mb-1" style={{ color: 'var(--color-text-dim)' }}>
+            NEXT 6 HRS
+          </p>
           <SparklineChart data={sparklineData} />
         </div>
       )}
 
-      <div className="mt-2.5">
+      <div className="mt-3">
         <PredictionSourceBadge source={dominantSource} confidence={dominantConfidence} />
       </div>
     </div>

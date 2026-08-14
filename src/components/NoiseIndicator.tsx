@@ -8,15 +8,30 @@ function getNoiseLabel(level: number): string {
   if (level <= 2.5) return 'Quiet'
   if (level <= 3.5) return 'Moderate'
   if (level <= 4.5) return 'Loud'
-  return 'Very Loud'
+  return 'Very loud'
 }
 
+/**
+ * Noise as a five-segment meter — an instrument readout rather than an icon.
+ *
+ * The report count is shown because it is the honest qualifier: an average of
+ * three reports is not the same claim as an average of thirty, and the reader
+ * deserves to know which they are looking at.
+ */
 export default function NoiseIndicator({ level, count }: NoiseIndicatorProps) {
+  const filled = Math.round(level)
+
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-[#64748B]">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>{level > 2.5 && <path d="M15.54 8.46a5 5 0 010 7.07"/>}{level > 3.5 && <path d="M19.07 4.93a10 10 0 010 14.14"/>}</svg>
-      <span>{getNoiseLabel(level)}</span>
-      <span className="text-[#94A3B8]">({count} reports)</span>
+    <span
+      className="mono inline-flex items-center gap-2 text-xs"
+      style={{ color: 'var(--color-text-secondary)' }}
+    >
+      <span aria-hidden="true" style={{ letterSpacing: '0.15em' }}>
+        {'█'.repeat(filled)}
+        <span style={{ color: 'var(--color-hairline)' }}>{'░'.repeat(5 - filled)}</span>
+      </span>
+      <span>{getNoiseLabel(level).toUpperCase()}</span>
+      <span style={{ color: 'var(--color-text-dim)' }}>({count} reports)</span>
     </span>
   )
 }

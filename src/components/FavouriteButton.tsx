@@ -1,35 +1,38 @@
-import { motion } from 'framer-motion'
-
 interface FavouriteButtonProps {
   isFavourite: boolean
   onToggle: () => void
   size?: number
 }
 
-export default function FavouriteButton({ isFavourite, onToggle, size = 20 }: FavouriteButtonProps) {
+/**
+ * Favourite toggle, as a bracketed marker rather than a heart.
+ *
+ * SIGNAL has no red and no emoji, and a filled heart is neither monospace nor
+ * square. `[*]` / `[ ]` reads instantly, states its own status in text, and
+ * costs nothing to render.
+ *
+ * The 44px box is the WCAG touch target; the visible glyph is smaller.
+ */
+export default function FavouriteButton({ isFavourite, onToggle, size = 14 }: FavouriteButtonProps) {
   return (
-    <motion.button
+    <button
+      type="button"
       onClick={(e) => { e.stopPropagation(); onToggle() }}
-      whileTap={{ scale: 0.8 }}
+      aria-pressed={isFavourite}
       aria-label={isFavourite ? 'Remove from favourites' : 'Add to favourites'}
+      className="mono flex items-center justify-center"
       style={{
-        background: 'none', border: 'none', cursor: 'pointer', padding: 4,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        minWidth: 44, minHeight: 44,
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        minWidth: 44,
+        minHeight: 44,
+        fontSize: size,
+        color: isFavourite ? 'var(--color-amber)' : 'var(--color-text-dim)',
+        transition: 'color var(--dur-fast) linear',
       }}
     >
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        fill={isFavourite ? '#E05252' : 'none'}
-        stroke={isFavourite ? '#E05252' : '#94A3B8'}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </svg>
-    </motion.button>
+      {isFavourite ? '[*]' : '[ ]'}
+    </button>
   )
 }

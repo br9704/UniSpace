@@ -7,17 +7,23 @@ interface DataSourcePillProps {
   lastUpdated?: Date | null
 }
 
-const CONFIG: Record<DataQuality, { label: string; color: string }> = {
-  live: { label: 'Live', color: 'var(--color-source-live)' },
-  'crowd-report': { label: 'Crowd reports', color: 'var(--color-source-live)' },
-  google: { label: 'Google data', color: 'var(--color-source-google)' },
-  predicted: { label: 'Predicted', color: 'var(--color-source-predicted)' },
-  stale: { label: 'Stale data', color: 'var(--color-source-stale)' },
-  none: { label: 'No data', color: 'var(--color-source-stale)' },
+/**
+ * Bottom-left readout: what the map as a whole is currently showing.
+ *
+ * Green and the pulse are reserved for genuinely live data. An estimate gets
+ * the dim `~` treatment, so a quiet campus never masquerades as a measured one.
+ */
+const CONFIG: Record<DataQuality, { glyph: string; label: string; live: boolean }> = {
+  live: { glyph: '●', label: 'LIVE', live: true },
+  'crowd-report': { glyph: '●', label: 'CROWD REPORTS', live: true },
+  google: { glyph: '~', label: 'ESTIMATED', live: false },
+  predicted: { glyph: '~', label: 'PREDICTED', live: false },
+  stale: { glyph: '·', label: 'STALE', live: false },
+  none: { glyph: '○', label: 'NO DATA', live: false },
 }
 
 export default function DataSourcePill({ source, lastUpdated }: DataSourcePillProps) {
-  const { label, color } = CONFIG[source]
+  const { glyph, label, live } = CONFIG[source]
   const [timeLabel, setTimeLabel] = useState('')
 
   useEffect(() => {
@@ -30,14 +36,26 @@ export default function DataSourcePill({ source, lastUpdated }: DataSourcePillPr
 
   return (
     <div
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs"
-      style={{ backgroundColor: 'var(--color-bg-elevated)', color: 'var(--color-text-primary)' }}
+      className="mono flex items-center gap-2 px-2.5 py-1.5 text-xs tracking-wider"
+      style={{
+        backgroundColor: 'var(--color-bg)',
+        border: '1px solid var(--color-hairline)',
+        color: 'var(--color-text-secondary)',
+      }}
     >
       <span
-        className="w-2 h-2 rounded-full inline-block"
-        style={{ backgroundColor: color }}
-      />
-      {label}{timeLabel && ` · ${timeLabel}`}
+        aria-hidden="true"
+        style={{
+          color: live ? 'var(--color-live)' : 'var(--color-text-dim)',
+          animation: live ? 'unispace-status-pulse 2s ease-in-out infinite' : undefined,
+        }}
+      >
+        {glyph}
+      </span>
+      <span style={{ color: live ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>
+        {label}
+      </span>
+      {timeLabel && <span style={{ color: 'var(--color-text-dim)' }}>· {timeLabel}</span>}
     </div>
   )
 }

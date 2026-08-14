@@ -3,20 +3,33 @@ interface ReportFABProps {
   onClick: () => void
 }
 
+/**
+ * Opens the crowd-report sheet for wherever the user is standing.
+ *
+ * Square and steel rather than a circular filled FAB — SIGNAL caps radius at
+ * 2px, and amber is reserved for the map's primary action, which is finding a
+ * spot rather than reporting one.
+ */
 export default function ReportFAB({ visible, onClick }: ReportFABProps) {
   if (!visible) return null
 
   return (
     <button
+      type="button"
       onClick={onClick}
-      aria-label="Report building busyness"
-      className="fixed bottom-[72px] right-4 z-[75] w-14 h-14 rounded-full bg-[var(--color-uom-navy)] text-white flex items-center justify-center shadow-lg active:scale-[0.95] transition-transform"
+      aria-label="Report how busy this building is"
+      className="mono fixed flex items-center justify-center text-xs tracking-wide"
+      style={{
+        bottom: 72, right: 12, zIndex: 75,
+        minWidth: 44, minHeight: 44, padding: '10px 14px',
+        backgroundColor: 'var(--color-bg)',
+        border: '1px solid var(--color-steel)',
+        borderRadius: 'var(--radius-md)',
+        color: 'var(--color-text-primary)',
+        cursor: 'pointer',
+      }}
     >
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
-        <rect x="9" y="3" width="6" height="4" rx="1" />
-        <path d="M9 14l2 2 4-4" />
-      </svg>
+      [ REPORT ]
     </button>
   )
 }

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Map from '@/components/Map'
@@ -12,37 +12,31 @@ import { useGeolocation } from '@/hooks/useGeolocation'
 import { usePositionBroadcast } from '@/hooks/usePositionBroadcast'
 import { useBlendedOccupancy } from '@/hooks/useBlendedOccupancy'
 import { useBuildingCard } from '@/hooks/useBuildingCard'
-import { useReportSubmit } from '@/hooks/useReportSubmit'
 import { useRecentReports } from '@/hooks/useRecentReports'
+import { useCrowdReporting } from '@/hooks/useCrowdReporting'
 import { useFavourites } from '@/hooks/useFavourites'
 import { detectZone } from '@/lib/zoneDetection'
 import { getDominantDataSource, getLatestUpdate } from '@/lib/occupancyHelpers'
 import { getDayPredictions } from '@/lib/predictionInsights'
 import { aggregateNoise } from '@/lib/noiseAggregation'
-import type { Building } from '@/types'
-import { useWebPush } from '@/hooks/useWebPush'
-import { useAlerts } from '@/hooks/useAlerts'
 import FindPanel from '@/components/FindPanel'
-
-const BuildingCard = lazy(() => import('@/components/BuildingCard'))
+import FindTrigger from '@/components/FindTrigger'
+import MapBuildingSheet from '@/components/MapBuildingSheet'
 
 export default function MapPage() {
   const { buildings, error } = useBuildings()
   const { zones } = useZones()
   const { position, isWatching } = useGeolocation()
   const { occupancyMap, allTypicalRows, allPredictionRows } = useBlendedOccupancy(buildings, zones)
-  const { submit, isSubmitting, error: reportError, canReport } = useReportSubmit()
   const reportsMap = useRecentReports()
   const { toggle: toggleFavourite, isFavourite } = useFavourites()
-  const { isSupported: pushSupported, permission: notifPermission, subscription: pushSub, subscribe: subscribePush } = useWebPush()
-  const { createAlert, deleteAlert, getAlertForBuilding } = useAlerts(pushSub)
+  const report = useCrowdReporting(buildings, position)
   const [searchParams, setSearchParams] = useSearchParams()
   // A `?building=` deep link (from a Share link) seeds the selection directly,
   // rather than being copied into state by an effect after first paint.
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(
     () => searchParams.get('building'),
   )
-  const [reportTarget, setReportTarget] = useState<Building | null>(null)
   const [showFind, setShowFind] = useState(false)
 
   // Clear the param once consumed so dismissing the card doesn't reopen it, and
@@ -88,35 +82,15 @@ export default function MapPage() {
     setSelectedBuildingId(null)
   }, [])
 
-  const handleFABClick = useCallback(() => {
-    if (!position || buildings.length === 0) return
-    // Find nearest building to user position
-    let nearest: Building | null = null
-    let minDist = Infinity
-    for (const b of buildings) {
-      const lat = b.entrance_lat ?? b.centroid_lat
-      const lng = b.entrance_lng ?? b.centroid_lng
-      if (lat == null || lng == null) continue
-      const d = (lat - position.latitude) ** 2 + (lng - position.longitude) ** 2
-      if (d < minDist) { minDist = d; nearest = b }
-    }
-    if (nearest) setReportTarget(nearest)
-  }, [position, buildings])
-
-  const handleReportFromCard = useCallback((building: Building) => {
-    setReportTarget(building)
-  }, [])
-
-  const handleReportSubmit = useCallback(async (level: import('@/types').ReportLevel, noise?: import('@/types').NoiseLevel) => {
-    if (!reportTarget) return
-    const success = await submit(reportTarget.id, level, noise)
-    if (success) setReportTarget(null)
-  }, [reportTarget, submit])
 
   if (error) {
     return (
-      <div className="h-full w-full flex items-center justify-center bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)]">
-        <p>Failed to load buildings: {error}</p>
+      <div
+        className="mono h-full w-full flex items-center justify-center p-6 text-center text-sm"
+        style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text-secondary)' }}
+        role="alert"
+      >
+        <p>&gt; could not load buildings — {error}</p>
       </div>
     )
   }
@@ -128,25 +102,9 @@ export default function MapPage() {
       <div className="absolute bottom-2 left-4" style={{ zIndex: 50 }}>
         <DataSourcePill source={dominantSource} lastUpdated={latestUpdate} />
       </div>
-      <ReportFAB visible={!selectedBuilding && !showFind} onClick={handleFABClick} />
+      <ReportFAB visible={!selectedBuilding && !showFind} onClick={report.reportNearest} />
 
-      {/* Find a Spot button */}
-      {!selectedBuilding && !showFind && (
-        <button
-          onClick={() => setShowFind(true)}
-          style={{
-            position: 'absolute', top: 16, left: 16, zIndex: 50,
-            display: 'flex', alignItems: 'center', gap: 8,
-            padding: '10px 18px', borderRadius: 14, border: 'none',
-            backgroundColor: '#003865', color: '#FFFFFF',
-            fontSize: 14, fontWeight: 600, cursor: 'pointer',
-            boxShadow: '0 4px 16px rgba(0,56,101,0.3)',
-          }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Find a Spot
-        </button>
-      )}
+      {!selectedBuilding && !showFind && <FindTrigger onClick={() => setShowFind(true)} />}
 
       {/* Find panel */}
       <FindPanel
@@ -157,40 +115,27 @@ export default function MapPage() {
         userPosition={position}
         onBuildingSelect={handleBuildingClick}
       />
+      <MapBuildingSheet
+        building={selectedBuilding}
+        occupancy={selectedOccupancy}
+        predictions={dayPredictions}
+        reportCount={occupancyMap.get(selectedBuildingId ?? '')?.source === 'crowd-report' ? 1 : 0}
+        noiseLevel={selectedNoise?.level ?? null}
+        noiseCount={selectedNoise?.count}
+        isFavourite={selectedBuildingId ? isFavourite(selectedBuildingId) : false}
+        onToggleFavourite={() => { if (selectedBuildingId) toggleFavourite(selectedBuildingId) }}
+        onDismiss={handleDismiss}
+        onReport={report.reportBuilding}
+      />
       <AnimatePresence>
-        {selectedBuilding && (
-          <Suspense fallback={null}>
-            <BuildingCard
-              key={selectedBuilding.id}
-              building={selectedBuilding}
-              occupancy={selectedOccupancy}
-              predictions={dayPredictions}
-              onDismiss={handleDismiss}
-              onReport={() => handleReportFromCard(selectedBuilding)}
-              reportCount={occupancyMap.get(selectedBuilding.id)?.source === 'crowd-report' ? 1 : 0}
-              noiseLevel={selectedNoise?.level ?? null}
-              noiseCount={selectedNoise?.count}
-              isFavourite={isFavourite(selectedBuilding.id)}
-              onToggleFavourite={() => toggleFavourite(selectedBuilding.id)}
-              existingAlert={selectedBuildingId ? getAlertForBuilding(selectedBuildingId) : undefined}
-              onCreateAlert={async (t) => { if (selectedBuildingId) await createAlert(selectedBuildingId, t) }}
-              onDeleteAlert={async (id) => await deleteAlert(id)}
-              onRequestPermission={async () => { await subscribePush() }}
-              notificationPermission={notifPermission}
-              pushSupported={pushSupported}
-            />
-          </Suspense>
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {reportTarget && (
+        {report.target && (
           <ReportSheet
-            building={reportTarget}
-            canReport={canReport(reportTarget.id)}
-            isSubmitting={isSubmitting}
-            error={reportError}
-            onSubmit={handleReportSubmit}
-            onDismiss={() => setReportTarget(null)}
+            building={report.target}
+            canReport={report.canReport(report.target.id)}
+            isSubmitting={report.isSubmitting}
+            error={report.error}
+            onSubmit={report.handleSubmit}
+            onDismiss={report.dismiss}
           />
         )}
       </AnimatePresence>

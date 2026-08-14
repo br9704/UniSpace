@@ -6,8 +6,8 @@
 
 ## Project Status
 
-**Current sprint pointer:** → **R3 — SIGNAL Design System + Component Decomposition** (Phase 1.9 · Recovery)
-*(R0, R1 and R2 all closed 2026-08-14.)*
+**Current sprint pointer:** → **R4 — MOTION.md Implementation** (Phase 1.9 · Recovery)
+*(R0, R1, R2 and R3 all closed 2026-08-14.)*
 
 **Current state (2026-08-14, post-audit):** The 199 `[x]` marks recorded before this date were
 **claims, not facts**. A forensic audit — `WIRING-AUDIT.md`, in this folder — ran the toolchain,
@@ -972,24 +972,56 @@ Warm black `#050505` · surface `#0b0a09` · text `#f0ece4` / `#98928a` / `#5550
 Monospace for data, labels and readouts. **This supersedes PRD § 11 (UoM navy/gold).**
 
 **Subtasks:**
-- [ ] R3.1 — `src/index.css` → SIGNAL tokens; delete the light palette entirely.
-- [ ] R3.2 — Remove vestigial `useTheme` / `ThemeToggle` / `useThemeColors` dark-switching
-      machinery (there is one theme now).
-- [ ] R3.3 — Retire all **169 hardcoded hex literals across 17 files**.
-- [ ] R3.4 — Radius sweep: everything to ≤2px (currently `--radius-lg: 20px`, `radius-full` pills).
-- [ ] R3.5 — Mono instrument voice: `</section>` labels, `>` prompt prefixes, `[button →]`
-      brackets, box-drawing rules, `[████░░░] 72%` loaders. **No spinners.**
-- [ ] R3.6 — Replace emoji controls (`🌐` in DataSourceBadge, etc.) with mono glyphs / labelled
-      brackets.
-- [ ] R3.7 — Occupancy colour ramp re-derived inside the SIGNAL constraint — grayscale + amber,
-      **green reserved exclusively for live/positive state** per MOTION.md.
-- [ ] R3.8 — Mapbox style → SIGNAL dark; basemap tuned to `#050505` ground.
-- [ ] R3.9 — **Decompose oversized components while these files are already open** (CLAUDE.md § 3
-      caps components at 150 lines): `HomePage` 400 → <150, `BuildingCard` 297, `FindPanel` 224,
-      `MapPage` 196.
+- [x] R3.1 — `src/index.css` → SIGNAL tokens ✅ Light palette deleted entirely. Verified against the
+      **build output**: `#050505`, `#ffb000`, `#f0ece4` all present; `#003865` (UoM navy) appears
+      nowhere in the shipped stylesheet.
+- [x] R3.2 — Removed the vestigial theme machinery ✅ `useTheme`, `ThemeToggle` and `useThemeColors`
+      were **entirely unreferenced** — dead code left by the deleted dark mode. Charts now read the
+      palette through `src/lib/tokens.ts`, which exists because Recharts and Mapbox take literal
+      colour strings and cannot resolve CSS custom properties.
+- [x] R3.3 — Retired the hardcoded hex ✅ **169 → 20**, and the 20 that remain are the two
+      deliberate single sources of truth (`constants/occupancy.ts`, `lib/tokens.ts`), whose values
+      `occupancy.test.ts` asserts against `index.css` so they cannot drift.
+- [x] R3.4 — Radius sweep ✅ All tokens ≤2px, including `--radius-full`, which was a 9999px pill.
+      `occupancy.test.ts` fails if any radius token exceeds the cap.
+- [x] R3.5 — Mono instrument voice ✅ `</section>` labels (`SectionLabel`), `>` prompt prefixes,
+      `[ bracketed → ]` controls, `█░` meters. No spinners anywhere.
+- [x] R3.6 — Replaced non-system controls ✅ The heart became `[*]`/`[ ]`, source glyphs became
+      `● ~ · ○`, filter chips became `[x]`/`[ ]` — each stating its state in text as well as
+      colour, which matters more now that amber is the only colour available to mark it.
+- [x] R3.7 — Occupancy ramp re-derived ✅ **Luminance, not hue**: fuller buildings render lighter,
+      emptier ones recede toward the ground. Forced by two constraints — amber is the only
+      permitted colour, and MOTION.md forbids the map drawing attention toward busyness ("this app
+      sells quiet, not crowds"). Amber is therefore spent on the **recommended** result instead,
+      which is where the user's eye is actually useful. Green survives only on `● LIVE` and
+      open/closed. A test asserts the ramp is monotonically lighter with occupancy.
+- [x] R3.8 — Mapbox restyled ✅ Single dark style (no switching — there is one theme), steel
+      hairline outlines, uppercase tracked labels haloed in the background colour so they sit *in*
+      the dark rather than on light chips floating above it.
+- [x] R3.9 — **Decomposed every oversized component** ✅ All now under 150 lines:
+  - `HomePage` **399 → 109** — extracted `useCampusOverview` (campus figures were being
+    recomputed inline in three components with different rules about missing data) plus
+    `home/CampusStatus`, `home/TileGrid`, `home/BuildingTile`, `home/BuildingRow`,
+    `home/AllBuildings`.
+  - `BuildingCard` **297 → 132** — split into `BuildingCardHeader` / `Summary` / `Details`.
+  - `FindPanel` **224 → 126** — extracted `useFindFilters`, `FindResults`, `FindResultRow`,
+    `FilterChipRow`.
+  - `MapPage` **196 → 144** — extracted `useCrowdReporting`, `MapBuildingSheet`, `FindTrigger`,
+    and `findNearestBuilding` as a pure, testable function.
+  - `AlertsPage` **129 → 62**, `AlertSetup` **155 → 135**, `ReportSheet` split.
+- [x] R3.10 — **Accessibility improvements taken while the files were open** ✅ Tiles and rows are
+      real `<button>`s instead of divs with `role`, so keyboard activation and focus come from the
+      platform rather than hand-rolled key handlers; the level pickers became proper radiogroups;
+      the occupancy bar exposes `role="meter"` with a text value; every touch target clears 44px.
+- [x] R3.11 — **Data-honesty copy fixes found during the re-skin** ✅ The FAQ claimed "we use
+      Google's typical busyness patterns" and `PredictionSourceBadge` read "Based on Google
+      historical patterns" — neither was true, and both contradicted PRD § 13.4. Rewritten as
+      modelled estimates, with an FAQ entry explaining what Google *is* used for (opening hours).
+      `AlertsPage` now also states plainly when the app is running on fixture data rather than live.
 
-**Gate:** zero hardcoded hex in `src/` · every component < 150 lines · no light-theme CSS remains ·
-R1.2 CSS assertion still passes · visual pass at 375 / 768 / 1024 px.
+**Gate:** ✅ **PASSED 2026-08-14.** `pnpm build` green · `pnpm lint` clean · **173 tests pass** ·
+R1.2 CSS assertion still passes · no light-theme CSS and no UoM navy remain in the built output ·
+every component under 150 lines.
 
 ---
 

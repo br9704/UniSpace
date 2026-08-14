@@ -5,6 +5,9 @@ interface TipsListProps {
   maxVisible?: number
 }
 
+/**
+ * Building tips as a terminal list — `>` prefixes, expand in place.
+ */
 export default function TipsList({ tips, maxVisible = 2 }: TipsListProps) {
   const [expanded, setExpanded] = useState(false)
   const visible = expanded ? tips : tips.slice(0, maxVisible)
@@ -14,18 +17,26 @@ export default function TipsList({ tips, maxVisible = 2 }: TipsListProps) {
     <div>
       <ul className="space-y-2">
         {visible.map((tip, i) => (
-          <li key={i} className="flex gap-2 text-sm text-[var(--color-text-secondary)]">
-            <span className="shrink-0 text-[#94A3B8]">-</span>
+          <li
+            key={i}
+            className="flex gap-2 text-sm"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            <span className="mono shrink-0" aria-hidden="true" style={{ color: 'var(--color-text-dim)' }}>
+              &gt;
+            </span>
             <span>{tip}</span>
           </li>
         ))}
       </ul>
       {hasMore && (
         <button
+          type="button"
           onClick={() => setExpanded(!expanded)}
-          className="text-xs text-[var(--color-text-accent)] mt-2 underline min-h-[44px] flex items-center"
+          className="mono text-xs mt-2 min-h-[44px] flex items-center"
+          style={{ color: 'var(--color-amber)', background: 'none', border: 'none', cursor: 'pointer' }}
         >
-          {expanded ? 'Show less' : `Show ${tips.length - maxVisible} more`}
+          {expanded ? '[ show less ]' : `[ ${tips.length - maxVisible} more → ]`}
         </button>
       )}
     </div>

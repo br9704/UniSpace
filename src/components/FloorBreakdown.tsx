@@ -2,36 +2,75 @@ import { motion } from 'framer-motion'
 import type { FloorOccupancy } from '@/types'
 import { getOccupancyLabel } from '@/constants/occupancy'
 import OccupancyBar from './OccupancyBar'
+import SectionLabel from './SectionLabel'
 
 interface FloorBreakdownProps {
   floors: FloorOccupancy[]
 }
 
+/**
+ * Per-floor readout, quietest floor marked.
+ *
+ * The recommendation is the one amber element here, which is the whole reason
+ * the occupancy ramp itself is monochrome: with every bar competing for
+ * attention, the answer to "where should I actually go" would be lost among
+ * them.
+ *
+ * Rows reveal on a 60ms stagger, per MOTION.md.
+ */
 export default function FloorBreakdown({ floors }: FloorBreakdownProps) {
   if (floors.length === 0) return null
 
-  const quietest = floors.reduce((q, f) => f.occupancy_pct < q.occupancy_pct ? f : q)
+  const quietest = floors.reduce((a, b) => (b.occupancy_pct < a.occupancy_pct ? b : a))
 
   return (
-    <div className="mb-4">
-      <h3 className="text-xs font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>By Floor</h3>
-      {floors.map((f, i) => (
-        <motion.div
-          key={f.zone_id}
-          className="flex items-center gap-2 mb-1.5"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.05 }}
-        >
-          <span className="text-xs w-24 truncate" style={{ color: 'var(--color-text-secondary)' }}>{f.zone_name}</span>
-          <div className="flex-1"><OccupancyBar pct={f.occupancy_pct} height={6} /></div>
-          <span className="text-xs w-8 text-right" style={{ color: 'var(--color-text-primary)' }}>{Math.round(f.occupancy_pct)}%</span>
-          <span className="text-xs w-14" style={{ color: 'var(--color-text-tertiary)' }}>{getOccupancyLabel(f.occupancy_pct)}</span>
-          {quietest.zone_id === f.zone_id && (
-            <span className="text-xs font-medium whitespace-nowrap" style={{ color: 'var(--color-uom-gold)' }}>→ Recommended</span>
-          )}
-        </motion.div>
-      ))}
+    <div>
+      <SectionLabel className="mb-3">by floor</SectionLabel>
+      <ul>
+        {floors.map((floor, i) => {
+          const recommended = floor.zone_id === quietest.zone_id
+          return (
+            <motion.li
+              key={floor.zone_id}
+              className="flex items-center gap-2 mb-2"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06, duration: 0.25, ease: 'easeOut' }}
+            >
+              <span
+                className="mono text-xs w-20 truncate shrink-0"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                {floor.zone_name}
+              </span>
+              <div className="flex-1 min-w-0">
+                <OccupancyBar pct={floor.occupancy_pct} height={4} recommended={recommended} />
+              </div>
+              <span
+                className="mono text-xs w-9 text-right shrink-0"
+                data-count
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                {Math.round(floor.occupancy_pct)}%
+              </span>
+              <span
+                className="mono text-xs w-16 shrink-0"
+                style={{ color: 'var(--color-text-dim)' }}
+              >
+                {getOccupancyLabel(floor.occupancy_pct).toUpperCase()}
+              </span>
+              {recommended && (
+                <span
+                  className="mono text-xs whitespace-nowrap shrink-0"
+                  style={{ color: 'var(--color-amber)' }}
+                >
+                  ← BEST
+                </span>
+              )}
+            </motion.li>
+          )
+        })}
+      </ul>
     </div>
   )
 }

@@ -14,20 +14,28 @@
  */
 @source not "../**/*.md";
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 /*
- * Tailwind v4 theme.
+ * ══ SIGNAL ══════════════════════════════════════════════════════════════════
  *
- * These are BOTH design tokens (read as var() from inline styles and from
- * arbitrary-value classes) AND the source of Tailwind's utility scales
- * (text-sm, rounded-md, shadow-elevated). One declaration, two consumers, so
- * they cannot drift apart.
+ * A warm-black precision instrument. Locked cross-project system; the source of
+ * truth is ~/bruno-portfolio/CLAUDE.md § "Redesign Design Decisions (2026-07 ·
+ * SIGNAL)". This supersedes PRD § 11, whose UoM navy/gold palette is retired.
  *
- * v4 namespaces used here: --color-* --font-* --text-* --radius-* --shadow-*
- * --breakpoint-*. A token declared outside those namespaces silently stops
- * generating utilities, which is exactly the failure this file is recovering
- * from — see WIRING-AUDIT.md RC-2. src/index.css.test.ts guards it.
+ * Non-negotiable:
+ *   · Amber #ffb000 is THE one accent, used sparingly — status, focus, CTAs,
+ *     the single recommended result. Everything else is grayscale on steel.
+ *   · No light theme. No gradients. No shadows. No colour beyond amber.
+ *   · Border radius max 2px. Effectively square.
+ *   · Monospace for data, labels, readouts.
+ *   · Nothing flashes >3x/s; prefers-reduced-motion means fully static.
+ *
+ * These are BOTH design tokens and the source of Tailwind's utility scales, so
+ * they cannot drift apart. v4 namespaces: --color-* --font-* --text-* --radius-*
+ * --shadow-* --breakpoint-*. A token declared outside those namespaces silently
+ * stops generating utilities — see WIRING-AUDIT.md RC-2. index.css.test.ts
+ * guards it.
  */
 @theme {
   /* ── Breakpoints ── */
@@ -36,50 +44,69 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
 
-  /* ── UoM Brand ── */
-  --color-uom-navy: #003865;
-  --color-uom-blue: #0080A4;
-  --color-uom-gold: #C8A951;
-  --color-uom-gold-light: #E8C97A;
+  /* ── Core palette (locked) ── */
+  --color-bg: #050505;
+  --color-surface: #0b0a09;
+  --color-steel: #2c2925;
+  --color-hairline: #1b1916;
 
-  /* ── Backgrounds ── */
-  --color-bg-primary: #FFFFFF;
-  --color-bg-secondary: #F5F7FA;
-  --color-bg-elevated: #FFFFFF;
-  --color-bg-overlay: rgba(0, 0, 0, 0.3);
-  --color-bg-card: #FAFBFD;
-  --color-bg-chip: #F0F2F5;
-  --color-bg-input: #FAFBFD;
-  --color-bg-page: #F0F2F5;
-  --color-border: #E2E8F0;
-  --color-border-bright: #CBD5E1;
+  --color-text-primary: #f0ece4;
+  --color-text-secondary: #98928a;
+  --color-text-dim: #55504a;
 
-  /* ── Text ── */
-  --color-text-primary: #1E293B;
-  --color-text-secondary: #64748B;
-  --color-text-tertiary: #94A3B8;
-  --color-text-accent: #003865;
-  --color-text-on-navy: #FFFFFF;
-  --color-text-on-navy-muted: rgba(255, 255, 255, 0.55);
-  --color-text-on-navy-subtle: rgba(255, 255, 255, 0.4);
+  --color-amber: #ffb000;
+  --color-amber-bright: #ffc94d;
+  --color-amber-dim: #8f6300;
 
-  /* ── Occupancy scale ── */
-  --color-empty: #4CAF7D;
-  --color-quiet: #A8C44E;
-  --color-moderate: #F5A623;
-  --color-busy: #E87040;
-  --color-packed: #E05252;
+  /*
+   * The only colour outside the warm-grey/amber system. MOTION.md reserves
+   * green exclusively for live/positive state — the `● LIVE` dot and nothing
+   * else. If it appears anywhere a human is not being told "this is real,
+   * right now", it is being misused.
+   */
+  --color-live: #4caf7d;
 
-  /* ── Data source indicators ── */
-  --color-source-live: #4CAF7D;
-  --color-source-google: #0080A4;
-  --color-source-predicted: #C8A951;
-  --color-source-stale: #94A3B8;
+  /*
+   * ── Occupancy ramp ──
+   *
+   * Luminance, not hue: fuller buildings render lighter and denser, emptier
+   * ones recede toward the background. Two constraints force this.
+   *
+   * A conventional green-to-red heatmap is impossible here — amber is the only
+   * permitted colour. And MOTION.md is explicit that the map must never draw
+   * attention toward busyness: "this app sells quiet, not crowds". So the ramp
+   * is deliberately undramatic, and amber is spent on the *recommended* result
+   * instead, which is where a user's eye is actually useful.
+   *
+   * Occupancy is never communicated by shade alone — every surface carries the
+   * text label too (Empty / Quiet / Moderate / Busy / Packed), which WCAG
+   * requires and which the old palette also relied on.
+   */
+  --color-occ-none: #141210;
+  --color-occ-empty: #2c2925;
+  --color-occ-quiet: #454039;
+  --color-occ-moderate: #625c53;
+  --color-occ-busy: #857e73;
+  --color-occ-packed: #ada496;
+
+  /* ── Aliases kept for surfaces that read as containers ── */
+  --color-bg-primary: #050505;
+  --color-bg-secondary: #0b0a09;
+  --color-bg-elevated: #0b0a09;
+  --color-bg-card: #0b0a09;
+  --color-bg-chip: #141210;
+  --color-bg-input: #0b0a09;
+  --color-bg-page: #050505;
+  --color-bg-overlay: rgba(5, 5, 5, 0.82);
+  --color-border: #2c2925;
+  --color-border-bright: #454039;
+  --color-text-tertiary: #55504a;
+  --color-text-accent: #ffb000;
 
   /* ── Typography ── */
-  --font-display: 'Neue Haas Grotesk Display', 'Helvetica Neue', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'DM Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'DM Sans', 'Helvetica Neue', sans-serif;
 
   --text-xs: 0.6875rem;
   --text-sm: 0.8125rem;
@@ -89,14 +116,14 @@
   --text-2xl: 1.75rem;
   --text-4xl: 3rem;
 
-  /* ── Radius ── */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
+  /* ── Shape: effectively square ── */
+  --radius-sm: 1px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
 
-  /* ── Shadows ── */
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 56, 101, 0.06);
-  --shadow-elevated: 0 8px 30px rgba(0, 56, 101, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  /* No shadows in this system. Depth comes from hairlines and steel borders. */
+  --shadow-card: none;
+  --shadow-elevated: none;
 }
 
 /*
@@ -104,11 +131,14 @@
  * they exist only to be read through var().
  */
 :root {
+  color-scheme: dark;
+
   /* Spacing (8pt grid) */
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
   --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-12: 48px;
 
-  --radius-full: 9999px;
+  /* Square, everywhere. Kept as a token so pills can be retired in one place. */
+  --radius-full: 2px;
 
   /* Font weights — NOT `--font-*`, which is the font-family namespace in v4 */
   --font-regular: 400;
@@ -116,12 +146,14 @@
   --font-semibold: 600;
   --font-bold: 700;
 
-  /* Glows */
-  --glow-gold: 0 0 20px rgba(200, 169, 81, 0.15);
-  --glow-live: 0 0 12px rgba(76, 175, 125, 0.2);
+  /* Focus is a bracket, not a glow. */
+  --focus-ring: 0 0 0 1px var(--color-bg), 0 0 0 2px var(--color-amber);
 
-  /* Focus ring */
-  --focus-ring: 0 0 0 2px var(--color-bg-primary), 0 0 0 4px var(--color-uom-blue);
+  /* Motion: ease-out or linear only, nothing over 600ms. */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 400ms;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -129,13 +161,29 @@
 html, body, #root {
   height: 100%;
   width: 100%;
-  background-color: var(--color-bg-primary);
+  background-color: var(--color-bg);
   color: var(--color-text-primary);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Global focus ring */
+/* Data, labels, readouts and ASCII are monospace throughout. */
+.mono,
+[data-readout] {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/*
+ * Numbers that update must not change width as they count, or the layout
+ * jitters and a measurement starts reading as a glitch.
+ */
+[data-count] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
 *:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
@@ -143,6 +191,46 @@ html, body, #root {
 }
 
 ::selection {
-  background-color: rgba(0, 128, 164, 0.3);
-  color: var(--color-text-primary);
+  background-color: var(--color-amber);
+  color: var(--color-bg);
+}
+
+/*
+ * Skeleton pulse — 1.6s, per MOTION.md. Opacity only, so it never shifts
+ * layout, and the reduced-motion block below stops it everywhere at once.
+ */
+@keyframes unispace-skeleton {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+
+/*
+ * Status pulse — the `● LIVE` dot. 2s, opacity .3 → 1 → .3. Half a flash per
+ * second, comfortably inside the 3-flashes-per-second accessibility ceiling.
+ */
+@keyframes unispace-status-pulse {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 1; }
+}
+
+/* Instrument scrollbars: hairline, no chrome. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-steel) transparent;
+}
+
+/*
+ * A11y hard rule, not a preference: reduced motion means fully static. Nothing
+ * in this app conveys information through movement alone — the breathing
+ * heatmap says "live", and the `● LIVE` dot says the same thing in text.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
