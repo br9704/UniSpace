@@ -1,21 +1,52 @@
+@import "tailwindcss";
+
+/*
+ * Exclude documentation from class detection.
+ *
+ * Tailwind v4 auto-detects sources from the project root and scans every
+ * non-ignored file, markdown included. MASTERPLAN.md and WIRING-AUDIT.md quote
+ * class names in prose, and Tailwind faithfully generated CSS from those quotes
+ * — including one malformed rule that made lightningcss fail to minify the
+ * whole stylesheet. Docs must never contribute utilities.
+ *
+ * (`source("../src")` on the @import above would be tidier, but Vite resolves
+ * @import before Tailwind's plugin runs, so the option leaks into the output.)
+ */
+@source not "../**/*.md";
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*
+ * Tailwind v4 theme.
+ *
+ * These are BOTH design tokens (read as var() from inline styles and from
+ * arbitrary-value classes) AND the source of Tailwind's utility scales
+ * (text-sm, rounded-md, shadow-elevated). One declaration, two consumers, so
+ * they cannot drift apart.
+ *
+ * v4 namespaces used here: --color-* --font-* --text-* --radius-* --shadow-*
+ * --breakpoint-*. A token declared outside those namespaces silently stops
+ * generating utilities, which is exactly the failure this file is recovering
+ * from — see WIRING-AUDIT.md RC-2. src/index.css.test.ts guards it.
+ */
+@theme {
+  /* ── Breakpoints ── */
+  --breakpoint-xs: 375px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
 
-:root {
-  /* UoM Brand */
+  /* ── UoM Brand ── */
   --color-uom-navy: #003865;
   --color-uom-blue: #0080A4;
   --color-uom-gold: #C8A951;
   --color-uom-gold-light: #E8C97A;
 
-  /* Backgrounds */
+  /* ── Backgrounds ── */
   --color-bg-primary: #FFFFFF;
   --color-bg-secondary: #F5F7FA;
   --color-bg-elevated: #FFFFFF;
-  --color-bg-overlay: rgba(0,0,0,0.3);
+  --color-bg-overlay: rgba(0, 0, 0, 0.3);
   --color-bg-card: #FAFBFD;
   --color-bg-chip: #F0F2F5;
   --color-bg-input: #FAFBFD;
@@ -23,48 +54,29 @@
   --color-border: #E2E8F0;
   --color-border-bright: #CBD5E1;
 
-  /* Text */
+  /* ── Text ── */
   --color-text-primary: #1E293B;
   --color-text-secondary: #64748B;
   --color-text-tertiary: #94A3B8;
   --color-text-accent: #003865;
   --color-text-on-navy: #FFFFFF;
-  --color-text-on-navy-muted: rgba(255,255,255,0.55);
-  --color-text-on-navy-subtle: rgba(255,255,255,0.4);
+  --color-text-on-navy-muted: rgba(255, 255, 255, 0.55);
+  --color-text-on-navy-subtle: rgba(255, 255, 255, 0.4);
 
-  /* Occupancy scale */
+  /* ── Occupancy scale ── */
   --color-empty: #4CAF7D;
   --color-quiet: #A8C44E;
   --color-moderate: #F5A623;
   --color-busy: #E87040;
   --color-packed: #E05252;
 
-  /* Data source indicators */
+  /* ── Data source indicators ── */
   --color-source-live: #4CAF7D;
   --color-source-google: #0080A4;
   --color-source-predicted: #C8A951;
   --color-source-stale: #94A3B8;
 
-  /* Spacing (8pt grid) */
-  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
-  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-12: 48px;
-
-  /* Radius */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-full: 9999px;
-
-  /* Shadows */
-  --shadow-card: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,56,101,0.06);
-  --shadow-elevated: 0 8px 30px rgba(0,56,101,0.12), 0 2px 8px rgba(0,0,0,0.06);
-  --glow-gold: 0 0 20px rgba(200,169,81,0.15);
-  --glow-live: 0 0 12px rgba(76,175,125,0.2);
-
-  /* Focus ring */
-  --focus-ring: 0 0 0 2px var(--color-bg-primary), 0 0 0 4px var(--color-uom-blue);
-
-  /* Typography */
+  /* ── Typography ── */
   --font-display: 'Neue Haas Grotesk Display', 'Helvetica Neue', sans-serif;
   --font-body: 'DM Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -76,6 +88,40 @@
   --text-xl: 1.375rem;
   --text-2xl: 1.75rem;
   --text-4xl: 3rem;
+
+  /* ── Radius ── */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  /* ── Shadows ── */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 56, 101, 0.06);
+  --shadow-elevated: 0 8px 30px rgba(0, 56, 101, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/*
+ * Tokens outside Tailwind's namespaces. These generate no utilities by design —
+ * they exist only to be read through var().
+ */
+:root {
+  /* Spacing (8pt grid) */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-12: 48px;
+
+  --radius-full: 9999px;
+
+  /* Font weights — NOT `--font-*`, which is the font-family namespace in v4 */
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* Glows */
+  --glow-gold: 0 0 20px rgba(200, 169, 81, 0.15);
+  --glow-live: 0 0 12px rgba(76, 175, 125, 0.2);
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 2px var(--color-bg-primary), 0 0 0 4px var(--color-uom-blue);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }

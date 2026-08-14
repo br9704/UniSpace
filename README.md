@@ -221,7 +221,9 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 
 **University of Melbourne — Parkville**
 
-18 UoM Parkville buildings with OSM-sourced polygon outlines, amenity data, building hours, and Google Popular Times data (1,453 rows across all 7 days).
+18 UoM Parkville buildings with OSM-sourced polygon outlines, amenity data, building hours, and typical-occupancy curves (1,172 rows across all 7 days).
+
+Those curves are UniSpace's own modelled estimates of campus rhythm, not measurements and not Google data — the UI labels them as estimates wherever they are shown. Google's public Places API does not expose live busyness, so it is used only for opening hours.
 
 > Capacity estimates are directional (~), not precise. Building data will be verified in Sprint 17.
 

@@ -18,7 +18,6 @@ import { getCurrentTypical } from '@/lib/occupancyHelpers'
 import { formatHour } from '@/lib/predictionInsights'
 import { formatRelativeTime } from '@/lib/relativeTime'
 import { SkeletonCard, SkeletonBuildingRow, SkeletonGlanceCard } from '@/components/ui/SkeletonLoader'
-import { getLatestUpdate } from '@/lib/occupancyHelpers'
 
 type SortedItem = { building: Building; occ: BlendedOccupancy | null; walk: { minutes: number; meters: number } | null }
 

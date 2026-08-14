@@ -3,6 +3,9 @@ import type { PushSubscriptionJSON, UserAlert } from '@/types'
 
 const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-alerts`
 
+/** Stable identity so consumers memoising on `alerts` don't re-run every render. */
+const EMPTY_ALERTS: UserAlert[] = []
+
 async function callManageAlerts(body: Record<string, unknown>): Promise<unknown> {
   const res = await fetch(FUNCTION_URL, {
     method: 'POST',
@@ -21,17 +24,32 @@ async function callManageAlerts(body: Record<string, unknown>): Promise<unknown>
 
 export function useAlerts(subscription: PushSubscriptionJSON | null) {
   const [alerts, setAlerts] = useState<UserAlert[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  // Which subscription the list below was fetched for. Loading is then derived
+  // rather than stored: we are loading exactly when a subscription exists whose
+  // fetch has not settled yet. Keeping it as state would mean flipping a flag
+  // synchronously inside the effect, one render behind where it is knowable.
+  const [loadedEndpoint, setLoadedEndpoint] = useState<string | null>(null)
+  const isLoading = subscription !== null && loadedEndpoint !== subscription.endpoint
 
-  // Fetch alerts when subscription is available
+  // Fetch alerts when a push subscription is available.
   useEffect(() => {
-    if (!subscription) { setAlerts([]); return }
-    setIsLoading(true)
+    if (!subscription) return
+
+    // Guards against a slow response from a previous subscription landing after
+    // a newer one has already been requested.
+    let cancelled = false
+    const { endpoint } = subscription
     callManageAlerts({ action: 'list', push_subscription: subscription })
-      .then((res) => setAlerts((res as { alerts: UserAlert[] }).alerts ?? []))
-      .catch(() => setAlerts([]))
-      .finally(() => setIsLoading(false))
+      .then((res) => { if (!cancelled) setAlerts((res as { alerts: UserAlert[] }).alerts ?? []) })
+      .catch(() => { if (!cancelled) setAlerts([]) })
+      .finally(() => { if (!cancelled) setLoadedEndpoint(endpoint) })
+
+    return () => { cancelled = true }
   }, [subscription])
+
+  // With no subscription there are no alerts to hold — derived, not stored, so
+  // clearing does not need a synchronous setState inside the effect above.
+  const visibleAlerts = subscription ? alerts : EMPTY_ALERTS
 
   const createAlert = useCallback(async (buildingId: string, thresholdPct: number) => {
     if (!subscription) return
@@ -68,8 +86,8 @@ export function useAlerts(subscription: PushSubscriptionJSON | null) {
   }, [subscription])
 
   const getAlertForBuilding = useCallback((buildingId: string): UserAlert | undefined => {
-    return alerts.find((a) => a.building_id === buildingId)
-  }, [alerts])
+    return visibleAlerts.find((a) => a.building_id === buildingId)
+  }, [visibleAlerts])
 
-  return { alerts, isLoading, createAlert, updateAlert, deleteAlert, getAlertForBuilding }
+  return { alerts: visibleAlerts, isLoading, createAlert, updateAlert, deleteAlert, getAlertForBuilding }
 }

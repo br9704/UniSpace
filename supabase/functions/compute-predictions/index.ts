@@ -16,7 +16,7 @@ interface GooglePopularTimeRow {
   typical_popularity: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 Deno.serve(async (_req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;

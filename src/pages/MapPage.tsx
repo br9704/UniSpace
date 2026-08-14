@@ -37,17 +37,20 @@ export default function MapPage() {
   const { isSupported: pushSupported, permission: notifPermission, subscription: pushSub, subscribe: subscribePush } = useWebPush()
   const { createAlert, deleteAlert, getAlertForBuilding } = useAlerts(pushSub)
   const [searchParams, setSearchParams] = useSearchParams()
-  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null)
+  // A `?building=` deep link (from a Share link) seeds the selection directly,
+  // rather than being copied into state by an effect after first paint.
+  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(
+    () => searchParams.get('building'),
+  )
   const [reportTarget, setReportTarget] = useState<Building | null>(null)
   const [showFind, setShowFind] = useState(false)
 
+  // Clear the param once consumed so dismissing the card doesn't reopen it, and
+  // so the URL is shareable as the plain map. The router is an external system,
+  // which is what an effect is for.
   useEffect(() => {
-    const bid = searchParams.get('building')
-    if (bid && buildings.length > 0) {
-      setSelectedBuildingId(bid)
-      setSearchParams({}, { replace: true })
-    }
-  }, [searchParams, buildings, setSearchParams])
+    if (searchParams.has('building')) setSearchParams({}, { replace: true })
+  }, [searchParams, setSearchParams])
 
   const { building: selectedBuilding, occupancy: selectedOccupancy } = useBuildingCard(
     selectedBuildingId, buildings, occupancyMap,

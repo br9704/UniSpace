@@ -19,5 +19,19 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // A leading underscore is the project's marker for "required by a
+      // signature, intentionally unused" — e.g. the `_req` an Edge Function
+      // handler must accept. Honour the convention instead of forcing
+      // eslint-disable comments at each site.
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
   },
 ])

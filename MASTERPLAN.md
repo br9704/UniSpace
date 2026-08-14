@@ -6,7 +6,8 @@
 
 ## Project Status
 
-**Current sprint pointer:** → **R1 — Foundation Repair** (Phase 1.9 · Recovery)
+**Current sprint pointer:** → **R2 — Local Fixture Layer** (Phase 1.9 · Recovery)
+*(R0 correction pass and R1 foundation repair both closed 2026-08-14.)*
 
 **Current state (2026-08-14, post-audit):** The 199 `[x]` marks recorded before this date were
 **claims, not facts**. A forensic audit — `WIRING-AUDIT.md`, in this folder — ran the toolchain,
@@ -338,10 +339,14 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 - [x] S7.7 — Labels update in real-time via GeoJSON source refresh ✅
   - [x] S7.extra — Expanded from 5 to 20 UoM buildings (OSM-sourced polygons)
   - [x] S7.extra — Fixed all polygon shapes using real OpenStreetMap outlines (up to 58 vertices)
-  - [x] S7.extra — Seeded google_popular_times for all 18 buildings — **1,321 rows**
-        (corrected 2026-08-14: `002` = 335 + `004` = 986. The previous figure of 1,252 here and
-        1,453 in README were both unbacked by any committed artifact — honesty-rule violation.)
-  - [x] S7.extra — Removed Giblin Eunson (inside FBE) and Brownless (not in OSM) — 18 buildings final
+  - [x] S7.extra — Seeded typical-occupancy curves for all 18 buildings — **1,172 rows**
+        (verified 2026-08-14 against the committed seeds: `002` = 335 + `004` = 837. The previous
+        figures — 1,252 here and 1,453 in README — were both unbacked by any committed artifact.
+        The count changed again in R1.7 when the two extra buildings below were finally removed
+        from the seeds, which is the point: it is recounted from the files, never restated.)
+  - [x] S7.extra — Removed Giblin Eunson (inside FBE) and Brownless (not in OSM) from
+        `buildingMeta.ts` — ⚠️ **but not from the seed files until R1.7 (2026-08-14).** For five
+        sprints the database described 20 buildings while the UI and README said 18.
   - [x] S7.extra — Fixed combined name+% label (was hiding names on buildings without data)
 
 **Test criteria:**
@@ -846,31 +851,57 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 Nothing downstream can be verified until this passes.
 
 **Subtasks:**
-- [ ] R1.1 — **Tailwind v4 migration (RC-2).** Replace `@tailwind base/components/utilities` in
-      `src/index.css` with `@import "tailwindcss"`; port the `tailwind.config.ts` theme into a
-      `@theme` block. Delete the dead config bridge.
-- [ ] R1.2 — **CSS emission assertion.** Commit a test that builds the stylesheet and asserts
-      `.p-4`, `.gap-2`, `.text-sm`, `.font-semibold`, `.rounded-lg` are present. This is the exact
-      probe that exposed RC-2; it becomes a permanent regression gate. *Without this, S12.30's
-      failure mode recurs silently.*
-- [ ] R1.3 — **Fix the 4 `tsc` errors (RC-3).** `useWebPush.ts` × 3 (`PushSubscriptionJSON` cast
-      needs `unknown` hop; `Uint8Array<ArrayBufferLike>` → `BufferSource`), `HomePage.tsx` × 1
-      (unused `getLatestUpdate` import).
-- [ ] R1.4 — **Fix all 10 ESLint errors**, including `MapPage.tsx:47` `setState`-in-effect
-      (derive from `searchParams` during render instead) and `sync-google-popularity` unused `_req`.
-- [ ] R1.5 — **Fail-soft Supabase config (B7).** `src/lib/supabase.ts` currently `throw`s at module
-      load on missing env → white screen with no diagnostics. Replace with a typed config guard
-      that surfaces a real error state. *This is why a misconfigured deploy shows nothing.*
-- [ ] R1.6 — **Rewrite migration `013` (RC-1a).** Re-source Google Place IDs for the 18 buildings
-      and commit as `013_data_verification_fixes.sql`, closing the `012 → 014` gap. Scope is now
-      opening-hours only (see decision: Google branding dropped).
-- [ ] R1.7 — **Reconcile seed data with `buildingMeta.ts`.** 18 slugs, no Brownless;
-      `003_additional_buildings.sql` still seeds `brownless-*`.
-- [ ] R1.8 — **Fix unbacked numbers.** README says 1,453 popular-times rows; committed seeds
-      contain **1,321**. Correct README and any other public copy.
+- [x] R1.1 — **Tailwind v4 migration (RC-2)** ✅ `@import "tailwindcss"` + `@theme` block in
+      `src/index.css`; `tailwind.config.ts` deleted (v4 never loaded it). Emitted utilities went
+      **97 → 194**; all spacing / font-size / weight / radius scales now compile.
+      Also added `@source not "../**/*.md"` — Tailwind was scanning the markdown docs and
+      generating classes from class names quoted in prose, one of which was malformed and made
+      lightningcss fail to minify the whole stylesheet.
+- [x] R1.2 — **CSS emission assertion** ✅ `src/index.css.test.ts` (14 tests). Compiles the real
+      stylesheet through Vite + PostCSS and asserts one utility per theme namespace. Asserts on
+      **build output, not source** — a source-level check would have passed happily throughout the
+      outage. ~200ms. It caught the malformed-class bug above on its first run.
+- [x] R1.3 — **Fixed the 4 `tsc` errors (RC-3)** ✅ Both `useWebPush.ts` issues were real bugs, not
+      type noise: the `PushSubscriptionJSON` cast asserted `keys.p256dh`/`keys.auth` exist when the
+      DOM type has them optional (any browser omitting one would crash downstream reads), replaced
+      with a validating narrowing function; and the VAPID key is now built over an explicit
+      `ArrayBuffer` so it is a genuine `BufferSource`. Unused import removed from `HomePage.tsx`.
+- [x] R1.4 — **Fixed all 10 ESLint errors** ✅ No suppressions. Refs in `Map.tsx` /
+      `usePositionBroadcast.ts` moved out of render into effects (mutating during render is unsafe
+      under concurrent React); `StaleDataBanner`, `useAlerts` and `MapPage` now derive state that
+      was being mirrored by effects; `useGeolocation` seeds unsupported-browser state at init.
+      ESLint config now honours the `_`-prefix convention rather than forcing per-site disables.
+  - [x] R1.4.extra — `useGeolocation.isWatching` now means "a fix is arriving" rather than "a watch
+        is registered". It previously flipped true on registration — before the permission prompt
+        was answered — so position broadcasting could be enabled for a watch that never produced a
+        position.
+- [x] R1.5 — **Fail-soft Supabase config (B7)** ✅ `src/lib/supabase.ts` no longer throws at import.
+      It sits at the root of nearly every hook's import graph, so throwing took the bundle down
+      before React mounted — a blank page with nothing to explain it. Now exports
+      `isSupabaseConfigured` / `supabaseConfigError`, and `ConfigError.tsx` names the exact missing
+      variables and where to set them.
+- [x] R1.6 — **Rewrote migration `013`** ✅ `013_data_verification_fixes.sql` closes the `012 → 014`
+      gap and idempotently removes the two dropped buildings from any pre-existing database.
+      ⚠️ **It deliberately does NOT write Google Place IDs.** 11 of 18 are NULL and the other 7 are
+      themselves unverified. Resolving them needs a live Places API key, and writing
+      plausible-looking IDs would reproduce exactly the failure being corrected. Recorded as
+      `[PLACEHOLDER]` in the migration and moved to the Ship Runbook, step 2. Impact is contained:
+      since Google is no longer an occupancy source, `google_place_id` feeds only opening hours.
+- [x] R1.7 — **Reconciled seed data with `buildingMeta.ts`** ✅ Seeds contained **20** buildings
+      while the UI and README said 18 — Brownless and Giblin Eunson were removed from
+      `buildingMeta.ts` in S7 but never from the seeds. Both now removed from `003` (buildings,
+      zones, occupancy backfill) and `004` (curves). **Seeds = buildingMeta = 18.**
+- [x] R1.8 — **Fixed unbacked numbers** ✅ Curve rows recounted from the committed seeds after the
+      removal: **1,172** (`002` = 335 + `004` = 837). README's 1,453 and the plan's 1,252 were both
+      unbacked. README also now states plainly that the curves are UniSpace's own modelled
+      estimates, not Google data.
+- [x] R1.9 — **Pinned the package manager** ✅ `packageManager: pnpm@11.13.0`. `node_modules` had
+      been installed by pnpm 10 while the global was 11, so `pnpm install` refused to proceed —
+      the same drift would have hit CI.
 
-**Gate:** `pnpm build` green (not `vite build` — that is what hid RC-3) · `eslint .` zero errors ·
-`vitest run` all pass · R1.2 assertion passes.
+**Gate:** ✅ **PASSED 2026-08-14.** `pnpm build` green (first successful build since S20) ·
+`pnpm lint` zero errors · `pnpm test` 154/154 pass (140 + 14 new) · R1.2 assertion passes.
+Verified with `pnpm` itself, not `vite build` — running only the latter is what hid RC-3.
 
 ---
 

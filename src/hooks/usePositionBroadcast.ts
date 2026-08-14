@@ -24,8 +24,14 @@ interface UsePositionBroadcastOptions {
  */
 export function usePositionBroadcast({ zoneId, campusSlug, enabled }: UsePositionBroadcastOptions): void {
   const lastBroadcastRef = useRef<number>(0)
+  // Read by the keepalive interval below, which outlives the render that
+  // scheduled it. Written in an effect rather than during render — mutating a
+  // ref while rendering is unsafe under concurrent React. Declared first so it
+  // commits before the broadcast effect reads it.
   const zoneIdRef = useRef(zoneId)
-  zoneIdRef.current = zoneId
+  useEffect(() => {
+    zoneIdRef.current = zoneId
+  })
 
   useEffect(() => {
     if (!enabled || !zoneId) return

@@ -18,12 +18,19 @@ const FILL_LAYER = 'building-fills'
 export default function Map({ buildings, occupancyMap, onBuildingClick }: MapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<mapboxgl.Map | null>(null)
+  // Latest props, readable from Mapbox callbacks that outlive a single render.
   const onClickRef = useRef(onBuildingClick)
-  onClickRef.current = onBuildingClick
   const buildingsRef = useRef(buildings)
-  buildingsRef.current = buildings
   const occupancyRef = useRef(occupancyMap)
-  occupancyRef.current = occupancyMap
+
+  // Written in an effect, not during render: mutating a ref while rendering is
+  // unsafe under concurrent React. Declared first so it commits before the
+  // effects below read these refs — effects run in declaration order.
+  useEffect(() => {
+    onClickRef.current = onBuildingClick
+    buildingsRef.current = buildings
+    occupancyRef.current = occupancyMap
+  })
 
   // Initialise map (runs once)
   useEffect(() => {

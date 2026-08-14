@@ -29,12 +29,12 @@ export default function Button(props: Props) {
   const classes = `inline-flex items-center justify-center font-semibold transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none ${VARIANT_STYLES[variant]} ${SIZE_STYLES[size]} ${className}`
 
   if (rest.as === 'a') {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { as: _, ...anchorProps } = rest as AnchorProps
     return <a className={`${classes} no-underline`} {...anchorProps} />
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   const { as: _, ...buttonProps } = rest as ButtonProps
   return <button className={classes} {...buttonProps} />
 }

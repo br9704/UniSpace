@@ -6,59 +6,6 @@
 -- Buildings
 -- ============================================================
 
--- 6. Brownless Biomedical Library (Building 182)
--- Medical precinct, east of central campus
-INSERT INTO buildings (
-  id, campus_id, slug, name, short_name, estimated_capacity,
-  entrance_lat, entrance_lng, centroid_lat, centroid_lng,
-  polygon, google_place_id,
-  has_wifi, has_power, has_food_nearby, has_quiet_zone,
-  has_group_seating, is_ground_floor_accessible, has_elevator,
-  has_accessible_bathrooms, has_accessible_parking,
-  hours_mon, hours_tue, hours_wed, hours_thu, hours_fri, hours_sat, hours_sun
-) VALUES (
-  'b0000000-0000-0000-0000-000000000006',
-  'a1b2c3d4-0000-0000-0000-000000000001',
-  'brownless-library',
-  'Brownless Biomedical Library',
-  'Brownless',
-  250,
-  -37.7990, 144.9595,
-  -37.7989, 144.9596,
-  '{"type":"Polygon","coordinates":[[[144.9590,-37.7986],[144.9602,-37.7986],[144.9602,-37.7993],[144.9590,-37.7993],[144.9590,-37.7986]]]}',
-  NULL,
-  true, true, true, true,
-  true, true, true,
-  true, false,
-  '08:00-22:00', '08:00-22:00', '08:00-22:00', '08:00-22:00', '08:00-18:00', '10:00-18:00', '12:00-18:00'
-);
-
--- 7. Giblin Eunson Library (inside FBE Building 105, 111 Barry St)
-INSERT INTO buildings (
-  id, campus_id, slug, name, short_name, estimated_capacity,
-  entrance_lat, entrance_lng, centroid_lat, centroid_lng,
-  polygon, google_place_id,
-  has_wifi, has_power, has_food_nearby, has_quiet_zone,
-  has_group_seating, is_ground_floor_accessible, has_elevator,
-  has_accessible_bathrooms, has_accessible_parking,
-  hours_mon, hours_tue, hours_wed, hours_thu, hours_fri, hours_sat, hours_sun
-) VALUES (
-  'b0000000-0000-0000-0000-000000000007',
-  'a1b2c3d4-0000-0000-0000-000000000001',
-  'giblin-eunson-library',
-  'Giblin Eunson Library',
-  'Giblin Eunson',
-  200,
-  -37.8013, 144.9594,
-  -37.8012, 144.9595,
-  '{"type":"Polygon","coordinates":[[[144.9588,-37.8009],[144.9600,-37.8009],[144.9600,-37.8017],[144.9588,-37.8017],[144.9588,-37.8009]]]}',
-  NULL,
-  true, true, true, true,
-  true, true, true,
-  true, false,
-  '08:00-21:00', '08:00-21:00', '08:00-21:00', '08:00-21:00', '08:00-18:00', '10:00-17:00', null
-);
-
 -- 8. Melbourne Law School (Building 106, 185 Pelham St)
 INSERT INTO buildings (
   id, campus_id, slug, name, short_name, estimated_capacity,
@@ -403,17 +350,6 @@ INSERT INTO buildings (
 -- Zone UUID pattern: c0000000-0000-0000-{zone_group}-00000000000{zone_num}
 -- ============================================================
 
--- Brownless Biomedical Library — 3 floors
-INSERT INTO building_zones (id, building_id, zone_slug, zone_name, polygon, capacity, floor_level, is_quiet_zone, has_power, is_accessible) VALUES
-  ('c0000000-0000-0000-0006-000000000001', 'b0000000-0000-0000-0000-000000000006', 'brownless-ground', 'Ground Floor', '{"type":"Polygon","coordinates":[[[144.9590,-37.7986],[144.9602,-37.7986],[144.9602,-37.7993],[144.9590,-37.7993],[144.9590,-37.7986]]]}', 80, 0, false, true, true),
-  ('c0000000-0000-0000-0006-000000000002', 'b0000000-0000-0000-0000-000000000006', 'brownless-level1', 'Level 1', '{"type":"Polygon","coordinates":[[[144.9590,-37.7986],[144.9602,-37.7986],[144.9602,-37.7993],[144.9590,-37.7993],[144.9590,-37.7986]]]}', 90, 1, true, true, true),
-  ('c0000000-0000-0000-0006-000000000003', 'b0000000-0000-0000-0000-000000000006', 'brownless-level2', 'Level 2 — Quiet Study', '{"type":"Polygon","coordinates":[[[144.9590,-37.7986],[144.9602,-37.7986],[144.9602,-37.7993],[144.9590,-37.7993],[144.9590,-37.7986]]]}', 80, 2, true, true, true);
-
--- Giblin Eunson Library — 2 floors
-INSERT INTO building_zones (id, building_id, zone_slug, zone_name, polygon, capacity, floor_level, is_quiet_zone, has_power, is_accessible) VALUES
-  ('c0000000-0000-0000-0007-000000000001', 'b0000000-0000-0000-0000-000000000007', 'giblin-eunson-ground', 'Ground Floor', '{"type":"Polygon","coordinates":[[[144.9588,-37.8009],[144.9600,-37.8009],[144.9600,-37.8017],[144.9588,-37.8017],[144.9588,-37.8009]]]}', 100, 0, false, true, true),
-  ('c0000000-0000-0000-0007-000000000002', 'b0000000-0000-0000-0000-000000000007', 'giblin-eunson-level1', 'Level 1 — Quiet Study', '{"type":"Polygon","coordinates":[[[144.9588,-37.8009],[144.9600,-37.8009],[144.9600,-37.8017],[144.9588,-37.8017],[144.9588,-37.8009]]]}', 100, 1, true, true, true);
-
 -- Melbourne Law School — 3 floors
 INSERT INTO building_zones (id, building_id, zone_slug, zone_name, polygon, capacity, floor_level, is_quiet_zone, has_power, is_accessible) VALUES
   ('c0000000-0000-0000-0008-000000000001', 'b0000000-0000-0000-0000-000000000008', 'law-ground', 'Ground Floor', '{"type":"Polygon","coordinates":[[[144.9609,-37.8019],[144.9625,-37.8019],[144.9625,-37.8030],[144.9609,-37.8030],[144.9609,-37.8019]]]}', 130, 0, false, true, true),
@@ -494,8 +430,6 @@ INSERT INTO zone_occupancy (zone_id, building_id, occupancy_count, occupancy_pct
 SELECT id, building_id, 0, 0, 'stable', 'none'
 FROM building_zones
 WHERE building_id IN (
-  'b0000000-0000-0000-0000-000000000006',
-  'b0000000-0000-0000-0000-000000000007',
   'b0000000-0000-0000-0000-000000000008',
   'b0000000-0000-0000-0000-000000000009',
   'b0000000-0000-0000-0000-00000000000a',
