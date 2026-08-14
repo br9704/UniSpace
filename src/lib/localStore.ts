@@ -104,3 +104,39 @@ export function canReportAgain(buildingId: string, windowMs: number, now = Date.
 export function markReported(buildingId: string, now = Date.now()): void {
   writeJson(reportThrottleKey(buildingId), now)
 }
+
+/**
+ * Last-known occupancy, cached for a cold start with no network.
+ *
+ * The service worker caches the app shell, so UniSpace opens offline — but
+ * opening to an empty map is barely better than not opening at all. This keeps
+ * the most recent reading so there is something to show, and a timestamp so it
+ * can be honestly labelled as old rather than presented as current.
+ *
+ * Deliberately small: percentages and a source per building, nothing more. It
+ * is a fallback for the first paint, not a second database.
+ */
+export interface OccupancySnapshot {
+  capturedAt: string
+  buildings: Record<string, { pct: number | null; source: string }>
+}
+
+const SNAPSHOT_KEY = 'occupancy-snapshot'
+
+/** Older than this and it is not worth showing at all. */
+export const SNAPSHOT_MAX_AGE_MS = 6 * 60 * 60 * 1000
+
+export function readSnapshot(now = Date.now()): OccupancySnapshot | null {
+  const snapshot = readJson<OccupancySnapshot | null>(SNAPSHOT_KEY, null)
+  if (!snapshot?.capturedAt || typeof snapshot.buildings !== 'object') return null
+
+  // A six-hour-old reading of a university building is not information — the
+  // day has changed shape around it.
+  if (now - new Date(snapshot.capturedAt).getTime() > SNAPSHOT_MAX_AGE_MS) return null
+
+  return snapshot
+}
+
+export function writeSnapshot(snapshot: OccupancySnapshot): void {
+  writeJson(SNAPSHOT_KEY, snapshot)
+}

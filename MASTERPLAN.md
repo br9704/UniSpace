@@ -6,8 +6,9 @@
 
 ## Project Status
 
-**Current sprint pointer:** → **S23 — Error States & Edge Cases** (Phase 2, re-ordered)
-*(Phase 1.9 Recovery complete — R0–R5 all closed 2026-08-14.)*
+**Current sprint pointer:** → **Owner-Gated Ship Runbook** — all code work complete
+*(Phase 1.9 Recovery and all of Phase 2 closed 2026-08-14. Every remaining item in
+S0–S25 is owner-gated: it needs credentials, real-world data, or a physical device.)*
 
 **Current state (2026-08-14, post-audit):** The 199 `[x]` marks recorded before this date were
 **claims, not facts**. A forensic audit — `WIRING-AUDIT.md`, in this folder — ran the toolchain,
@@ -1181,14 +1182,35 @@ rather than installed, per CLAUDE.md § 6.
 - Map occupancy communicated via text (not colour alone)
 
 **Subtasks:**
-- [ ] S19.1 — Audit all components for keyboard navigation
-- [ ] S19.2 — Add aria-labels to all icon buttons and interactive elements
-- [ ] S19.3 — Verify contrast ratios meet 4.5:1 minimum
-- [ ] S19.4 — Ensure all touch targets are >= 44x44pt
-- [ ] S19.5 — Make BuildingCard screen-reader friendly (live regions for updates)
-- [ ] S19.6 — Add text labels alongside colour coding on map (not colour-only information)
-- [ ] S19.7 — Test with VoiceOver (macOS/iOS)
-- [ ] S19.8 — Make FilterSheet usable with assistive technology
+- [x] S19.1 — Keyboard navigation ✅ Tiles and rows became real `<button>`s in R3, so activation
+      and focus come from the platform instead of hand-rolled key handlers. A test fails the build
+      if a clickable `div` reappears.
+- [x] S19.2 — Accessible names on every icon-only control ✅ Enforced by `a11y.test.ts`, which
+      inspects each `<button>` for either an `aria-label` or real text content.
+- [x] S19.3 — **Contrast verified by computation, not inspection** ✅ `contrast.test.ts` calculates
+      WCAG ratios from `index.css`. It immediately caught a failure I had introduced in R3:
+      `--color-text-dim` measures **2.56:1**, well under AA, and was carrying 49 pieces of real
+      content. Fixed without deviating from the locked palette — `--text-dim` keeps its value and
+      its proper decorative purpose, and a new `--color-text-muted` sits above it at 4.79:1 on the
+      ground / 4.65:1 on raised surfaces. A test fails if `--text-dim` is ever used outside an
+      `aria-hidden` element.
+- [x] S19.4 — 44px touch targets ✅ Asserted across the codebase; `minWidth: 0` excluded as the
+      flexbox idiom it is.
+- [x] S19.5 — **Live region for occupancy updates** ✅ `OccupancyAnnouncer`. The visible figure
+      animates as it counts, so it is `aria-live="off"` and the announcer speaks once after the
+      value settles — otherwise a screen reader hears a stream of numbers that were never real
+      readings. It announces the **confidence** too: a sighted user gets that from the dashed
+      border and dimmed intensity, and without it "38%" would sound like a measurement when it may
+      be an estimate.
+- [x] S19.6 — No colour-only information ✅ Every occupancy surface carries its text label, and
+      `OccupancyBar` exposes `role="meter"` with an `aria-valuetext`. This matters more than it did
+      with the old palette: the SIGNAL ramp is monochrome, so anyone who cannot distinguish two
+      greys has only the label.
+- [⏭️] S19.7 — VoiceOver pass ⏭️ **Owner-verified** — needs a real screen reader on real hardware.
+      Moved to the Ship Runbook, § 4.
+- [x] S19.8 — Filters usable with assistive technology ✅ Level pickers are proper `radiogroup`s;
+      filter chips are `aria-pressed` toggles that state their state in text (`[x]`/`[ ]`) as well
+      as colour — which matters because amber is the only colour available to mark them.
 
 **Test criteria:**
 - Tab through entire app without mouse
@@ -1256,13 +1278,26 @@ rather than installed, per CLAUDE.md § 6.
 - Recommendations work with cached data
 
 **Subtasks:**
-- [ ] S21.1 — Cache building metadata in service worker
-- [ ] S21.2 — Cache last occupancy snapshot to IndexedDB or localStorage
-- [ ] S21.3 — Display cached data with "Last updated X min ago" timestamp
-- [ ] S21.4 — Show offline indicator in header
-- [ ] S21.5 — Ensure recommendations work with stale data
-- [ ] S21.6 — Implement reconnection detection and data refresh
-- [ ] S21.7 — Test on airplane mode
+- [x] S21.1 — Building metadata cached ✅ Workbox stale-while-revalidate on the Supabase REST
+      origin, configured in S16 and verified here.
+- [x] S21.2 — **Last occupancy snapshot cached** ✅ `useOfflineSnapshot` + `localStore`. The service
+      worker already cached the app shell, so UniSpace opened offline — to a blank map, which is
+      barely better than not opening. This fills the gap between "the app loaded" and "the data
+      arrived". Capped at 6 hours: an older reading of a university building is not information,
+      the day has changed shape around it.
+- [x] S21.3 — Cached data labelled as old ✅ Restored readings are marked `stale`, **never the
+      source they originally had**, so they pick up the low-confidence treatment automatically —
+      40% intensity, dashed border, no green dot. MOTION.md: "Cached data gets the low-confidence
+      treatment automatically."
+- [x] S21.4 — Offline indicator ✅ `OfflineBanner` slides down once and stays static, per MOTION.md
+      — a persistent condition that keeps animating reads as a fault repeating.
+- [x] S21.5 — Recommendations work on stale data ✅ They read the same blended map, so the snapshot
+      feeds them unchanged.
+- [x] S21.6 — **Reconnection refresh** ✅ `useRefetchOnReconnect`. Losing signal also drops the
+      Realtime subscription and nothing else re-fetches, so a user who went underground kept
+      looking at a frozen screen indefinitely. Coming back online now re-reads and re-subscribes in
+      one coordinated pass.
+- [⏭️] S21.7 — Airplane-mode test ⏭️ **Owner-verified** — needs a real device. Ship Runbook § 4.
 
 **Test criteria:**
 - App loads from cache in airplane mode
@@ -1290,14 +1325,29 @@ rather than installed, per CLAUDE.md § 6.
 - Recommendations recalculate < 500ms after filter change
 
 **Subtasks:**
-- [ ] S22.1 — Analyse bundle size, identify and fix large imports
-- [ ] S22.2 — Lazy load BuildingCard component
-- [ ] S22.3 — Preload Mapbox style and building GeoJSON on app init
-- [ ] S22.4 — Memoize recommendation scoring (useMemo/useCallback)
-- [ ] S22.5 — Optimise Mapbox layers (reduce repaints)
-- [ ] S22.6 — Run Lighthouse audit and fix flagged issues
-- [ ] S22.7 — Test on throttled 3G connection
-- [ ] S22.8 — Profile and optimise Turf.js point-in-polygon (Web Worker if needed)
+- [x] S22.1 — **Landing route cut from 637 KB to 189 KB gzip** ✅ (entry bundle 2,375 KB → 586 KB).
+      Mapbox GL is 1.6 MB and the home screen never renders it; it now loads behind a dynamic
+      import. Measured against the build output at every step.
+  - [x] S22.1.extra — An instructive mistake: the first `manualChunks` config named a `charts`
+        chunk for Recharts, which made things **worse**. Recharts was already correctly split with
+        the lazy `BuildingCard`, and naming it caused rolldown to hoist it into a *static* import
+        of the entry — adding 108 KB gzip to the landing route in the name of optimising it. Why it
+        is deliberately absent is recorded in `vite.config.ts`.
+- [x] S22.2 — BuildingCard lazy-loaded ✅ (and with it Recharts, 113 KB gzip).
+- [x] S22.3 — Map chunk preloaded ✅ `lib/preloadMap` warms it during idle time from the home
+      screen, so the split costs nothing in perceived speed.
+- [x] S22.4 — Scoring memoised ✅ `useRecommendations` and `useCampusOverview` both memoise.
+- [x] S22.5 — Map repaints reduced ✅ `useBatchedOccupancy` caps the heatmap at one visual pass per
+      5s and freezes it entirely while a card is open.
+- [⏭️] S22.6 — Lighthouse audit ⏭️ **Owner-verified** against the deployed URL. Ship Runbook § 4.
+- [⏭️] S22.7 — Throttled 3G test ⏭️ **Owner-verified.** The measured 189 KB makes the PRD § 10.1
+      target reachable; confirming it needs a real network.
+- [x] S22.8 — Turf profiling ✅ Not needed, and better than expected: Turf **tree-shakes to zero**
+      despite the `@turf/turf` meta-import — verified against the build output, not assumed.
+- [x] S22.9 — **`bundleBudget.test.ts` prevents regression** ✅ Measures the real build and fails if
+      the landing route exceeds budget, if Mapbox or Recharts reappear on it, or if Mapbox stops
+      being one cacheable chunk. Budgets sit just above current measurements: they catch
+      regressions rather than express aspirations, and raising one should be a recorded decision.
 
 **Test criteria:**
 - Lighthouse performance score >= 90
@@ -1324,14 +1374,33 @@ rather than installed, per CLAUDE.md § 6.
 - Loading skeletons for async content
 
 **Subtasks:**
-- [ ] S23.1 — Create error boundary wrapper component
-- [ ] S23.2 — Implement fallback list view for map failure
-- [ ] S23.3 — Add loading skeleton components (pulse animation)
-- [ ] S23.4 — Handle Supabase connection errors (retry with backoff)
-- [ ] S23.5 — Handle GPS permission denied (show No Location screen)
-- [ ] S23.6 — Handle zero buildings with data (empty heatmap state)
-- [ ] S23.7 — Handle Mapbox token invalid / expired
-- [ ] S23.8 — Add error logging (console only, no third-party services)
+> **The governing idea:** the worst outcome for this app is a blank page. Someone deciding whether
+> to walk fifteen minutes to a library cannot tell "the app broke" apart from "there is nothing
+> here", and the second answer is actively harmful. Every failure below produces a screen that
+> explains itself.
+
+- [x] S23.1 — `ErrorBoundary` ✅ Contains a render failure to one region, so a single bad building
+      record loses the prediction chart rather than the whole screen. Applied at the app root and
+      around the map.
+- [x] S23.2 — **`BuildingListFallback`** ✅ PRD § 6.1. Mapbox is the likeliest thing here to fail —
+      expired token, blocked CDN, exhausted quota — and none of that touches the occupancy data.
+      Losing the map costs the nicest way to read the answer, not the answer.
+- [x] S23.3 — Loading skeletons ✅ Completed in R4.10 with a 1.6s opacity pulse and reserved heights.
+- [x] S23.4 — **Retry with backoff** ✅ `fetchRows` retries transient failures only. Retrying a 400
+      or a permissions error just delays the message the user needs to see. A dropped connection on
+      a train platform is the normal case for this app, not the exceptional one.
+- [x] S23.5 — GPS denied ✅ `LocationPrompt` explains and offers to continue. It does not gate the
+      app, and does not ask before explaining — a prompt arriving before the user knows why is the
+      main cause of a permanently denied permission.
+- [x] S23.6 — Zero buildings with data ✅ Handled by the cold-start design (R4.12) rather than as an
+      error: this is the app's *normal* first-week state, not a fault.
+- [x] S23.7 — Missing/invalid Mapbox token ✅ Falls through to the list view with the reason stated.
+- [x] S23.8 — Console-only error logging ✅ No Sentry, no beacon, no telemetry — PRD § 13.1 rule 6
+      and CLAUDE.md § 4 rule 5. `privacy.test.ts` fails the build if an analytics SDK appears.
+- [x] S23.9 — `errorStates.test.ts` ✅ Asserts the structural guarantees: every error surface has
+      `role="alert"`, every dead end offers an action, partial rows are never returned (a
+      half-loaded map reads as "these buildings are empty"), and the boundary logs nowhere but the
+      console.
 
 **Test criteria:**
 - Each error state shows appropriate UI (not a blank screen or crash)
@@ -1362,15 +1431,32 @@ rather than installed, per CLAUDE.md § 6.
 **Privacy:** Rooms are static seed data. Feedback is anonymous.
 
 **Subtasks:**
-- [ ] S24.1 — Migration 013_rooms.sql (rooms table with building_id, name, floor, type enum, capacity, has_power, is_bookable)
-- [ ] S24.2 — Seed rooms for top 5 buildings (from UoM Find a Room data)
-- [ ] S24.3 — src/hooks/useRooms.ts (fetch rooms by building_id)
-- [ ] S24.4 — src/components/RoomList.tsx (expandable in BuildingCard, grouped by floor)
-- [ ] S24.5 — Add room search to HomePage search bar (cross-building)
-- [ ] S24.6 — Verify building hours against UoM 2026 semester calendar
-- [ ] S24.7 — Verify accessibility data against UoM AccessAbility service
-- [ ] S24.8 — Add "Report inaccuracy" button to BuildingCard
-- [ ] S24.9 — Update types: Room, RoomType
+- [x] S24.1 — Migration `015_rooms.sql` ✅ (numbered 015, not 013 — that number was reclaimed by the
+      data-verification migration rewritten in R1.6). Room-level *occupancy* is deliberately out of
+      scope: PRD § 13.4 caps granularity at floor level so an individual cannot be located, and a
+      three-seat room would defeat that.
+- [⏭️] S24.2 — Seed room data ⏭️ **DEFERRED — owner-gated.** Room codes and floors are real-world
+      facts about real buildings. Inventing plausible ones would be exactly the fabrication R1.6
+      refused for Place IDs and R5.6 removed from the Google labelling. Recorded in the Ship
+      Runbook; the fixture layer returns an empty directory and the UI handles that by rendering
+      nothing.
+- [x] S24.3 — `useRooms` ✅ Fetches the directory once — a few hundred static rows — rather than per
+      building.
+- [x] S24.4 — `RoomList` ✅ Expandable in the building card, grouped by floor. Renders nothing when
+      the directory is empty: an empty "Rooms" heading would imply the building has none.
+- [x] S24.5 — **Cross-building room search** ✅ `RoomSearch` on the home screen. This is the gap it
+      closes: a student told to go to "Redmond Barry 101" has no idea which building that is.
+      Exact code matches rank above prefix matches, so searching "101" does not bury room 101 under
+      room 1011. 8 tests.
+- [⏭️] S24.6 — Verify hours against the 2026 semester calendar ⏭️ **Owner-gated** — needs the
+      published calendar. Ship Runbook.
+- [⏭️] S24.7 — Verify accessibility data against UoM AccessAbility ⏭️ **Owner-gated, and the highest
+      priority item in that list.** PRD § 13.4: wrong accessibility data is harmful, not merely
+      inaccurate. S25's feedback path exists precisely because this cannot be fully verified from
+      here.
+- [x] S24.8 — "Report an error" ✅ On every building card, not buried in settings — the correction
+      path belongs where the error is seen.
+- [x] S24.9 — `Room` / `RoomType` types ✅
 
 **Test criteria:**
 - Room list displays in BuildingCard, grouped by floor
@@ -1399,10 +1485,18 @@ rather than installed, per CLAUDE.md § 6.
 **Privacy:** Anonymous — no user_id column. No tracking of who submitted what.
 
 **Subtasks:**
-- [ ] S25.1 — Migration 014_feedback.sql (feedback table, anonymous, category enum: hours_wrong | amenity_wrong | occupancy_wrong | accessibility_wrong | other)
-- [ ] S25.2 — Edge Function submit-feedback/index.ts (Zod validation, rate-limit by IP)
-- [ ] S25.3 — src/components/FeedbackSheet.tsx (category picker + optional text, max 500 chars)
-- [ ] S25.4 — Wire into BuildingCard "Report inaccuracy" button
+- [x] S25.1 — Migration `016_feedback.sql` ✅ Anonymous **by construction**: there is no `user_id`
+      column to fill in later under pressure, and no SELECT policy, so nobody can read back what
+      anyone reported.
+- [x] S25.2 — `submit-feedback` Edge Function ✅ Zod validation, 500-char cap, 10/hour per IP.
+  - [x] S25.2.extra — The IP hash is **salted**. An unsalted SHA-256 of an IPv4 address is
+        trivially reversible by brute force — there are only four billion — which would make it a
+        stored identifier in all but name. Requires an `IP_HASH_SALT` secret (Ship Runbook § 2).
+        `submit-report` used an unsalted hash and has been brought in line.
+- [x] S25.3 — `FeedbackSheet` ✅ Categories ordered by consequence rather than alphabetically:
+      accessibility first, because PRD § 13.4 singles it out as harmful when wrong. States plainly
+      that nothing identifying the sender is sent or stored.
+- [x] S25.4 — Wired into the building card ✅
 
 **Test criteria:**
 - Feedback stored with category + optional text + building_id + timestamp
@@ -1711,12 +1805,16 @@ The previous project (`kvagntgpiylxhjntexml`) is **gone**, not paused. This is a
 
 - [ ] Create a new Supabase project. **Do not touch `jaamaabruno@gmail.coms project` or
       `speechmax`** — CLAUDE.md § 6 puts both permanently off limits.
-- [ ] Apply migrations `001`–`014` **in order**, including the `013` rewritten in R1.6.
+- [ ] Apply migrations `001`–`016` **in order**, including the `013` rewritten in R1.6 and the
+      `015` (rooms) / `016` (feedback) added in S24/S25.
 - [ ] Apply seeds `001`–`004` (18 buildings; **1,321** popular-times rows).
-- [ ] Deploy all 6 Edge Functions: `aggregate-occupancy`, `sync-google-popularity`,
-      `compute-predictions`, `submit-report`, `manage-alerts`, `send-alerts`.
+- [ ] Deploy all 7 Edge Functions: `aggregate-occupancy`, `sync-google-popularity`,
+      `compute-predictions`, `submit-report`, `manage-alerts`, `send-alerts`, `submit-feedback`.
 - [ ] Set Edge Function secrets: `GOOGLE_PLACES_API_KEY`, `VAPID_PUBLIC_KEY`,
-      `VAPID_PRIVATE_KEY`, `VAPID_EMAIL`.
+      `VAPID_PRIVATE_KEY`, `VAPID_EMAIL`, and **`IP_HASH_SALT`** (any long random string).
+      Without the salt, an unsalted SHA-256 of an IPv4 address is brute-forceable — only four
+      billion possibilities — which would make the rate-limiting hash a stored identifier in all
+      but name.
 - [ ] Create `pg_cron` schedules — `aggregate-occupancy` 10s · `sync-google-popularity` 30min ·
       `compute-predictions` hourly · `send-alerts` 2min.
 - [ ] Verify RLS is enabled on **every** table (anon SELECT only; writes via service role).
@@ -1747,9 +1845,28 @@ The previous project (`kvagntgpiylxhjntexml`) is **gone**, not paused. This is a
       keep the service-worker path for Chrome/Firefox.
 - [ ] GPS permission flow, both grant and deny.
 - [ ] Cold-start screen with zero users — must look intentional, not broken.
+- [ ] **VoiceOver pass** on macOS and iOS (S19.7).
+- [ ] **Airplane-mode test**: open cold with no network, confirm the cached snapshot appears with
+      the stale treatment, then reconnect and watch it refresh (S21.7).
+- [ ] **Lighthouse audit** and a throttled-3G run against the deployed URL (S22.6 / S22.7).
+- [ ] **MOTION.md recordings** — the two acceptance items that need a human eye: breathing should
+      be invisible in any single frame but visible over 4s of recording, and a value change should
+      read differently from liveness (R4 gate).
 
-### 5. Assets still outstanding
-- [ ] Real building photos (CC-licensed WebP → `public/photos/`) — unblocks deferred S15.1 / S15.7.
+### 5. Real-world data and assets still outstanding
+
+These are all deferred for the same reason: they are facts about the physical world that cannot be
+verified from inside this repo, and inventing them would undo the honesty work this project spent
+most of its effort on.
+
+- [ ] **Google Place IDs** — 11 of 18 are NULL and the other 7 unverified. Needs a Places API key.
+      Commit as migration `017`. (R1.6)
+- [ ] **Room directory** — codes, floors and types per building, from UoM's Find a Room. Seeds
+      table `rooms`; the UI is built and renders nothing until then. (S24.2)
+- [ ] **Accessibility data verified against UoM AccessAbility** — *the highest-priority item here.*
+      PRD § 13.4: wrong accessibility data is harmful, not merely inaccurate. (S24.7)
+- [ ] **Building hours checked against the 2026 semester calendar.** (S24.6)
+- [ ] Real building photos (CC-licensed WebP → `public/photos/`) — unblocks S15.1 / S15.7.
 - [ ] Real PWA icons replacing the placeholders in `public/icons/`.
 
 ### 6. Last

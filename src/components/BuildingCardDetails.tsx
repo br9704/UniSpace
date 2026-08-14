@@ -8,6 +8,12 @@ import PhotoCarousel from './PhotoCarousel'
 import TipsList from './TipsList'
 import AlertSetup from './AlertSetup'
 import Button from './ui/Button'
+import { useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
+import FeedbackSheet from './FeedbackSheet'
+import TerminalList from './TerminalList'
+import RoomList from './RoomList'
+import { useRooms } from '@/hooks/useRooms'
 
 interface BuildingCardDetailsProps {
   building: Building
@@ -40,6 +46,9 @@ export default function BuildingCardDetails({
   pushSupported,
 }: BuildingCardDetailsProps) {
   const meta = BUILDING_META[building.slug]
+  const [reportingError, setReportingError] = useState(false)
+  const { rooms } = useRooms()
+  const buildingRooms = rooms.filter((room) => room.building_id === building.id)
 
   return (
     <>
@@ -48,6 +57,8 @@ export default function BuildingCardDetails({
           <FloorBreakdown floors={floors} />
         </Card>
       )}
+
+      <RoomList rooms={buildingRooms} />
 
       {predictions && predictions.length > 0 && (
         <Card>
@@ -72,20 +83,7 @@ export default function BuildingCardDetails({
       {meta?.nearbyFood && meta.nearbyFood.length > 0 && (
         <Card>
           <SectionLabel className="mb-3">nearby food</SectionLabel>
-          <ul className="space-y-1">
-            {meta.nearbyFood.map((food) => (
-              <li
-                key={food}
-                className="text-sm flex gap-2"
-                style={{ color: 'var(--color-text-secondary)' }}
-              >
-                <span className="mono shrink-0" aria-hidden="true" style={{ color: 'var(--color-text-dim)' }}>
-                  &gt;
-                </span>
-                {food}
-              </li>
-            ))}
-          </ul>
+          <TerminalList items={meta.nearbyFood} />
         </Card>
       )}
 
@@ -122,6 +120,26 @@ export default function BuildingCardDetails({
       >
         DIRECTIONS →
       </Button>
+
+      {/*
+        Deliberately present on every building, not buried in a settings screen.
+        This data is manually maintained and will be wrong sometimes; PRD § 13.4
+        treats wrong accessibility data as harmful rather than merely
+        inaccurate, so the correction path has to be where the error is seen.
+      */}
+      <Button variant="ghost" size="sm" className="w-full" onClick={() => setReportingError(true)}>
+        [ REPORT AN ERROR ]
+      </Button>
+
+      <AnimatePresence>
+        {reportingError && (
+          <FeedbackSheet
+            buildingId={building.id}
+            buildingName={building.name}
+            onDismiss={() => setReportingError(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   )
 }

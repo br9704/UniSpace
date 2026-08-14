@@ -228,3 +228,44 @@ export interface PositionBroadcast {
   session_id: string    // rotating anon UUID — NEVER stored in DB
   campus_slug: string
 }
+
+// ── Rooms (S24) ────────────────────────────────────────────────────
+
+export type RoomType =
+  | 'lecture'
+  | 'tutorial'
+  | 'lab'
+  | 'study'
+  | 'meeting'
+  | 'library'
+  | 'other'
+
+export interface Room {
+  id: string
+  building_id: string
+  /** As printed on the door and in timetables — "101", "G12". */
+  code: string
+  name: string | null
+  floor_level: number
+  room_type: RoomType
+  capacity: number | null
+  has_power: boolean
+  is_bookable: boolean
+  is_accessible: boolean
+  created_at: string
+}
+
+// ── Feedback (S25) ─────────────────────────────────────────────────
+
+export type FeedbackCategory =
+  | 'hours_wrong'
+  | 'amenity_wrong'
+  | 'occupancy_wrong'
+  | 'accessibility_wrong'
+  | 'other'
+
+export interface FeedbackSubmission {
+  building_id: string | null
+  category: FeedbackCategory
+  message: string | null
+}

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useRefetchOnReconnect } from './useRefetchOnReconnect'
 import { fetchRows, subscribeRows } from '@/lib/dataSource'
 import type { ZoneOccupancy } from '@/types'
 import { groupByBuildingId, mergeZoneOccupancy } from '@/lib/occupancyHelpers'
@@ -18,6 +19,12 @@ export function useOccupancyRealtime(): UseOccupancyRealtimeResult {
   const [zoneOccupancyMap, setMap] = useState<Map<string, ZoneOccupancy[]>>(new Map())
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [reloadToken, setReloadToken] = useState(0)
+
+  // Losing signal also drops the Realtime subscription, and nothing else
+  // re-fetches. Coming back online re-runs the effect below, which re-reads the
+  // snapshot and re-subscribes in one pass.
+  useRefetchOnReconnect(useCallback(() => setReloadToken((n) => n + 1), []))
 
   useEffect(() => {
     let cancelled = false
@@ -49,7 +56,7 @@ export function useOccupancyRealtime(): UseOccupancyRealtimeResult {
       cancelled = true
       unsubscribe()
     }
-  }, [])
+  }, [reloadToken])
 
   return { zoneOccupancyMap, isLoading, error }
 }

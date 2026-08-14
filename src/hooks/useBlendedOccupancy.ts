@@ -5,6 +5,7 @@ import { getCurrentPrediction, getCurrentTypical } from '@/lib/occupancyHelpers'
 import { useOccupancyRealtime } from './useOccupancyRealtime'
 import { useGooglePopularity } from './useGooglePopularity'
 import { useRecentReports } from './useRecentReports'
+import { useOfflineSnapshot } from './useOfflineSnapshot'
 
 interface UseBlendedOccupancyResult {
   occupancyMap: Map<string, BlendedOccupancy>
@@ -65,8 +66,13 @@ export function useBlendedOccupancy(
     return map
   }, [buildings, zones, zoneOccupancyMap, googleCacheMap, allTypicalRows, allPredictionRows, reportsMap])
 
+  // Falls back to the last-known reading when live data has not arrived —
+  // offline, or in the moment before the first fetch resolves. Restored values
+  // are marked stale, so they render with the low-confidence treatment.
+  const withFallback = useOfflineSnapshot(occupancyMap)
+
   return {
-    occupancyMap,
+    occupancyMap: withFallback,
     allTypicalRows,
     allPredictionRows,
     isLoading: rtLoading || gLoading,

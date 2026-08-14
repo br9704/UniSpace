@@ -10,6 +10,7 @@ export type ReadableTable =
   | 'google_popular_times'
   | 'occupancy_predictions'
   | 'occupancy_reports'
+  | 'rooms'
 
 export interface QueryResult<T> {
   data: T[]

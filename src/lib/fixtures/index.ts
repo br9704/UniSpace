@@ -1,5 +1,6 @@
 import type {
   GooglePopularityCache,
+  Room,
   OccupancyPrediction,
   OccupancyReport,
   ZoneOccupancy,
@@ -59,6 +60,7 @@ function buildPopularityCache(now: Date): GooglePopularityCache[] {
 }
 
 const EMPTY_PREDICTIONS: OccupancyPrediction[] = []
+const EMPTY_ROOMS: Room[] = []
 const EMPTY_REPORTS: OccupancyReport[] = []
 
 /** Reports submitted this session, so the report loop is testable end to end. */
@@ -86,6 +88,12 @@ export function getFixtureRows<T>(
       return buildPopularityCache(now) as unknown as T[]
     case 'occupancy_predictions':
       return EMPTY_PREDICTIONS as unknown as T[]
+    case 'rooms':
+      // Empty on purpose. Room codes and floors are real-world facts about
+      // real buildings; inventing plausible ones would be exactly the kind of
+      // fabrication this project spent a sprint removing. The UI handles an
+      // empty directory by not rendering one. See MASTERPLAN S24.
+      return EMPTY_ROOMS as unknown as T[]
     case 'occupancy_reports': {
       const rows = options.unexpiredOnly
         ? sessionReports.filter((r) => new Date(r.expires_at).getTime() > now.getTime())

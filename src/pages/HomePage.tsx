@@ -10,6 +10,7 @@ import { schedulePreloadMap } from '@/lib/preloadMap'
 import CampusStatus from '@/components/home/CampusStatus'
 import TileGrid from '@/components/home/TileGrid'
 import AllBuildings from '@/components/home/AllBuildings'
+import RoomSearch from '@/components/home/RoomSearch'
 import { SkeletonCard, SkeletonBuildingRow, SkeletonGlanceCard } from '@/components/ui/SkeletonLoader'
 
 function greeting(): string {
@@ -98,6 +99,8 @@ export default function HomePage() {
               onToggleFavourite={toggleFavourite}
               onOpen={openBuilding}
             />
+
+            <RoomSearch buildings={buildings} onOpenBuilding={openBuilding} />
 
             <AllBuildings
               items={overview.items}

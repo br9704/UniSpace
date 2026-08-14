@@ -1,10 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
+  SNAPSHOT_MAX_AGE_MS,
   canReportAgain,
   markReported,
   readFavourites,
+  readSnapshot,
   toggleFavourite,
   writeFavourites,
+  writeSnapshot,
 } from './localStore'
 
 /** Minimal in-memory localStorage — the test environment is node, not jsdom. */
@@ -105,5 +108,40 @@ describe('report throttle', () => {
     // Reporting on the library should not stop you reporting on the ERC.
     markReported('b1', T0)
     expect(canReportAgain('b2', WINDOW, T0)).toBe(true)
+  })
+})
+
+describe('occupancy snapshot', () => {
+  const T0 = 1_700_000_000_000
+
+  beforeEach(() => installStorage())
+
+  it('round-trips a snapshot', () => {
+    writeSnapshot({
+      capturedAt: new Date(T0).toISOString(),
+      buildings: { b1: { pct: 42, source: 'live' } },
+    })
+    expect(readSnapshot(T0)?.buildings.b1.pct).toBe(42)
+  })
+
+  it('discards a snapshot older than the maximum age', () => {
+    // A six-hour-old reading of a university building is not information —
+    // the day has changed shape around it.
+    writeSnapshot({ capturedAt: new Date(T0).toISOString(), buildings: {} })
+    expect(readSnapshot(T0 + SNAPSHOT_MAX_AGE_MS + 1)).toBeNull()
+  })
+
+  it('keeps a snapshot inside the maximum age', () => {
+    writeSnapshot({ capturedAt: new Date(T0).toISOString(), buildings: {} })
+    expect(readSnapshot(T0 + SNAPSHOT_MAX_AGE_MS - 1)).not.toBeNull()
+  })
+
+  it('returns null when nothing is stored', () => {
+    expect(readSnapshot(T0)).toBeNull()
+  })
+
+  it('rejects a malformed snapshot rather than rendering nonsense', () => {
+    installStorage({ 'unispace:occupancy-snapshot': JSON.stringify({ nope: true }) })
+    expect(readSnapshot(T0)).toBeNull()
   })
 })

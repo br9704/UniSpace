@@ -2,7 +2,7 @@
 // Accepts manual crowd reports of building busyness (1-5 scale).
 //
 // PRIVACY INVARIANTS:
-//   1. Raw IP is NEVER stored — only SHA-256 hash for rate limiting
+//   1. Raw IP is NEVER stored — only a SALTED SHA-256 hash, for rate limiting
 //   2. No session_id stored in database
 //   3. Reports expire after 30 minutes
 
@@ -17,12 +17,21 @@ const ReportSchema = z.object({
 
 const MAX_REPORTS_PER_HOUR = 5;
 
+/**
+ * Salted hash of the caller's IP, for rate limiting only.
+ *
+ * The salt is load-bearing. An *unsalted* SHA-256 of an IPv4 address is
+ * trivially reversible by brute force — there are only four billion of them, so
+ * the whole space can be enumerated in seconds — which would make this column a
+ * stored identifier in all but name, and PRD § 13.1 promises there are none.
+ */
 async function hashIP(ip: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(ip);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+  const salt = Deno.env.get("IP_HASH_SALT") ?? "";
+  const data = new TextEncoder().encode(`${salt}:${ip}`);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 Deno.serve(async (req) => {
