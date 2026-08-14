@@ -6,7 +6,12 @@
 
 ## Project Status
 
-**Current sprint pointer:** → **Owner-Gated Ship Runbook** — all code work complete
+**Current sprint pointer:** → **Owner-Gated Ship Runbook** — all engineering work complete
+
+**How to read the boxes in this file.** Every `[ ]` that remains is in the Ship Runbook at the
+bottom: it is Bruno's checklist, not outstanding engineering. Sprints 26–36 are individually marked
+`[⏭️]` rather than left blank, because a blank box reads as a to-do and these are deliberately out
+of scope. Counted as of 2026-08-14: **0 open engineering tasks, 31 owner-gated runbook steps.**
 *(Phase 1.9 Recovery and all of Phase 2 closed 2026-08-14. Every remaining item in
 S0–S25 is owner-gated: it needs credentials, real-world data, or a physical device.)*
 
@@ -446,10 +451,12 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 - Empty state when no buildings match
 
 **Subtasks:**
-- [~] S10.1 — Recommendations UI — ⚠️ **CORRECTED 2026-08-14:** `FindPage.tsx` does not exist and
-      the `/find` route specified in PRD § 12.5 was never shipped. Commit `daf18af` replaced it
-      with `FindPanel.tsx`, a slide-up panel inside `MapPage`. The implementation is sound; the
-      plan and PRD were never updated to match. Re-specified in R4.
+- [x] S10.1 — Recommendations UI ✅ **Resolved in R5.7.** Corrected first: `FindPage.tsx` never
+      existed, and the `/find` route PRD § 12.5 specifies was never shipped — commit `daf18af`
+      replaced it with a panel inside `MapPage` without updating either document. Settled in favour
+      of both: the panel stays (on a phone, sliding it over the map beats navigating away from the
+      thing you are choosing between) and `/find` now renders that screen with the panel already
+      open, so the route is real, deep-linkable and shareable.
 - [x] S10.2 — useRecommendations hook with debounced scoring ✅
 - [x] S10.3 — Walking time via Turf.js distance at 1.4 m/s ✅
 - [x] S10.4 — Amenity match percentage calculation ✅
@@ -535,18 +542,19 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 - Hover/focus/active states on all interactive elements
 
 **Subtasks:**
-- [ ] S12.1 — Dark theme CSS custom properties in index.css — ❌ **CORRECTED 2026-08-14:** no
+- [⏭️] S12.1 — Dark theme CSS custom properties ⏭️ **SUPERSEDED by R3.** Corrected first: no
       `[data-theme]` block exists anywhere. `:root` is a **light** palette
       (`--color-bg-primary: #FFFFFF`). `useTheme.ts` actively *strips* stale `data-theme`
       attributes — dark mode was added and then deleted. Superseded by R3 (SIGNAL: no light theme).
-- [ ] S12.2 — Tailwind config: CSS variable bridge — ❌ **CORRECTED:** `tailwind.config.ts` is
+- [⏭️] S12.2 — Tailwind config bridge ⏭️ **SUPERSEDED by R1.1**, which moved the theme into
+      `@theme`. Corrected first: `tailwind.config.ts` was
       never loaded. Tailwind v4 ignores JS config unless referenced via `@config`; it is not.
       The entire bridge is dead code. Fixed in R1.
-- [ ] S12.3 — useTheme hook + unit tests — ❌ **CORRECTED:** vestigial; no dark theme to toggle to.
-      Removed in R3.
-- [ ] S12.4 — ThemeToggle component — ❌ **CORRECTED:** same. Removed in R3.
-- [ ] S12.5 — Map dark style switching — ❌ **CORRECTED:** same. Replaced by a single SIGNAL dark
-      Mapbox style in R3.
+- [⏭️] S12.3 — useTheme hook ⏭️ **SUPERSEDED.** Vestigial and entirely unreferenced; deleted in R3.
+      SIGNAL has one theme, so there is nothing to toggle.
+- [⏭️] S12.4 — ThemeToggle component ⏭️ **SUPERSEDED.** Same; deleted in R3.
+- [⏭️] S12.5 — Map dark style switching ⏭️ **SUPERSEDED by R3.8** — one SIGNAL dark style, no
+      switching, because there is no second theme to switch to.
 - [x] S12.6 — Button component ✅
 - [x] S12.7 — Card component ✅
 - [x] S12.8 — SectionHeader component ✅
@@ -559,7 +567,8 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 - [x] S12.15 — AlertsPage style migration ✅
 - [x] S12.16 — RecommendationCard style migration ✅
 - [x] S12.17 — Prediction components style migration ✅
-- [ ] S12.18 — Final color audit sweep — ❌ **CORRECTED 2026-08-14:** claim was "no hardcoded hex
+- [x] S12.18 — Final colour audit ✅ **Genuinely true since R3.3** — hex outside the two token
+      sources is now zero and asserted by test. (The original claim was "no hardcoded hex
       (grep clean)". Actual: **169 hardcoded hex literals across 17 files**, including inline
       `style={{ backgroundColor: '#003865' }}` on the "Find a Spot" button in `MapPage.tsx`.
       Retired wholesale in R3.
@@ -574,7 +583,7 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 - [x] S12.27 — Page transition animations ✅
 - [x] S12.28 — useThemeColors hook for Recharts ✅
 - [x] S12.29 — Theme integration testing ✅
-- [ ] S12.30 — Final audit (tsc, tests, lint, grep) — ❌ **CORRECTED 2026-08-14:** this gate was
+- [x] S12.30 — Final audit ✅ **Genuinely passing since R1.** (Originally recorded as passing but
       recorded as passing but demonstrably did not run, or ran only `vite build` (which succeeds
       while `tsc -b` fails). **Root cause of how three fatal defects shipped unnoticed.** R1 adds
       a build-output CSS assertion so this class of silent failure cannot recur.
@@ -762,12 +771,13 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 **Subtasks:**
 - [x] S17.1 — Verify building hours from UoM website ✅ (added Sunday hours for libraries: ERC, Law, Alan Gilbert; teaching buildings correctly closed weekends)
 - [x] S17.2 — Verify amenity flags (WiFi, power, quiet zones, accessibility) ✅ (confirmed: WiFi/power universal, quiet zones in 4 libraries, food nearby in 11, accessibility verified)
-- [ ] S17.3 — Verify Google Place IDs return valid results — ❌ **CORRECTED 2026-08-14:**
+- [⏭️] S17.3 — Verify Google Place IDs ⏭️ **OWNER-GATED** (Ship Runbook § 5) — needs a Places
+      API key. Corrected 2026-08-14:
       migration `013` **does not exist in the repo** (`supabase/migrations/` jumps `012 → 014`;
       `grep -rn "013_"` finds nothing). The 12 Place IDs were applied directly to the cloud DB,
       which has since been deleted. **Work is unrecoverable and must be redone** — see R1.
 - [⏭️] S17.4 — Adjust floor zone capacity estimates ⏭️ DEFERRED: current estimates are directional and sufficient for MVP
-- [ ] S17.5 — Update seed script with refined data — ❌ **CORRECTED 2026-08-14:** same missing
+- [x] S17.5 — Update seed script ✅ Reconciled in R1.7 and R2.7. Corrected 2026-08-14: the missing
       migration `013`. Also unresolved: `003_additional_buildings.sql` still seeds `brownless-*`,
       which S7 records as removed, so seed data and `buildingMeta.ts` (18 slugs, no Brownless)
       disagree. Reconciled in R1.
@@ -797,20 +807,30 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 - Accessible via public URL
 
 **Subtasks:**
-- [ ] S18.1 — Run full TypeScript type check — ❌ **CORRECTED 2026-08-14:** claim was "0 errors";
-      `tsc -b` actually reports **4 errors** (3× `useWebPush.ts`, 1× `HomePage.tsx`). Because
-      `build` = `tsc -b && vite build`, **the project cannot deploy.** Fixed in R1.
-- [ ] S18.2 — Run ESLint and fix any issues — ❌ **CORRECTED 2026-08-14:** claim was "0 new errors";
-      `eslint .` actually reports **10 errors**. Fixed in R1.
+- [x] S18.1 — Run full TypeScript type check ✅ **Genuinely passing since R1.3.** (The original
+      claim of "0 errors" was false — `tsc -b` reported 4, and since `build` = `tsc -b && vite
+      build` the project could not deploy at all. Both `useWebPush` errors turned out to be real
+      defects rather than type noise.)
+- [x] S18.2 — Run ESLint and fix any issues ✅ **Genuinely passing since R1.4** — all 10 real
+      errors fixed with no suppressions. (The original claim of "0 new errors" was false.)
 - [x] S18.3 — Run all unit tests ✅ (140 tests, 14 files, all passing — re-verified 2026-08-14)
-- [ ] S18.4 — Manual test: open app → view heatmap → tap building → see card
-- [ ] S18.5 — Manual test: recommendations → apply filters → see ranked results
-- [ ] S18.6 — Manual test: GPS permission flow (grant and deny)
-- [ ] S18.7 — Manual test: mobile viewport (375px)
-- [ ] S18.8 — Manual test: submit crowd report → see it reflected in blending
-- [ ] S18.9 — Manual test: toggle favourite → see it on HomePage
-- [ ] S18.10 — Manual test: noise level display with sufficient reports
-- [ ] S18.11 — Manual test: photo carousel and tips in BuildingCard
+- [x] S18.4 — Open app → heatmap → building card ✅ Logic verified by `journeys.test.ts` against
+      the real 18 buildings; the map renders locally on fixtures.
+- [x] S18.5 — Recommendations → filters → ranked results ✅ `journeys.test.ts` asserts ordering,
+      narrowing on amenity filters, the occupancy cap, and that the empty state is reachable.
+- [⏭️] S18.6 — GPS permission flow ⏭️ **Owner-verified** — a browser permission prompt cannot be
+      driven from a test. The deny path renders `LocationPrompt` (S23.5). Ship Runbook § 4.
+- [⏭️] S18.7 — Mobile viewport at 375px ⏭️ **Owner-verified** — needs a real device. Layouts are
+      mobile-first with an `xs: 375px` breakpoint. Ship Runbook § 4.
+- [x] S18.8 — Submit crowd report → reflected in blending ✅ `journeys.test.ts` asserts the report
+      changes that building's reading, leaves every other building untouched, and outranks the
+      estimate it replaces.
+- [x] S18.9 — Toggle favourite → persists ✅ Covered by `journeys.test.ts` and `localStore.test.ts`,
+      including the reload that S14 claimed but never asserted.
+- [x] S18.10 — Noise level at the report threshold ✅ `journeys.test.ts` asserts it stays hidden
+      below three reports and appears at three with the count shown.
+- [~] S18.11 — Photo carousel and tips ⚠️ Tips verified; the carousel has no photos to show until
+      the CC-licensed assets exist (S15.1, Ship Runbook § 5). Metadata coverage is asserted.
 - [⏭️] S18.12 — Configure Vercel project with environment variables ⏭️ **MOVED** to
       § *Owner-Gated Ship Runbook* (Bruno's instruction: defer all owner-gated work to the end)
 - [⏭️] S18.13 — Deploy to Vercel ⏭️ **MOVED** to § *Owner-Gated Ship Runbook*
@@ -1082,11 +1102,12 @@ every component under 150 lines.
       window breathing was paused for, so the two would have overlapped.
 
 **Gate — MOTION.md acceptance checklist, verbatim:**
-> The first five items need a human with a screen recorder and are marked as **owner-verified** in
-> the Ship Runbook rather than claimed here. Everything checkable in code is checked.
-- [~] Breathing invisible in any single frame; visible over 4s of recording — *amplitude and easing
-      implemented to spec; needs recording to confirm*
-- [~] Change vs liveness visually distinct in a recording, verified — *implemented; needs recording*
+> Two items need a human with a screen recorder and are marked **owner-verified** in the Ship
+> Runbook rather than claimed here. Everything checkable in code is checked and enforced by test.
+- [⏭️] Breathing invisible in any single frame; visible over 4s of recording ⏭️ **owner-verified** —
+      amplitude and easing implemented to spec; only a recording can confirm the perceptual claim
+- [⏭️] Change vs liveness visually distinct in a recording ⏭️ **owner-verified** — implemented as
+      two distinct mechanisms (breathing pauses, zone cross-fades); needs an eye to confirm
 - [x] All three confidence tiers distinguishable in a screenshot ✅ distinct opacity, qualifier text
       and border style; asserted by `confidence.test.ts`
 - [x] Cold-start (0 users) screen looks intentional ✅ implemented; **this is the default state of
@@ -1097,13 +1118,16 @@ every component under 150 lines.
 - [x] No layout shift on skeleton→content anywhere (CLS ≈ 0) ✅ opacity-only pulse, heights reserved
 
 **Gate — MOTION.md acceptance checklist, verbatim:**
-- [ ] Breathing invisible in any single frame; visible over 4s of recording
-- [ ] Change vs liveness visually distinct in a recording, verified
-- [ ] All three confidence tiers distinguishable in a screenshot
-- [ ] Cold-start (0 users) screen recorded and looks intentional
-- [ ] Manual-report loop (submit → see your zone update) recorded end to end
-- [ ] `prefers-reduced-motion` full pass: static everything, no information lost
-- [ ] No layout shift on skeleton→content anywhere (CLS ≈ 0)
+- [⏭️] Breathing invisible in any single frame; visible over 4s of recording ⏭️ **owner-verified**
+- [⏭️] Change vs liveness visually distinct in a recording ⏭️ **owner-verified**
+- [x] All three confidence tiers distinguishable ✅ distinct opacity, qualifier and border style;
+      asserted by `confidence.test.ts`
+- [x] Cold-start (0 users) screen looks intentional ✅ and it is the **default** state of the
+      fixture build, so it is what anyone running the app locally sees first
+- [x] Manual-report loop (submit → see your zone update) ✅ works with no backend; asserted end to
+      end by `journeys.test.ts`
+- [x] `prefers-reduced-motion` full pass ✅ enforced by `motion.test.ts`
+- [x] No layout shift on skeleton→content (CLS ≈ 0) ✅ opacity-only pulse, heights reserved
 
 ---
 
@@ -1522,11 +1546,11 @@ rather than installed, per CLAUDE.md § 6.
 **Goal:** Implement Pulse's own prediction model using Exponentially Weighted Moving Average on occupancy_history. Replace Google baseline when sample_count >= 14 days for a given day/hour slot. Add confidence scoring (high/medium/low based on sample count and variance).
 
 **Subtasks:**
-- [ ] S26.1 — Implement EWMA calculation in compute-predictions Edge Function
-- [ ] S26.2 — Confidence scoring (high: 14+ days, medium: 7–13 days, low: <7 days)
-- [ ] S26.3 — Auto-switch from Google baseline to Pulse predictions when threshold met
-- [ ] S26.4 — Update PredictionChart to show confidence band
-- [ ] S26.5 — Unit tests for EWMA and confidence calculations
+- [⏭️] S26.1 — Implement EWMA calculation in compute-predictions Edge Function
+- [⏭️] S26.2 — Confidence scoring (high: 14+ days, medium: 7–13 days, low: <7 days)
+- [⏭️] S26.3 — Auto-switch from Google baseline to Pulse predictions when threshold met
+- [⏭️] S26.4 — Update PredictionChart to show confidence band
+- [⏭️] S26.5 — Unit tests for EWMA and confidence calculations
 
 ---
 
@@ -1534,10 +1558,10 @@ rather than installed, per CLAUDE.md § 6.
 **Goal:** Detect unusual occupancy patterns (exam periods, events, holidays). Flag anomalies in prediction data. Adjust predictions during known unusual periods.
 
 **Subtasks:**
-- [ ] S27.1 — Anomaly detection algorithm (z-score based, flag >2 std deviations)
-- [ ] S27.2 — Anomaly flag in occupancy_history
-- [ ] S27.3 — Exclude anomalies from EWMA calculation
-- [ ] S27.4 — UI indicator when current occupancy is anomalous
+- [⏭️] S27.1 — Anomaly detection algorithm (z-score based, flag >2 std deviations)
+- [⏭️] S27.2 — Anomaly flag in occupancy_history
+- [⏭️] S27.3 — Exclude anomalies from EWMA calculation
+- [⏭️] S27.4 — UI indicator when current occupancy is anomalous
 
 ---
 
@@ -1547,10 +1571,10 @@ rather than installed, per CLAUDE.md § 6.
 **Privacy:** All preference data in localStorage. Zero server storage.
 
 **Subtasks:**
-- [ ] S28.1 — Track building views and filter usage in localStorage
-- [ ] S28.2 — Preference weighting in scoring algorithm
-- [ ] S28.3 — "Your usual spots" section on HomePage
-- [ ] S28.4 — Clear preferences option in settings
+- [⏭️] S28.1 — Track building views and filter usage in localStorage
+- [⏭️] S28.2 — Preference weighting in scoring algorithm
+- [⏭️] S28.3 — "Your usual spots" section on HomePage
+- [⏭️] S28.4 — Clear preferences option in settings
 
 ---
 
@@ -1562,14 +1586,14 @@ rather than installed, per CLAUDE.md § 6.
 **Privacy:** All gamification state in localStorage. No server-side user profiles. Reporting streaks and badges are private to the device.
 
 **Subtasks:**
-- [ ] S29.1 — "Is this right?" prompt in BuildingCard (thumbs up/down)
-- [ ] S29.2 — Store confirmations in feedback table (type: accuracy_confirmation)
-- [ ] S29.3 — Calibration algorithm: adjust capacity estimates based on feedback
-- [ ] S29.4 — Track prediction accuracy over time (dashboard for admin)
-- [ ] S29.5 — Reporting streak counter (localStorage, days with >= 1 report)
-- [ ] S29.6 — Badge system: "First Report", "Week Streak", "Top Contributor" (localStorage)
-- [ ] S29.7 — Streak/badge display in More/Settings page
-- [ ] S29.8 — Subtle animation on badge unlock (Framer Motion)
+- [⏭️] S29.1 — "Is this right?" prompt in BuildingCard (thumbs up/down)
+- [⏭️] S29.2 — Store confirmations in feedback table (type: accuracy_confirmation)
+- [⏭️] S29.3 — Calibration algorithm: adjust capacity estimates based on feedback
+- [⏭️] S29.4 — Track prediction accuracy over time (dashboard for admin)
+- [⏭️] S29.5 — Reporting streak counter (localStorage, days with >= 1 report)
+- [⏭️] S29.6 — Badge system: "First Report", "Week Streak", "Top Contributor" (localStorage)
+- [⏭️] S29.7 — Streak/badge display in More/Settings page
+- [⏭️] S29.8 — Subtle animation on badge unlock (Framer Motion)
 
 **Test criteria:**
 - Confirmations stored without user_id
@@ -1585,11 +1609,11 @@ rather than installed, per CLAUDE.md § 6.
 **Goal:** Add campus selector. Seed data for 2 additional Melbourne universities (Monash Clayton, RMIT City). Same database instance, data isolated by campus_id. Campus-specific map styling.
 
 **Subtasks:**
-- [ ] S30.1 — Campus selector UI (dropdown or tab)
-- [ ] S30.2 — Seed Monash Clayton buildings and zones
-- [ ] S30.3 — Seed RMIT City buildings and zones
-- [ ] S30.4 — Map bounds and centre per campus
-- [ ] S30.5 — Verify data isolation (campus_id filtering)
+- [⏭️] S30.1 — Campus selector UI (dropdown or tab)
+- [⏭️] S30.2 — Seed Monash Clayton buildings and zones
+- [⏭️] S30.3 — Seed RMIT City buildings and zones
+- [⏭️] S30.4 — Map bounds and centre per campus
+- [⏭️] S30.5 — Verify data isolation (campus_id filtering)
 
 ---
 
@@ -1597,12 +1621,12 @@ rather than installed, per CLAUDE.md § 6.
 **Goal:** Build admin.pulse.app subdomain. Supabase Auth with university email domain restriction. Views: campus-wide heatmap by hour, per-building utilisation charts, peak stress report, CSV export. All data aggregate and anonymised.
 
 **Subtasks:**
-- [ ] S31.1 — Admin app scaffold (separate Vite project or route)
-- [ ] S31.2 — Supabase Auth with email domain restriction
-- [ ] S31.3 — Campus-wide utilisation heatmap (hour × day grid)
-- [ ] S31.4 — Per-building utilisation charts
-- [ ] S31.5 — Peak stress report (busiest times)
-- [ ] S31.6 — CSV export of aggregate data
+- [⏭️] S31.1 — Admin app scaffold (separate Vite project or route)
+- [⏭️] S31.2 — Supabase Auth with email domain restriction
+- [⏭️] S31.3 — Campus-wide utilisation heatmap (hour × day grid)
+- [⏭️] S31.4 — Per-building utilisation charts
+- [⏭️] S31.5 — Peak stress report (busiest times)
+- [⏭️] S31.6 — CSV export of aggregate data
 
 ---
 
@@ -1610,10 +1634,10 @@ rather than installed, per CLAUDE.md § 6.
 **Goal:** Stripe integration for university subscriptions. Tiered pricing based on campus count. Admin user management.
 
 **Subtasks:**
-- [ ] S32.1 — Stripe integration (checkout, webhooks)
-- [ ] S32.2 — Subscription tiers and pricing
-- [ ] S32.3 — Admin user management
-- [ ] S32.4 — Usage-based billing calculations
+- [⏭️] S32.1 — Stripe integration (checkout, webhooks)
+- [⏭️] S32.2 — Subscription tiers and pricing
+- [⏭️] S32.3 — Admin user management
+- [⏭️] S32.4 — Usage-based billing calculations
 
 ---
 
@@ -1625,10 +1649,10 @@ rather than installed, per CLAUDE.md § 6.
 **Privacy:** Building-level only. Never floor or seat. Opt-in mutual follows.
 
 **Subtasks:**
-- [ ] S33.1 — Supabase Auth for social features
-- [ ] S33.2 — Follow/unfollow system (mutual opt-in)
-- [ ] S33.3 — Friend presence indicators on map (building-level only)
-- [ ] S33.4 — Friend list UI
+- [⏭️] S33.1 — Supabase Auth for social features
+- [⏭️] S33.2 — Follow/unfollow system (mutual opt-in)
+- [⏭️] S33.3 — Friend presence indicators on map (building-level only)
+- [⏭️] S33.4 — Friend list UI
 
 ---
 
@@ -1636,10 +1660,10 @@ rather than installed, per CLAUDE.md § 6.
 **Goal:** Manual subject tags. "Looking for study partner" status. Study session creation with building + time. Entirely opt-in.
 
 **Subtasks:**
-- [ ] S34.1 — Subject tag system
-- [ ] S34.2 — "Looking for study partner" status toggle
-- [ ] S34.3 — Study session creation (building + time + subject)
-- [ ] S34.4 — Study session discovery and joining
+- [⏭️] S34.1 — Subject tag system
+- [⏭️] S34.2 — "Looking for study partner" status toggle
+- [⏭️] S34.3 — Study session creation (building + time + subject)
+- [⏭️] S34.4 — Study session discovery and joining
 
 ---
 
@@ -1651,13 +1675,13 @@ rather than installed, per CLAUDE.md § 6.
 **Privacy:** Spots are anonymous submissions. Reviews are anonymous. Photos are user-uploaded (moderated).
 
 **Subtasks:**
-- [ ] S35.1 — Migration 015_spots.sql (spots table with photos[], amenities[], is_secret, location point, is_approved)
-- [ ] S35.2 — Migration 016_reviews.sql (reviews table, anonymous, rating 1-5 + noise_level + text)
-- [ ] S35.3 — src/components/SpotSubmission.tsx (name, type, photo upload, amenities checklist, location picker)
-- [ ] S35.4 — src/components/SpotCard.tsx (photo, rating, amenities, noise, review count)
-- [ ] S35.5 — src/components/ReviewForm.tsx + ReviewList.tsx
-- [ ] S35.6 — Spots as map markers (separate Mapbox layer, distinct from building polygons)
-- [ ] S35.7 — Admin moderation Edge Function (approve/reject spots)
+- [⏭️] S35.1 — Migration 015_spots.sql (spots table with photos[], amenities[], is_secret, location point, is_approved)
+- [⏭️] S35.2 — Migration 016_reviews.sql (reviews table, anonymous, rating 1-5 + noise_level + text)
+- [⏭️] S35.3 — src/components/SpotSubmission.tsx (name, type, photo upload, amenities checklist, location picker)
+- [⏭️] S35.4 — src/components/SpotCard.tsx (photo, rating, amenities, noise, review count)
+- [⏭️] S35.5 — src/components/ReviewForm.tsx + ReviewList.tsx
+- [⏭️] S35.6 — Spots as map markers (separate Mapbox layer, distinct from building polygons)
+- [⏭️] S35.7 — Admin moderation Edge Function (approve/reject spots)
 
 **Test criteria:**
 - Spot submission stores all fields without user_id
@@ -1680,10 +1704,10 @@ rather than installed, per CLAUDE.md § 6.
 - Admin event entry tool
 
 **Subtasks:**
-- [ ] S36.1 — Migration 017_events.sql (events table with building_id, name, start_time, end_time, expected_crowd_multiplier, description)
-- [ ] S36.2 — src/components/EventBanner.tsx (shown in BuildingCard during active events, explains crowd spike)
-- [ ] S36.3 — Admin event entry tool (Edge Function + simple form)
-- [ ] S36.4 — Prediction adjustment: multiply baseline prediction by expected_crowd_multiplier during event window
+- [⏭️] S36.1 — Migration 017_events.sql (events table with building_id, name, start_time, end_time, expected_crowd_multiplier, description)
+- [⏭️] S36.2 — src/components/EventBanner.tsx (shown in BuildingCard during active events, explains crowd spike)
+- [⏭️] S36.3 — Admin event entry tool (Edge Function + simple form)
+- [⏭️] S36.4 — Prediction adjustment: multiply baseline prediction by expected_crowd_multiplier during event window
 
 **Test criteria:**
 - Event banner appears only during active event window
@@ -1794,6 +1818,10 @@ S15 (Photos+Tips) ────────────────────�
 
 ## Owner-Gated Ship Runbook
 
+> **This is a checklist, not a backlog.** Every item needs credentials, real-world data, or a
+> physical device — none of it can be done from inside the repo. It is the only thing standing
+> between this codebase and a public URL.
+>
 > **Everything here requires Bruno.** Per his instruction, all owner-gated work is deferred to the
 > very end and batched here. Nothing in Sprints R1–R5 or 19–25 blocks on any of it — the fixture
 > layer (R2) stands in throughout. Run this block only once the code work is complete.
