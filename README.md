@@ -12,7 +12,7 @@ UniSpace shows how full every building on a university campus is, so students st
 
 | | |
 |---|---|
-| **Landing route** | **171 KB gzip**, down from 637 KB — Mapbox's 439 KB stays off it entirely |
+| **Landing route** | **173 KB gzip**, down from 637 KB — Mapbox's 439 KB stays off it entirely |
 | **Tests** | **380** across 32 files, including four that assert properties most projects only write down |
 | **Campus data** | **18** buildings · **47** zones · **890** rooms · **1,156** modelled occupancy rows |
 | **Coordinates sent to a server** | **None.** Zone matching runs on the device; a test fails the build if that changes |
@@ -193,14 +193,18 @@ could not be identified with confidence are still quadrilaterals and are named a
 matched to a guess.
 
 Measurement changed decisions repeatedly, and not always in the expected direction. Splitting
-Mapbox out took the landing route from 637 KB to 171 KB gzip; the next optimisation, naming a
+Mapbox out took the landing route from 637 KB to 173 KB gzip; the next optimisation, naming a
 `charts` chunk for Recharts, made things **worse** — it was already correctly split behind the
 lazy building card, and naming it caused the bundler to hoist it into a static import, adding
 108 KB to the route in the name of shrinking it. Computing contrast ratios rather than eyeballing
 them caught a regression introduced two sprints earlier: a text token measuring 2.56:1 was
 carrying 49 pieces of real content. The same test later blocked a design revert — restoring the
 university palette's literal gold (2.02:1) and green (2.42:1) failed 13 contrast assertions, so
-the shipped values are hue- and saturation-preserved and darkened until they pass.
+the shipped values are hue- and saturation-preserved and darkened until they pass. One thing that
+revert deliberately did *not* restore is the coloured occupancy percentage on each home tile: the
+original green measures about 2.2:1 on the card, under the 3:1 floor for large text. The colour
+lives on the stripe and the bar instead. Putting it back would have been a regression sold as a
+revert.
 
 The most interesting finding was not a bug but a schema limitation. Researching accessibility data
 against the university's own sources showed that every flag in the database had been invented —
@@ -346,10 +350,11 @@ what remains genuinely outstanding is real-world data the repository cannot prod
 parking for any building, step-free entry for 17, hours for 13, and CC-licensed building
 photographs. Each is listed in [`MASTERPLAN.md`](MASTERPLAN.md) rather than quietly rounded up.
 
-One note on history: Sprint R3 applied a dark, single-accent design system called SIGNAL. Its
-component decomposition and accessibility work stand, but **the design layer was reverted on
-2026-08-15** in favour of the university palette on a light ground. The reasoning is in the
-masterplan's Architecture Decisions Log.
+One note on history: Sprint R3 applied a dark, single-accent design system called SIGNAL, with a
+monospace "instrument voice" throughout. Its component decomposition and accessibility work stand
+and are load-bearing, but **the visual layer was reverted on 2026-08-15** — university navy and
+gold on a light ground, and the monospace dropped across 113 elements. The reasoning is in the
+masterplan's Architecture Decisions Log. The screenshots above are the current build.
 
 | | |
 |---|---|

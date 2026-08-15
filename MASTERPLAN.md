@@ -2187,8 +2187,17 @@ CLAUDE.md § Honesty: every number in the README maps to a committed artifact or
       `bugs`, `license`, `author`.
 - [x] D7 — **Numbers re-counted from files, never restated** ✅ Every figure verified at the moment
       of writing: 380 tests / 32 files · 22 migrations · 8 seeds · 7 Edge Functions · 18 buildings ·
-      47 zones · 890 rooms across 17 buildings · 1,156 curve rows · 171 KB gzip landing route ·
+      47 zones · 890 rooms across 17 buildings · 1,156 curve rows · 173 KB gzip landing route ·
       439 KB Mapbox chunk.
+  - [x] D7.recount — **Re-verified after the visual revert landed** (`2f80bb7`). The landing route
+        moved 171.5 → **172.8 KB** gzip as `index.css` grew and five home components were added;
+        README and `PROJECT.json` corrected to 173. Tests (380/32) and migrations (22) unmoved.
+- [x] D9 — **Images re-captured at the settled design** ✅ All five retaken against the `2f80bb7`
+      build after the SIGNAL revert completed — UoM palette, monospace dropped across 113 elements,
+      the reworked home-page rhythm. Currency proved by matching the built stylesheet hash
+      (`index-AJq4aJ5Q.css`) against the one the deployed site serves, rather than by eye. The
+      first two capture rounds were discarded: round one predated the revert entirely, round two
+      predated the home-page rework.
   - [x] D7.extra — The counts moved four times mid-pass (277 → 297 → 325 → 380 tests) because a
         parallel session was still landing work. Recounted rather than trusting any handoff figure,
         including the parallel session's own — its final message reported 325/30 and 21 migrations,
