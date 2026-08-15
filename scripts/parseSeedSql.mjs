@@ -294,3 +294,40 @@ export function applyGlobalUpdates(sql, rows) {
 
   return rows
 }
+
+/**
+ * Apply `UPDATE <table> SET ... WHERE <col> = '<value>'` statements.
+ *
+ * The two existing helpers between them cover `WHERE col IN (...)` and no WHERE
+ * clause at all. Neither matches a plain equality, which is the form migrations
+ * 010 and 011 use — so both were silently skipped by the fixture generator for
+ * as long as it existed, and the fixtures kept the oversized axis-aligned
+ * rectangles that 010 was written to replace. The app renders those boxes
+ * wherever it runs on fixtures, which is everywhere, since there is no backend.
+ *
+ * @param table  the table being updated, so building_zones can be corrected too
+ * @param rows   parsed rows, mutated in place
+ */
+export function applyKeyedUpdates(sql, rows, table = 'buildings') {
+  const clean = stripComments(sql)
+  const pattern = new RegExp(
+    `UPDATE\\s+${table}\\s+SET\\s+([\\s\\S]*?)\\s+WHERE\\s+(\\w+)\\s*=\\s*'([^']*)'\\s*;`,
+    'gi',
+  )
+
+  let applied = 0
+  for (const match of clean.matchAll(pattern)) {
+    const assignments = splitFields(match[1]).map((a) => {
+      const [col, ...rest] = a.split('=')
+      return [col.trim(), parseLiteral(rest.join('='))]
+    })
+    const [, , keyColumn, keyValue] = match
+
+    for (const row of rows) {
+      if (String(row[keyColumn]) !== keyValue) continue
+      for (const [col, value] of assignments) row[col] = value
+      applied++
+    }
+  }
+  return applied
+}

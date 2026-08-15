@@ -9,7 +9,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parseInserts, applyUpdates, applyGlobalUpdates } from './parseSeedSql.mjs'
+import { parseInserts, applyUpdates, applyGlobalUpdates, applyKeyedUpdates } from './parseSeedSql.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const OUT = resolve(ROOT, 'src/lib/fixtures/seedData.generated.ts')
@@ -32,6 +32,30 @@ const SEED_FILES = [
  * migrations run, then seeds, then later corrective seeds. Fixtures must show
  * the same final state or local development lies about what is deployed.
  */
+/**
+ * Migrations that correct geometry, applied in order before anything else.
+ *
+ * These were missing, and their absence is what made every building on the map
+ * a box. 010's own header states the problem it exists to fix: "Original
+ * polygons were oversized rectangles (~140m x 100m) that were misaligned from
+ * actual building positions." 011 then replaces them with real OpenStreetMap
+ * outlines. Neither was ever applied here, because both use
+ * `WHERE id = '...'` and the generator had no helper for that form — so the
+ * fixtures kept the very rectangles 010 was written to remove, and the app
+ * rendered them everywhere, since it runs on fixtures everywhere.
+ *
+ * They also set centroid and entrance coordinates, which is why building
+ * centroids looked wrong against UoM's own campus map.
+ */
+const GEOMETRY_MIGRATIONS = [
+  'supabase/migrations/010_fix_building_polygons.sql',
+  'supabase/migrations/011_correct_all_polygons.sql',
+  // 022 replaces 011's hand-simplified 4-7 point quads with the real
+  // OpenStreetMap ways, 14-57 vertices each, and recomputes centroids from the
+  // geometry rather than asserting them alongside it.
+  'supabase/migrations/022_osm_building_footprints.sql',
+]
+
 const CORRECTIVE_MIGRATIONS = [
   'supabase/migrations/018_accessibility_unknown.sql',
   // 021 adds the hours-provenance columns and blanks them for every building.
@@ -90,6 +114,14 @@ export function buildSeedData() {
   const typicalCurves = parseInserts(sql, 'google_popular_times').filter(
     (t) => !REMOVED_BUILDING_IDS.has(t.building_id),
   )
+
+  // Geometry first, mirroring migration order: 010 tightens the boxes, then 011
+  // replaces them with OSM outlines. Zones carry their building's polygon.
+  for (const file of GEOMETRY_MIGRATIONS) {
+    const sqlText = readFileSync(resolve(ROOT, file), 'utf8')
+    applyKeyedUpdates(sqlText, buildings, 'buildings')
+    applyKeyedUpdates(sqlText, zones, 'building_zones')
+  }
 
   // 018 blanks every accessibility flag to "unverified", then seed 005 restores
   // only what a published source supports.

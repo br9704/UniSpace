@@ -311,7 +311,19 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 
 **University of Melbourne — Parkville**
 
-18 UoM Parkville buildings with OSM-sourced polygon outlines, amenity data, building hours, and typical-occupancy curves (1,156 rows, covering each building only on the days it is open).
+18 UoM Parkville buildings with amenity data, building hours, and typical-occupancy curves (1,156
+rows, covering each building only on the days it is open).
+
+**Building geometry** — 15 of the 18 carry their real OpenStreetMap footprint, 14 to 57 vertices
+each (migration `022`). The other three — Engineering Building 1, the ICT Building and Kwong Lee Dow
+— could not be identified in OSM with any confidence and are left as rectangular approximations
+rather than matched to a guess. Buildings are matched to OSM by name, not by proximity, because
+several seeded coordinates were wrong and proximity matching inherits that error: Melbourne School
+of Design was seeded 428 m from the Glyn Davis Building it actually occupies.
+
+> Building geometry © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors,
+> available under the [Open Database License](https://opendatacommons.org/licenses/odbl/) (ODbL).
+> The ODbL governs that geometry and applies independently of this repository's own licence.
 
 Those curves are UniSpace's own modelled estimates of campus rhythm, not measurements and not Google data — the UI labels them as estimates wherever they are shown. Google's public Places API does not expose live busyness, so it is used only for opening hours.
 
