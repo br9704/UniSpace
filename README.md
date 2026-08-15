@@ -7,6 +7,8 @@ UniSpace shows how full every building on a university campus is, so students st
 <p align="center">
   <strong><a href="https://unispace-tawny.vercel.app">unispace-tawny.vercel.app</a></strong>
   &nbsp;·&nbsp;
+  Case study: <a href="https://brunojaamaa.dev/projects/unispace">brunojaamaa.dev/projects/unispace</a>
+  &nbsp;·&nbsp;
   <code>pnpm install && pnpm dev</code> — runs fully, no backend, no API keys but a Mapbox token
 </p>
 
