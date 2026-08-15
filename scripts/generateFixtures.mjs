@@ -20,6 +20,9 @@ const SEED_FILES = [
   'supabase/seed/003_additional_buildings.sql',
   'supabase/seed/004_additional_popular_times.sql',
   'supabase/seed/005_verified_accessibility.sql',
+  'supabase/seed/006_rooms_uom_campus_map.sql',
+  'supabase/seed/007_verified_accessibility_campus_map.sql',
+  'supabase/seed/008_verified_hours_source.sql',
 ]
 
 /**
@@ -31,6 +34,12 @@ const SEED_FILES = [
  */
 const CORRECTIVE_MIGRATIONS = [
   'supabase/migrations/018_accessibility_unknown.sql',
+  // 021 adds the hours-provenance columns and blanks them for every building.
+  // It has to run here rather than be left implicit: without it the 13 buildings
+  // seed 008 does not touch would carry `undefined` instead of `null`, and
+  // "unverified" would read to the UI as "column missing" rather than as the
+  // deliberate statement it is.
+  'supabase/migrations/021_hours_source.sql',
 ]
 
 /** Buildings dropped in R1.7 — belt and braces if a seed reintroduces them. */
@@ -38,6 +47,37 @@ const REMOVED_BUILDING_IDS = new Set([
   'b0000000-0000-0000-0000-000000000006',
   'b0000000-0000-0000-0000-000000000007',
 ])
+
+/**
+ * When this seed data was authored.
+ *
+ * The seed SQL never inserts `created_at`, `updated_at` or `seeded_at` — the
+ * columns carry `DEFAULT NOW()`, so a real database fills them at insert time
+ * and the parser has nothing to read. Left absent, they arrived as `undefined`
+ * behind an `as unknown as Building[]` cast, and `blendOccupancy` handed that
+ * `undefined` straight to `last_updated` on the Google-typical path. Every
+ * freshness stamp in the app then failed its own truthiness guard and rendered
+ * nothing at all.
+ *
+ * A fixed date rather than `new Date()`, for two reasons. It has to be
+ * byte-stable or `seedData.test.ts` — which fails when this file drifts from
+ * the seeds — would fail on every regeneration. And it is the honest value:
+ * this data really was seeded on this date and has not been refreshed since,
+ * so the UI ageing it and eventually applying its stale treatment is the true
+ * statement. Stamping it `now` would make months-old seed data claim to be
+ * fresh. Update it when the seed data is genuinely re-derived.
+ */
+const SEED_AUTHORED_AT = '2026-08-15T00:00:00.000Z'
+
+/** Fill DB-default columns the seed SQL omits, without overwriting explicit values. */
+function withDefaults(rows, columns) {
+  for (const row of rows) {
+    for (const column of columns) {
+      if (row[column] === undefined) row[column] = SEED_AUTHORED_AT
+    }
+  }
+  return rows
+}
 
 export function buildSeedData() {
   const sql = SEED_FILES.map((f) => readFileSync(resolve(ROOT, f), 'utf8')).join('\n')
@@ -74,6 +114,11 @@ export function buildSeedData() {
     }
   }
 
+  withDefaults(campuses, ['created_at'])
+  withDefaults(buildings, ['created_at', 'updated_at'])
+  withDefaults(zones, ['created_at'])
+  withDefaults(typicalCurves, ['seeded_at'])
+
   return { campuses, buildings, zones, typicalCurves }
 }
 
@@ -94,13 +139,17 @@ export function renderModule(data) {
 
 import type { Building, BuildingZone, Campus, GooglePopularTime } from '@/types'
 
-export const SEED_CAMPUSES = ${json(campuses)} as unknown as Campus[]
+// Annotated rather than cast. The previous \`as unknown as Building[]\` asserted
+// a shape instead of checking one, and hid four missing timestamp columns for
+// as long as it existed. A contextual annotation makes tsc verify every row.
 
-export const SEED_BUILDINGS = ${json(buildings)} as unknown as Building[]
+export const SEED_CAMPUSES: Campus[] = ${json(campuses)}
 
-export const SEED_ZONES = ${json(zones)} as unknown as BuildingZone[]
+export const SEED_BUILDINGS: Building[] = ${json(buildings)}
 
-export const SEED_TYPICAL_CURVES = ${json(typicalCurves)} as unknown as GooglePopularTime[]
+export const SEED_ZONES: BuildingZone[] = ${json(zones)}
+
+export const SEED_TYPICAL_CURVES: GooglePopularTime[] = ${json(typicalCurves)}
 `
 }
 

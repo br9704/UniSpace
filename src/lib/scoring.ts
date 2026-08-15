@@ -54,8 +54,18 @@ export function rankBuildings(
       floor_occupancies: [], last_updated: new Date().toISOString(),
     }
 
-    // Filter: currently open
-    if (filters.currently_open && !isOpenNow(building).open) continue
+    // Filter: currently open.
+    //
+    // Excludes only buildings *known* to be closed. For the 13 buildings with
+    // no published hours (migration 021), openness is unknown, and dropping
+    // them would be acting on the invented seed values as though they were
+    // fact — on a weekend those values close all 13, silently reducing the
+    // whole campus to the five libraries. Unknown is not a reason to hide a
+    // building; the row labels it `[?] HOURS` so the user can judge.
+    if (filters.currently_open) {
+      const status = isOpenNow(building)
+      if (status.verified && !status.open) continue
+    }
 
     // Filter: max occupancy
     if (occupancy.pct !== null && occupancy.pct > filters.max_occupancy_pct) continue

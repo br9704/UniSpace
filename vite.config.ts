@@ -10,7 +10,9 @@ export default defineConfig({
       manifest: {
         name: 'UniSpace',
         short_name: 'UniSpace',
-        description: 'Live campus occupancy. Your GPS never leaves your device.',
+        // Not "live campus occupancy": this string surfaces in the OS install
+        // prompt, where it is a promise made before anyone can see the caveats.
+        description: 'How busy campus buildings are. Your GPS never leaves your device.',
         start_url: '/',
         display: 'standalone',
         // SIGNAL: the splash and OS chrome must match the app, not the

@@ -41,8 +41,9 @@ export default function AlertsPage() {
         <Card variant="elevated">
           <SectionLabel className="mb-3">about</SectionLabel>
           <p className="text-sm" style={{ color: 'var(--color-text-secondary)', lineHeight: 1.65 }}>
-            UniSpace gives university students real-time visibility into campus occupancy, so they
-            never waste a trip to a building that turns out to be full.
+            UniSpace shows how busy campus buildings are, so you can choose one before walking
+            across campus. Live counts need people sharing occupancy; until they do, it falls back
+            to typical patterns and labels every number with where it came from.
           </p>
           <p className="mono text-xs mt-4" style={{ color: 'var(--color-text-muted)' }}>
             v0.1.0 · BUILT BY BRUNO JAAMAA

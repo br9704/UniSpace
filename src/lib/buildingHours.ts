@@ -4,6 +4,16 @@ export interface OpenStatus {
   open: boolean
   closesAt: string | null
   opensAt: string | null
+  /**
+   * Whether a published source backs this building's hours (migration 021).
+   *
+   * False for 13 of 18 buildings, whose hours are the invented values seeded in
+   * 001/003. `open` is still computed from them so ordering and filtering have
+   * something to work with, but **it must never be rendered as a confident
+   * OPEN or CLOSED when this is false** — that would state a fabricated number
+   * as fact, which is the same defect migration 018 fixed for accessibility.
+   */
+  verified: boolean
 }
 
 const DAY_FIELDS: (keyof Building)[] = [
@@ -25,18 +35,36 @@ function formatTime(hhmm: string): string {
   return m === 0 ? `${hour12} ${period}` : `${hour12}:${m.toString().padStart(2, '0')} ${period}`
 }
 
+/**
+ * How the open state should read on screen.
+ *
+ * Every surface goes through here so the unverified case cannot be forgotten at
+ * one call site — which is how 13 buildings came to advertise a confident
+ * "OPEN" derived from a made-up timetable. `[?]` matches the marker
+ * `AccessibilityPanel` already uses for the same idea.
+ *
+ * @param detailed include the closing/opening time, where there is room for it.
+ */
+export function openStatusLabel(status: OpenStatus, detailed = false): string {
+  if (!status.verified) return detailed ? '[?] HOURS NOT VERIFIED' : '[?] HOURS'
+  if (!detailed) return status.open ? 'OPEN' : 'CLOSED'
+  if (status.open) return `OPEN · CLOSES ${status.closesAt}`
+  return status.opensAt ? `CLOSED · OPENS ${status.opensAt}` : 'CLOSED'
+}
+
 /** Determine if a building is currently open based on its hours fields. */
 export function isOpenNow(building: Building, now?: Date): OpenStatus {
   const d = now ?? new Date()
   const hours = getTodayHours(building, d)
+  const verified = building.hours_source !== null && building.hours_source !== undefined
 
   if (!hours) {
-    return { open: false, closesAt: null, opensAt: null }
+    return { open: false, closesAt: null, opensAt: null, verified }
   }
 
   const [openStr, closeStr] = hours.split('-')
   if (!openStr || !closeStr) {
-    return { open: false, closesAt: null, opensAt: null }
+    return { open: false, closesAt: null, opensAt: null, verified }
   }
 
   const [oh, om] = openStr.split(':').map(Number)
@@ -46,12 +74,12 @@ export function isOpenNow(building: Building, now?: Date): OpenStatus {
   const closeMinutes = ch * 60 + cm
 
   if (currentMinutes >= openMinutes && currentMinutes < closeMinutes) {
-    return { open: true, closesAt: formatTime(closeStr), opensAt: null }
+    return { open: true, closesAt: formatTime(closeStr), opensAt: null, verified }
   }
 
   if (currentMinutes < openMinutes) {
-    return { open: false, closesAt: null, opensAt: formatTime(openStr) }
+    return { open: false, closesAt: null, opensAt: formatTime(openStr), verified }
   }
 
-  return { open: false, closesAt: null, opensAt: null }
+  return { open: false, closesAt: null, opensAt: null, verified }
 }

@@ -122,7 +122,10 @@ export default function MapPage() {
         building={selectedBuilding}
         occupancy={selectedOccupancy}
         predictions={predictions}
-        reportCount={occupancyMap.get(selectedBuildingId ?? '')?.source === 'crowd-report' ? 1 : 0}
+        // The real number of unexpired reports, not a boolean wearing a count.
+        // This was `source === 'crowd-report' ? 1 : 0`, which rendered "[1]"
+        // however many people had actually reported.
+        reportCount={reportsMap.get(selectedBuildingId ?? '')?.length ?? 0}
         noiseLevel={noise?.level ?? null}
         noiseCount={noise?.count}
         isFavourite={selectedBuildingId ? isFavourite(selectedBuildingId) : false}

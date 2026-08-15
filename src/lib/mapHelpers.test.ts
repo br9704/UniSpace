@@ -35,6 +35,7 @@ function makeBuilding(overrides: Partial<Building> = {}): Building {
     hours_fri: null,
     hours_sat: null,
     hours_sun: null,
+    hours_source: null, hours_verified_on: null, hours_period: null,
     created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z',
     ...overrides,

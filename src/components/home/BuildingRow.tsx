@@ -4,7 +4,7 @@ import { BUILDING_META } from '@/constants/buildingMeta'
 import { getActiveAmenities } from '@/lib/amenityHelpers'
 import { getCurrentTypical } from '@/lib/occupancyHelpers'
 import { formatHour } from '@/lib/predictionInsights'
-import { isOpenNow } from '@/lib/buildingHours'
+import { isOpenNow, openStatusLabel } from '@/lib/buildingHours'
 import OccupancyBar from '../OccupancyBar'
 import CountUpValue from '../CountUpValue'
 import FavouriteButton from '../FavouriteButton'
@@ -76,8 +76,8 @@ export default function BuildingRow({
         </div>
 
         <div className="mono flex items-center gap-2 mt-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
-          <StatusDot open={status.open} size={5} />
-          <span>{status.open ? `OPEN · CLOSES ${status.closesAt}` : 'AFTER HOURS'}</span>
+          <StatusDot open={status.open} verified={status.verified} size={5} />
+          <span>{!status.verified ? openStatusLabel(status) : status.open ? `OPEN · CLOSES ${status.closesAt}` : 'AFTER HOURS'}</span>
           {item.walkMinutes !== null && <span>· ~{Math.round(item.walkMinutes)} MIN</span>}
         </div>
 

@@ -13,7 +13,9 @@ function makeBuilding(overrides: Partial<Building> = {}): Building {
     has_accessible_bathrooms: true, has_accessible_parking: false,
     hours_mon: '08:00-22:00', hours_tue: '08:00-22:00', hours_wed: '08:00-22:00',
     hours_thu: '08:00-22:00', hours_fri: '08:00-18:00', hours_sat: '10:00-17:00',
-    hours_sun: null, created_at: '', updated_at: '',
+    hours_sun: null,
+    hours_source: null, hours_verified_on: null, hours_period: null,
+    created_at: '', updated_at: '',
     ...overrides,
   }
 }
@@ -154,5 +156,34 @@ describe('rankBuildings', () => {
     const filters = { ...DEFAULT_FILTERS, low_noise: true, currently_open: false }
     const result = rankBuildings(buildings, occ, filters, null, noiseMap)
     expect(result[0].building.id).toBe('silent')
+  })
+})
+
+describe('the "open now" filter and unverified hours', () => {
+  // Every hours field null, so the building reads as closed at any clock time —
+  // which keeps this test independent of when it runs.
+  const NEVER_OPEN: Partial<Building> = {
+    hours_mon: null, hours_tue: null, hours_wed: null, hours_thu: null,
+    hours_fri: null, hours_sat: null, hours_sun: null,
+  }
+  const filters: FilterState = { ...DEFAULT_FILTERS, currently_open: true, max_walk_minutes: 999 }
+  const occ = new Map<string, BlendedOccupancy>()
+
+  it('excludes a building a source says is closed', () => {
+    const building = makeBuilding({
+      ...NEVER_OPEN,
+      hours_source: 'https://library.unimelb.edu.au/library-locations-and-opening-hours',
+      hours_verified_on: '2026-08-15',
+      hours_period: 'Semester 2 2026 teaching weeks.',
+    })
+    expect(rankBuildings([building], occ, filters, null)).toHaveLength(0)
+  })
+
+  // The 13 buildings with no published hours carry invented seed values. On a
+  // weekend those values close all of them, so filtering on them would quietly
+  // reduce the campus to the five libraries on the strength of made-up data.
+  it('keeps a building whose hours no source backs', () => {
+    const building = makeBuilding({ ...NEVER_OPEN, hours_source: null })
+    expect(rankBuildings([building], occ, filters, null)).toHaveLength(1)
   })
 })

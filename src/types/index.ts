@@ -51,6 +51,19 @@ export interface Building {
   hours_fri: string | null
   hours_sat: string | null
   hours_sun: string | null
+  /**
+   * Provenance for the hours above (migration 021).
+   *
+   * NULL means the hours are **not backed by any published source** — for 13 of
+   * 18 buildings they are the invented values seeded in 001/003. Treat hours
+   * exactly like the accessibility flags: NULL is "nobody has checked", it is
+   * not "closed", and it must render differently from either answer.
+   */
+  hours_source: string | null
+  /** Date `hours_source` was last read. NULL whenever `hours_source` is NULL. */
+  hours_verified_on: string | null
+  /** The period the hours are known to hold for. NULL whenever `hours_source` is. */
+  hours_period: string | null
   created_at: string
   updated_at: string
 }
@@ -84,6 +97,18 @@ export interface OccupancyReport {
 }
 
 export type DataQuality = 'live' | 'crowd-report' | 'google' | 'predicted' | 'stale' | 'none'
+
+/**
+ * The subset of `DataQuality` the `zone_occupancy.data_quality` column can hold.
+ *
+ * Migration 009's CHECK constraint permits exactly these five values.
+ * `'crowd-report'` is deliberately not among them: crowd reports live in
+ * `occupancy_reports` and are blended in on the client, so that string is only
+ * ever produced by `blendOccupancy`, never returned by the database. Typing the
+ * row shape as the full `DataQuality` claimed Postgres could hand back a value
+ * its own constraint forbids.
+ */
+export type ZoneDataQuality = Exclude<DataQuality, 'crowd-report'>
 export type OccupancyTrend = 'filling' | 'emptying' | 'stable'
 export type PredictionConfidence = 'high' | 'medium' | 'low' | 'google-estimated'
 export type PredictionSource = 'pulse' | 'google'
@@ -96,7 +121,7 @@ export interface ZoneOccupancy {
   trend: OccupancyTrend
   prev_pct: number | null
   last_updated: string
-  data_quality: DataQuality
+  data_quality: ZoneDataQuality
 }
 
 export interface OccupancyUpdate {
@@ -255,9 +280,16 @@ export interface Room {
   floor_level: number
   room_type: RoomType
   capacity: number | null
-  has_power: boolean
-  is_bookable: boolean
-  is_accessible: boolean
+  /**
+   * NULL means unverified, not "no" — migration 019 dropped NOT NULL on these
+   * three for the same reason 018 did on `buildings`. UoM's campus map, which
+   * seeds the directory, records no power, booking or per-room accessibility
+   * data, so every seeded room carries NULL here. RoomList's `[A] — step-free
+   * access` marker is driven by `is_accessible` and must stay hidden for NULL.
+   */
+  has_power: boolean | null
+  is_bookable: boolean | null
+  is_accessible: boolean | null
   created_at: string
 }
 

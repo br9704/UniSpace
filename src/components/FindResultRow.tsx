@@ -1,6 +1,6 @@
 import type { Building } from '@/types'
 import { getOccupancyLabel } from '@/constants/occupancy'
-import { isOpenNow } from '@/lib/buildingHours'
+import { isOpenNow, openStatusLabel } from '@/lib/buildingHours'
 import OccupancyBar from './OccupancyBar'
 import CountUpValue from './CountUpValue'
 import StatusDot from './ui/StatusDot'
@@ -62,8 +62,8 @@ export default function FindResultRow({
           {building.short_name || building.name}
         </p>
         <div className="mono flex items-center gap-2 mt-1 text-xs" style={{ color: 'var(--color-text-muted)' }}>
-          <StatusDot open={status.open} size={5} />
-          <span>{status.open ? 'OPEN' : 'CLOSED'}</span>
+          <StatusDot open={status.open} verified={status.verified} size={5} />
+          <span>{openStatusLabel(status)}</span>
           {walkMinutes !== null && <span>· ~{Math.round(walkMinutes)} MIN</span>}
         </div>
         <div className="mt-2">

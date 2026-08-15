@@ -75,28 +75,50 @@ describe('accessibility facts', () => {
 })
 
 describe('seeded accessibility data', () => {
-  const LIBRARIES = [
-    'baillieu-library', 'erc-library', 'law-school',
-    'fbe-building', 'melbourne-school-of-design',
-  ]
+  /**
+   * The one building that could not be identified on UoM's own campus map.
+   * Seed 001 calls it "Engineering Building 1 (Block B)", a name the University
+   * does not publish, so seed 007 deliberately says nothing about it.
+   */
+  const UNIDENTIFIED = 'engineering-1'
 
-  it('claims a lift and accessible toilet only for the library buildings', () => {
-    // The single unambiguous statement in UoM's guide: "All libraries are
-    // accessible with lifts and an accessible toilet." Everything else in that
-    // source is hedged with "most" or "some", which is not a fact about any
-    // particular building.
+  /** Seed 007: the campus map shows no lift in Peter Hall. Absence is not a fact. */
+  const NO_MAPPED_LIFT = 'peter-hall'
+
+  it('claims a lift for every building the campus map shows one in, and no other', () => {
+    // Seed 005 could only cover the five libraries, because UoM's mobility
+    // guide states one thing unambiguously ("All libraries are accessible with
+    // lifts and an accessible toilet") and hedges the rest with "most" and
+    // "some". Seed 007 extends this from UoM's campus map, which the same guide
+    // points at — but only ever upward: a mapped lift sets true, an unmapped
+    // one leaves null, because a map can be incomplete.
     for (const b of SEED_BUILDINGS) {
-      const expected = LIBRARIES.includes(b.slug) ? true : null
+      const expected = b.slug === UNIDENTIFIED || b.slug === NO_MAPPED_LIFT ? null : true
       expect(b.has_elevator, `${b.slug} lift`).toBe(expected)
+    }
+  })
+
+  it('claims an accessible toilet for every identified building', () => {
+    // All 17 buildings that resolved to a campus-map building carry at least
+    // one mapped wheelchair-accessible toilet. Ambulant toilets are excluded
+    // from that count at the seed level — they have grab rails but are not
+    // wheelchair-sized, and counting them would be the harmful error itself.
+    for (const b of SEED_BUILDINGS) {
+      const expected = b.slug === UNIDENTIFIED ? null : true
       expect(b.has_accessible_bathrooms, `${b.slug} accessible toilet`).toBe(expected)
     }
   })
 
-  it('claims step-free entry for nothing', () => {
-    // A lift inside says nothing about getting in, and the source warns the
-    // accessible entrance is sometimes elsewhere than the main door.
+  it('claims step-free entry only where an entrance is named as accessible', () => {
+    // A lift inside says nothing about getting in, and UoM's guide warns the
+    // accessible entrance is sometimes elsewhere than the main door. Exactly one
+    // building on the map has entrances the University itself labels
+    // "Accessible Entrance": Peter Hall, north and west, both at ground level.
+    // Every other building's entrances are labelled only "Main Entrance", which
+    // is not evidence either way.
     for (const b of SEED_BUILDINGS) {
-      expect(b.is_ground_floor_accessible, `${b.slug} step-free entry`).toBeNull()
+      const expected = b.slug === 'peter-hall' ? true : null
+      expect(b.is_ground_floor_accessible, `${b.slug} step-free entry`).toBe(expected)
     }
   })
 

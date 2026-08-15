@@ -14,7 +14,10 @@ export interface CampusOverview {
   items: CampusItem[]
   quiet: CampusItem[]
   filling: CampusItem[]
+  /** Buildings currently open, counted only among those with published hours. */
   openCount: number
+  /** Buildings whose hours a published source backs (migration 021). */
+  verifiedHoursCount: number
   quietCount: number
   averagePct: number | null
   quietest: CampusItem | null
@@ -85,7 +88,15 @@ export function useCampusOverview(
       items,
       quiet: items.filter((item) => (item.occupancy?.pct ?? 100) <= QUIET_THRESHOLD),
       filling: items.filter((item) => item.occupancy?.trend === 'filling'),
-      openCount: items.filter((item) => isOpenNow(item.building).open).length,
+      // Only buildings with sourced hours are counted, in either direction. The
+      // other 13 carry invented hours, so counting them as open would inflate
+      // this and counting them as closed would deflate it — both would be
+      // asserting a fact the data does not contain.
+      openCount: items.filter((item) => {
+        const status = isOpenNow(item.building)
+        return status.verified && status.open
+      }).length,
+      verifiedHoursCount: items.filter((item) => isOpenNow(item.building).verified).length,
       quietCount: items.filter((item) => (item.occupancy?.pct ?? 100) < 50).length,
       averagePct: withData.length
         ? Math.round(withData.reduce((sum, item) => sum + item.occupancy!.pct!, 0) / withData.length)

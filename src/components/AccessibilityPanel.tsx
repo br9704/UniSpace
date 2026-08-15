@@ -49,7 +49,7 @@ export default function AccessibilityPanel({ building }: AccessibilityPanelProps
       <p className="mono text-xs mt-3" style={{ color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
         {allUnverified
           ? '> Not yet verified for this building. Please check with the University before relying on it.'
-          : '> Verified against UoM’s published accessibility guide. Entrances can differ from the main door — check before you travel.'}
+          : '> From UoM’s published mobility guide, which that page states was written by students rather than compiled from a facilities audit. Entrances can differ from the main door — check before you travel.'}
       </p>
     </Card>
   )

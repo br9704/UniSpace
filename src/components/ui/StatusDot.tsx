@@ -1,5 +1,10 @@
 interface StatusDotProps {
   open: boolean
+  /**
+   * Whether a source backs the hours behind `open`. Defaults true so an
+   * unverified state has to be passed deliberately, never assumed.
+   */
+  verified?: boolean
   size?: number
 }
 
@@ -11,9 +16,13 @@ interface StatusDotProps {
  * reserves it for. Closed is dim grey rather than red: a shut building is not
  * an error, and red is not in this palette.
  *
+ * Unverified is a hollow outline — filled means we know, empty means we do not.
+ * A filled dot of either colour would answer a question the data cannot answer,
+ * and the green one would answer it wrongly for 13 of 18 buildings.
+ *
  * Square, like everything else in SIGNAL.
  */
-export default function StatusDot({ open, size = 6 }: StatusDotProps) {
+export default function StatusDot({ open, verified = true, size = 6 }: StatusDotProps) {
   return (
     <span
       aria-hidden="true"
@@ -21,7 +30,10 @@ export default function StatusDot({ open, size = 6 }: StatusDotProps) {
       style={{
         width: size,
         height: size,
-        backgroundColor: open ? 'var(--color-live)' : 'var(--color-text-muted)',
+        backgroundColor: !verified
+          ? 'transparent'
+          : open ? 'var(--color-live)' : 'var(--color-text-muted)',
+        boxShadow: !verified ? 'inset 0 0 0 1px var(--color-text-muted)' : undefined,
       }}
     />
   )

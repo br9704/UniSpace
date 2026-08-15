@@ -1,5 +1,5 @@
 import type { BlendedOccupancy, Building } from '@/types'
-import { isOpenNow } from '@/lib/buildingHours'
+import { isOpenNow, openStatusLabel } from '@/lib/buildingHours'
 import { BUILDING_META } from '@/constants/buildingMeta'
 import { getActiveAmenities } from '@/lib/amenityHelpers'
 import AccessibilityPanel from './AccessibilityPanel'
@@ -90,15 +90,22 @@ export default function BuildingCardSummary({
 
       <Card>
         <div className="flex items-center gap-2">
-          <StatusDot open={status.open} />
+          <StatusDot open={status.open} verified={status.verified} />
           <span className="mono text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-            {status.open
-              ? `OPEN · CLOSES ${status.closesAt}`
-              : status.opensAt
-                ? `CLOSED · OPENS ${status.opensAt}`
-                : 'CLOSED'}
+            {openStatusLabel(status, true)}
           </span>
         </div>
+        {/*
+          The provenance, in the one place someone is deciding whether to walk
+          there. Verified hours still carry a caveat worth reading — they come
+          from a current-week table — and unverified ones say so plainly rather
+          than hiding behind a confident dot.
+        */}
+        <p className="mono text-xs mt-2" style={{ color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
+          {building.hours_period
+            ? `> ${building.hours_period}`
+            : '> No published source for this building’s hours. The times behind this are an estimate, not a fact — check before you travel.'}
+        </p>
         {building.estimated_capacity && (
           // "~" is doing real work: capacities are directional estimates, and
           // PRD § 15 is explicit that they must never be presented as precise.

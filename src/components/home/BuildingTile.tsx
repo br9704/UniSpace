@@ -1,6 +1,6 @@
 import type { CampusItem } from '@/hooks/useCampusOverview'
 import { getOccupancyLabel } from '@/constants/occupancy'
-import { isOpenNow } from '@/lib/buildingHours'
+import { isOpenNow, openStatusLabel } from '@/lib/buildingHours'
 import OccupancyBar from '../OccupancyBar'
 import CountUpValue from '../CountUpValue'
 import FavouriteButton from '../FavouriteButton'
@@ -73,8 +73,8 @@ export default function BuildingTile({
 
         <div className="mono flex items-center justify-between mt-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
           <span className="flex items-center gap-1.5">
-            <StatusDot open={status.open} size={5} />
-            {status.open ? 'OPEN' : 'CLOSED'}
+            <StatusDot open={status.open} verified={status.verified} size={5} />
+            {openStatusLabel(status)}
           </span>
           {item.walkMinutes !== null && <span>~{Math.round(item.walkMinutes)}M</span>}
         </div>

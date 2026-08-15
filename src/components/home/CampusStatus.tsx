@@ -30,10 +30,20 @@ function StatRow({ label, value, accent }: { label: string; value: string; accen
  * plain grey: useful context, not something to draw the eye.
  */
 export default function CampusStatus({ overview }: CampusStatusProps) {
-  const { items, quietCount, openCount, averagePct, quietest, busiest, peakHourToday, lastUpdated } =
+  const { items, quietCount, openCount, verifiedHoursCount, averagePct, quietest, busiest, peakHourToday, lastUpdated } =
     overview
 
   const campusIsQuiet = quietCount > items.length / 2
+
+  // Mark aggregates as approximate whenever nothing underneath them is observed.
+  // With no live counts and no crowd reports, every percentage here is derived
+  // from a modelled weekly curve, and BuildingRow already writes those as
+  // "~ USUALLY n% NOW". Printing a bare "63%" campus-wide claimed a precision
+  // the same data was hedged about one component away.
+  const isObserved = (source: string) => source === 'live' || source === 'crowd-report'
+  const approx = items.some((item) => item.occupancy && isObserved(item.occupancy.source))
+    ? ''
+    : '~'
 
   return (
     <Card variant="elevated" className="flex flex-col gap-4">
@@ -51,19 +61,25 @@ export default function CampusStatus({ overview }: CampusStatusProps) {
       <div>
         <SectionLabel className="mb-3">at a glance</SectionLabel>
         <dl className="flex flex-col gap-2">
-          <StatRow label="BUILDINGS" value={`${items.length} · ${openCount} OPEN`} />
-          {averagePct !== null && <StatRow label="AVG OCCUPANCY" value={`${averagePct}%`} />}
+          <StatRow
+            label="BUILDINGS"
+            // "n OPEN" alone implied the remainder were closed. Only
+            // verifiedHoursCount buildings publish hours at all, so the open
+            // count is reported against that denominator rather than the 18.
+            value={`${items.length} · ${openCount}/${verifiedHoursCount} OPEN`}
+          />
+          {averagePct !== null && <StatRow label="AVG OCCUPANCY" value={`${approx}${averagePct}%`} />}
           {quietest && (
             <StatRow
               label="QUIETEST"
               accent
-              value={`${quietest.building.short_name || quietest.building.name} · ${Math.round(quietest.occupancy!.pct!)}%`}
+              value={`${quietest.building.short_name || quietest.building.name} · ${approx}${Math.round(quietest.occupancy!.pct!)}%`}
             />
           )}
           {busiest && (
             <StatRow
               label="BUSIEST"
-              value={`${busiest.building.short_name || busiest.building.name} · ${Math.round(busiest.occupancy!.pct!)}%`}
+              value={`${busiest.building.short_name || busiest.building.name} · ${approx}${Math.round(busiest.occupancy!.pct!)}%`}
             />
           )}
           {peakHourToday !== null && (

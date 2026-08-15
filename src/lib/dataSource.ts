@@ -1,5 +1,6 @@
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { getFixtureRows, subscribeToFixtureTable } from '@/lib/fixtures'
+import { TABLE_SCHEMAS, describeIssue } from '@/lib/schemas'
 
 /** Tables the client reads directly. Writes always go through Edge Functions. */
 export type ReadableTable =
@@ -56,10 +57,43 @@ function isTransient(message: string): boolean {
 }
 
 /**
+ * Validate a batch of rows against the table's schema.
+ *
+ * A schema mismatch fails the whole read rather than dropping the offending
+ * rows, for the same reason `fetchAllPages` refuses partial pages: a map
+ * missing the buildings whose shape changed reads as "these buildings are
+ * empty", which is a wrong answer presented confidently. An error reads as an
+ * error. It is also not transient — a renamed column fails identically on every
+ * retry — so `isTransient` deliberately does not match this message.
+ *
+ * Applied to fixtures as well as to Supabase. The fixtures are generated from
+ * the committed seed SQL, so validating them is what keeps the generator, the
+ * seeds and the types from drifting apart unnoticed.
+ */
+function validateRows<T>(table: ReadableTable, rows: unknown[]): QueryResult<T> {
+  const schema = TABLE_SCHEMAS[table]
+  const validated: T[] = []
+
+  for (let i = 0; i < rows.length; i++) {
+    const result = schema.safeParse(rows[i])
+    if (!result.success) {
+      return {
+        data: [],
+        error: `Unexpected shape in "${table}" row ${i} — ${describeIssue(result.error)}. `
+          + 'The database schema and this build disagree.',
+      }
+    }
+    validated.push(result.data as T)
+  }
+
+  return { data: validated, error: null }
+}
+
+/**
  * Read every row of a table.
  *
  * Pages until the server returns a short page, rather than requesting a fixed
- * number of pages. `google_popular_times` holds 1,172 rows today and the hook
+ * number of pages. `google_popular_times` holds 1,156 rows today and the hook
  * that read it asked for exactly two pages — correct now, silently truncating
  * the moment a campus is added.
  */
@@ -68,7 +102,7 @@ export async function fetchRows<T>(
   options: { unexpiredOnly?: boolean } = {},
 ): Promise<QueryResult<T>> {
   if (isFixtureMode) {
-    return { data: getFixtureRows<T>(table, options), error: null }
+    return validateRows<T>(table, getFixtureRows<unknown>(table, options))
   }
 
   let result = await fetchAllPages<T>(table, options)
@@ -107,8 +141,11 @@ async function fetchAllPages<T>(
       return { data: [], error: error.message }
     }
 
-    const batch = (data ?? []) as T[]
-    rows.push(...batch)
+    const batch = data ?? []
+    const validated = validateRows<T>(table, batch)
+    if (validated.error) return validated
+
+    rows.push(...validated.data)
     if (batch.length < PAGE_SIZE) break
   }
 
@@ -125,8 +162,30 @@ export function subscribeRows<T>(
   event: 'INSERT' | 'UPDATE' | '*',
   onChange: (row: T) => void,
 ): () => void {
+  const schema = TABLE_SCHEMAS[table]
+
+  /**
+   * Forward a row only if it matches the schema.
+   *
+   * A malformed update is dropped rather than failing the subscription: the
+   * last known-good value stays on screen with its existing freshness
+   * treatment, which is a true statement about stale data. Applying the row
+   * would put a wrong number on screen with a live timestamp attached to it.
+   */
+  const forwardValidRow = (row: unknown) => {
+    const result = schema.safeParse(row)
+    if (!result.success) {
+      console.error(
+        `Dropped a realtime "${table}" row — ${describeIssue(result.error)}. `
+        + 'Showing the last known-good value instead.',
+      )
+      return
+    }
+    onChange(result.data as T)
+  }
+
   if (isFixtureMode) {
-    return subscribeToFixtureTable<T>(table, onChange)
+    return subscribeToFixtureTable<unknown>(table, forwardValidRow)
   }
 
   const channel = supabase
@@ -134,7 +193,7 @@ export function subscribeRows<T>(
     .on(
       'postgres_changes',
       { event, schema: 'public', table },
-      (payload) => onChange(payload.new as T),
+      (payload) => forwardValidRow(payload.new),
     )
     .subscribe()
 

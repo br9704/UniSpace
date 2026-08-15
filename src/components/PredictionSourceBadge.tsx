@@ -20,9 +20,12 @@ export default function PredictionSourceBadge({ source, confidence }: Prediction
   const label = isModelled ? 'MODELLED ESTIMATE' : 'UNISPACE PREDICTION'
   const detail = isModelled
     ? 'typical weekly pattern for this building'
-    : confidence === 'high' ? 'high confidence · 4+ weeks of data'
-    : confidence === 'medium' ? 'medium confidence · 2+ weeks of data'
-    : 'low confidence · limited data'
+    // Thresholds match MASTERPLAN S26.2, the only place they are defined:
+    // high 14+ days, medium 7-13, low under 7. This previously advertised
+    // "4+ weeks" and "2+ weeks", which no spec or code anywhere backs.
+    : confidence === 'high' ? 'high confidence · 14+ days of data'
+    : confidence === 'medium' ? 'medium confidence · 7-13 days of data'
+    : 'low confidence · under 7 days of data'
 
   return (
     <div

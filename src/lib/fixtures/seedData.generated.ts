@@ -11,7 +11,11 @@
 
 import type { Building, BuildingZone, Campus, GooglePopularTime } from '@/types'
 
-export const SEED_CAMPUSES = [
+// Annotated rather than cast. The previous `as unknown as Building[]` asserted
+// a shape instead of checking one, and hid four missing timestamp columns for
+// as long as it existed. A contextual annotation makes tsc verify every row.
+
+export const SEED_CAMPUSES: Campus[] = [
   {
     "id": "a1b2c3d4-0000-0000-0000-000000000001",
     "slug": "unimelb",
@@ -20,11 +24,12 @@ export const SEED_CAMPUSES = [
     "country": "AU",
     "center_lat": -37.7964,
     "center_lng": 144.9631,
-    "default_zoom": 15
+    "default_zoom": 15,
+    "created_at": "2026-08-15T00:00:00.000Z"
   }
-] as unknown as Campus[]
+]
 
-export const SEED_BUILDINGS = [
+export const SEED_BUILDINGS: Building[] = [
   {
     "id": "b0000000-0000-0000-0000-000000000001",
     "campus_id": "a1b2c3d4-0000-0000-0000-000000000001",
@@ -79,7 +84,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "09:00-20:00",
     "hours_fri": "09:00-17:00",
     "hours_sat": "11:00-17:00",
-    "hours_sun": "10:00-17:00"
+    "hours_sun": "10:00-17:00",
+    "hours_source": "https://library.unimelb.edu.au/library-locations-and-opening-hours",
+    "hours_verified_on": "2026-08-15",
+    "hours_period": "Semester 2 2026 teaching weeks. Read from a current-week table on 2026-08-15; not known to hold during the non-teaching week of 28 Sep - 4 Oct 2026, during examinations, over summer, or on public holidays.",
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000002",
@@ -135,7 +145,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "09:00-20:00",
     "hours_fri": "09:00-17:00",
     "hours_sat": "11:00-17:00",
-    "hours_sun": "10:00-17:00"
+    "hours_sun": "10:00-17:00",
+    "hours_source": "https://library.unimelb.edu.au/library-locations-and-opening-hours",
+    "hours_verified_on": "2026-08-15",
+    "hours_period": "Semester 2 2026 teaching weeks. Read from a current-week table on 2026-08-15; not known to hold during the non-teaching week of 28 Sep - 4 Oct 2026, during examinations, over summer, or on public holidays.",
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000003",
@@ -182,8 +197,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": false,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:30-21:00",
     "hours_tue": "07:30-21:00",
@@ -191,7 +206,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:30-21:00",
     "hours_fri": "07:30-18:00",
     "hours_sat": null,
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000004",
@@ -247,7 +267,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:30-21:00",
     "hours_fri": "07:30-18:00",
     "hours_sat": null,
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000005",
@@ -294,8 +319,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": false,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:30-21:00",
     "hours_tue": "07:30-21:00",
@@ -303,7 +328,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:30-21:00",
     "hours_fri": "07:30-18:00",
     "hours_sat": null,
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000008",
@@ -359,7 +389,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "09:00-20:00",
     "hours_fri": "09:00-17:00",
     "hours_sat": "11:00-17:00",
-    "hours_sun": "10:00-17:00"
+    "hours_sun": "10:00-17:00",
+    "hours_source": "https://library.unimelb.edu.au/library-locations-and-opening-hours",
+    "hours_verified_on": "2026-08-15",
+    "hours_period": "Semester 2 2026 teaching weeks. Read from a current-week table on 2026-08-15; not known to hold during the non-teaching week of 28 Sep - 4 Oct 2026, during examinations, over summer, or on public holidays.",
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000009",
@@ -415,7 +450,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "09:00-20:00",
     "hours_fri": "09:00-17:00",
     "hours_sat": "11:00-17:00",
-    "hours_sun": "10:00-17:00"
+    "hours_sun": "10:00-17:00",
+    "hours_source": "https://library.unimelb.edu.au/library-locations-and-opening-hours",
+    "hours_verified_on": "2026-08-15",
+    "hours_period": "Semester 2 2026 teaching weeks. Read from a current-week table on 2026-08-15; not known to hold during the non-teaching week of 28 Sep - 4 Oct 2026, during examinations, over summer, or on public holidays.",
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-00000000000a",
@@ -462,8 +502,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": false,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:00-22:00",
     "hours_tue": "07:00-22:00",
@@ -471,7 +511,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:00-22:00",
     "hours_fri": "07:00-18:00",
     "hours_sat": "09:00-17:00",
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-00000000000b",
@@ -527,7 +572,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "09:00-19:00",
     "hours_fri": "09:00-17:00",
     "hours_sat": "13:00-17:00",
-    "hours_sun": "10:00-16:00"
+    "hours_sun": "10:00-16:00",
+    "hours_source": "https://library.unimelb.edu.au/library-locations-and-opening-hours",
+    "hours_verified_on": "2026-08-15",
+    "hours_period": "Semester 2 2026 teaching weeks. Read from a current-week table on 2026-08-15; not known to hold during the non-teaching week of 28 Sep - 4 Oct 2026, during examinations, over summer, or on public holidays.",
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-00000000000c",
@@ -574,8 +624,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": false,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:30-21:00",
     "hours_tue": "07:30-21:00",
@@ -583,7 +633,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:30-21:00",
     "hours_fri": "07:30-18:00",
     "hours_sat": null,
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-00000000000d",
@@ -630,8 +685,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": false,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:30-21:00",
     "hours_tue": "07:30-21:00",
@@ -639,7 +694,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:30-21:00",
     "hours_fri": "07:30-18:00",
     "hours_sat": null,
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-00000000000e",
@@ -686,8 +746,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": false,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:30-21:00",
     "hours_tue": "07:30-21:00",
@@ -695,7 +755,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:30-21:00",
     "hours_fri": "07:30-18:00",
     "hours_sat": null,
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-00000000000f",
@@ -742,8 +807,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": false,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:30-21:00",
     "hours_tue": "07:30-21:00",
@@ -751,7 +816,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:30-21:00",
     "hours_fri": "07:30-18:00",
     "hours_sat": null,
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000010",
@@ -798,8 +868,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": false,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:30-21:00",
     "hours_tue": "07:30-21:00",
@@ -807,7 +877,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:30-21:00",
     "hours_fri": "07:30-18:00",
     "hours_sat": null,
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000011",
@@ -853,9 +928,9 @@ export const SEED_BUILDINGS = [
     "has_food_nearby": false,
     "has_quiet_zone": false,
     "has_group_seating": true,
-    "is_ground_floor_accessible": null,
+    "is_ground_floor_accessible": true,
     "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:30-21:00",
     "hours_tue": "07:30-21:00",
@@ -863,7 +938,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:30-21:00",
     "hours_fri": "07:30-18:00",
     "hours_sat": null,
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000012",
@@ -910,8 +990,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": true,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:00-22:00",
     "hours_tue": "07:00-22:00",
@@ -919,7 +999,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:00-22:00",
     "hours_fri": "07:00-18:00",
     "hours_sat": "09:00-17:00",
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000013",
@@ -966,8 +1051,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": false,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:00-22:00",
     "hours_tue": "07:00-22:00",
@@ -975,7 +1060,12 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:00-22:00",
     "hours_fri": "07:00-18:00",
     "hours_sat": "09:00-17:00",
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "b0000000-0000-0000-0000-000000000014",
@@ -1022,8 +1112,8 @@ export const SEED_BUILDINGS = [
     "has_quiet_zone": false,
     "has_group_seating": true,
     "is_ground_floor_accessible": null,
-    "has_elevator": null,
-    "has_accessible_bathrooms": null,
+    "has_elevator": true,
+    "has_accessible_bathrooms": true,
     "has_accessible_parking": null,
     "hours_mon": "07:30-21:00",
     "hours_tue": "07:30-21:00",
@@ -1031,11 +1121,16 @@ export const SEED_BUILDINGS = [
     "hours_thu": "07:30-21:00",
     "hours_fri": "07:30-18:00",
     "hours_sat": null,
-    "hours_sun": null
+    "hours_sun": null,
+    "hours_source": null,
+    "hours_verified_on": null,
+    "hours_period": null,
+    "created_at": "2026-08-15T00:00:00.000Z",
+    "updated_at": "2026-08-15T00:00:00.000Z"
   }
-] as unknown as Building[]
+]
 
-export const SEED_ZONES = [
+export const SEED_ZONES: BuildingZone[] = [
   {
     "id": "c0000000-0000-0000-0001-000000000001",
     "building_id": "b0000000-0000-0000-0000-000000000001",
@@ -1072,7 +1167,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0001-000000000002",
@@ -1110,7 +1206,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": true,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0001-000000000003",
@@ -1148,7 +1245,8 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": true,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0002-000000000001",
@@ -1186,7 +1284,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0002-000000000002",
@@ -1224,7 +1323,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": true,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0003-000000000001",
@@ -1262,7 +1362,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0003-000000000002",
@@ -1300,7 +1401,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0003-000000000003",
@@ -1338,7 +1440,8 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": false,
     "has_power": false,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0004-000000000001",
@@ -1376,7 +1479,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": false
+    "is_accessible": false,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0004-000000000002",
@@ -1414,7 +1518,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0004-000000000003",
@@ -1452,7 +1557,8 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0005-000000000001",
@@ -1490,7 +1596,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0005-000000000002",
@@ -1528,7 +1635,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0008-000000000001",
@@ -1566,7 +1674,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0008-000000000002",
@@ -1604,7 +1713,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0008-000000000003",
@@ -1642,7 +1752,8 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": true,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0009-000000000001",
@@ -1680,7 +1791,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0009-000000000002",
@@ -1718,7 +1830,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0009-000000000003",
@@ -1756,7 +1869,8 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000a-000000000001",
@@ -1794,7 +1908,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000a-000000000002",
@@ -1832,7 +1947,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000b-000000000001",
@@ -1870,7 +1986,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000b-000000000002",
@@ -1908,7 +2025,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000b-000000000003",
@@ -1946,7 +2064,8 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000c-000000000001",
@@ -1984,7 +2103,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000c-000000000002",
@@ -2022,7 +2142,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000c-000000000003",
@@ -2060,7 +2181,8 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000d-000000000001",
@@ -2098,7 +2220,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000d-000000000002",
@@ -2136,7 +2259,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000e-000000000001",
@@ -2174,7 +2298,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000e-000000000002",
@@ -2212,7 +2337,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000e-000000000003",
@@ -2250,7 +2376,8 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000f-000000000001",
@@ -2288,7 +2415,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-000f-000000000002",
@@ -2326,7 +2454,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0010-000000000001",
@@ -2364,7 +2493,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0010-000000000002",
@@ -2402,7 +2532,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0010-000000000003",
@@ -2440,7 +2571,8 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0011-000000000001",
@@ -2478,7 +2610,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0011-000000000002",
@@ -2516,7 +2649,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0012-000000000001",
@@ -2554,7 +2688,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0012-000000000002",
@@ -2592,7 +2727,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": true,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0012-000000000003",
@@ -2630,7 +2766,8 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0013-000000000001",
@@ -2668,7 +2805,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0013-000000000002",
@@ -2706,7 +2844,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0014-000000000001",
@@ -2744,7 +2883,8 @@ export const SEED_ZONES = [
     "floor_level": 0,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0014-000000000002",
@@ -2782,7 +2922,8 @@ export const SEED_ZONES = [
     "floor_level": 1,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "id": "c0000000-0000-0000-0014-000000000003",
@@ -2820,6945 +2961,8102 @@ export const SEED_ZONES = [
     "floor_level": 2,
     "is_quiet_zone": false,
     "has_power": true,
-    "is_accessible": true
+    "is_accessible": true,
+    "created_at": "2026-08-15T00:00:00.000Z"
   }
-] as unknown as BuildingZone[]
+]
 
-export const SEED_TYPICAL_CURVES = [
+export const SEED_TYPICAL_CURVES: GooglePopularTime[] = [
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 78
+    "typical_popularity": 78,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 80
+    "typical_popularity": 80,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 75
+    "typical_popularity": 75,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 1,
     "hour_of_day": 21,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 33
+    "typical_popularity": 33,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 80
+    "typical_popularity": 80,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 82
+    "typical_popularity": 82,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 76
+    "typical_popularity": 76,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 56
+    "typical_popularity": 56,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 51
+    "typical_popularity": 51,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 2,
     "hour_of_day": 21,
-    "typical_popularity": 27
+    "typical_popularity": 27,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 83
+    "typical_popularity": 83,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 85
+    "typical_popularity": 85,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 78
+    "typical_popularity": 78,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 47
+    "typical_popularity": 47,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 3,
     "hour_of_day": 21,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 17
+    "typical_popularity": 17,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 51
+    "typical_popularity": 51,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 66
+    "typical_popularity": 66,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 79
+    "typical_popularity": 79,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 81
+    "typical_popularity": 81,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 74
+    "typical_popularity": 74,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 67
+    "typical_popularity": 67,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 43
+    "typical_popularity": 43,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 37
+    "typical_popularity": 37,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 4,
     "hour_of_day": 21,
-    "typical_popularity": 24
+    "typical_popularity": 24,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 6,
     "hour_of_day": 10,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 6,
     "hour_of_day": 11,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 6,
     "hour_of_day": 12,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 6,
     "hour_of_day": 13,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 6,
     "hour_of_day": 14,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 6,
     "hour_of_day": 15,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 6,
     "hour_of_day": 16,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 6,
     "hour_of_day": 17,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 0,
     "hour_of_day": 12,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 0,
     "hour_of_day": 13,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 0,
     "hour_of_day": 14,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 0,
     "hour_of_day": 15,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 0,
     "hour_of_day": 16,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000001",
     "day_of_week": 0,
     "hour_of_day": 17,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 80
+    "typical_popularity": 80,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 85
+    "typical_popularity": 85,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 78
+    "typical_popularity": 78,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 82
+    "typical_popularity": 82,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 88
+    "typical_popularity": 88,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 80
+    "typical_popularity": 80,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 26
+    "typical_popularity": 26,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 85
+    "typical_popularity": 85,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 90
+    "typical_popularity": 90,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 83
+    "typical_popularity": 83,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 21
+    "typical_popularity": 21,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 41
+    "typical_popularity": 41,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 61
+    "typical_popularity": 61,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 81
+    "typical_popularity": 81,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 86
+    "typical_popularity": 86,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 79
+    "typical_popularity": 79,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 69
+    "typical_popularity": 69,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 24
+    "typical_popularity": 24,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 6,
     "hour_of_day": 10,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 6,
     "hour_of_day": 11,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 6,
     "hour_of_day": 12,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 6,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 6,
     "hour_of_day": 14,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 6,
     "hour_of_day": 15,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000002",
     "day_of_week": 6,
     "hour_of_day": 16,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 24
+    "typical_popularity": 24,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 9
+    "typical_popularity": 9,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 53
+    "typical_popularity": 53,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 66
+    "typical_popularity": 66,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 63
+    "typical_popularity": 63,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 47
+    "typical_popularity": 47,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 7
+    "typical_popularity": 7,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000003",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 63
+    "typical_popularity": 63,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 24
+    "typical_popularity": 24,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 26
+    "typical_popularity": 26,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 26
+    "typical_popularity": 26,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 13
+    "typical_popularity": 13,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 57
+    "typical_popularity": 57,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 24
+    "typical_popularity": 24,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000004",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 24
+    "typical_popularity": 24,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 26
+    "typical_popularity": 26,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 11
+    "typical_popularity": 11,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 33
+    "typical_popularity": 33,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 31
+    "typical_popularity": 31,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000005",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 75
+    "typical_popularity": 75,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 11
+    "typical_popularity": 11,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 56
+    "typical_popularity": 56,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 43
+    "typical_popularity": 43,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 39
+    "typical_popularity": 39,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 66
+    "typical_popularity": 66,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 24
+    "typical_popularity": 24,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 18,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 19,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 5,
     "hour_of_day": 20,
-    "typical_popularity": 3
+    "typical_popularity": 3,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 6,
     "hour_of_day": 10,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 6,
     "hour_of_day": 11,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 6,
     "hour_of_day": 12,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 6,
     "hour_of_day": 13,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 6,
     "hour_of_day": 14,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000008",
     "day_of_week": 6,
     "hour_of_day": 15,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 9
+    "typical_popularity": 9,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 24
+    "typical_popularity": 24,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 13
+    "typical_popularity": 13,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 37
+    "typical_popularity": 37,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 64
+    "typical_popularity": 64,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 7
+    "typical_popularity": 7,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000009",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 7,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 78
+    "typical_popularity": 78,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 7,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 80
+    "typical_popularity": 80,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 7,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 85
+    "typical_popularity": 85,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 76
+    "typical_popularity": 76,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 57
+    "typical_popularity": 57,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 7,
-    "typical_popularity": 21
+    "typical_popularity": 21,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 66
+    "typical_popularity": 66,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 39
+    "typical_popularity": 39,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 51
+    "typical_popularity": 51,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 76
+    "typical_popularity": 76,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 51
+    "typical_popularity": 51,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 7,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 18,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000a",
     "day_of_week": 5,
     "hour_of_day": 19,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 21,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 1,
     "hour_of_day": 22,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 75
+    "typical_popularity": 75,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 21,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 2,
     "hour_of_day": 22,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 78
+    "typical_popularity": 78,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 76
+    "typical_popularity": 76,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 21,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 3,
     "hour_of_day": 22,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 33
+    "typical_popularity": 33,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 56
+    "typical_popularity": 56,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 76
+    "typical_popularity": 76,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 74
+    "typical_popularity": 74,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 66
+    "typical_popularity": 66,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 21,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 4,
     "hour_of_day": 22,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 18,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 19,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 20,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 21,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000b",
     "day_of_week": 5,
     "hour_of_day": 22,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 63
+    "typical_popularity": 63,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 66
+    "typical_popularity": 66,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 7
+    "typical_popularity": 7,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 11
+    "typical_popularity": 11,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 47
+    "typical_popularity": 47,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 26
+    "typical_popularity": 26,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000c",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 7
+    "typical_popularity": 7,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 9
+    "typical_popularity": 9,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000d",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 75
+    "typical_popularity": 75,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 78
+    "typical_popularity": 78,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 82
+    "typical_popularity": 82,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 76
+    "typical_popularity": 76,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 64
+    "typical_popularity": 64,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 7
+    "typical_popularity": 7,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 74
+    "typical_popularity": 74,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 56
+    "typical_popularity": 56,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000e",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 56
+    "typical_popularity": 56,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 33
+    "typical_popularity": 33,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 9
+    "typical_popularity": 9,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 53
+    "typical_popularity": 53,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 26
+    "typical_popularity": 26,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-00000000000f",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 3
+    "typical_popularity": 3,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 63
+    "typical_popularity": 63,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 66
+    "typical_popularity": 66,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 64
+    "typical_popularity": 64,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 24
+    "typical_popularity": 24,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 7
+    "typical_popularity": 7,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 11
+    "typical_popularity": 11,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000010",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 17
+    "typical_popularity": 17,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 9
+    "typical_popularity": 9,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 56
+    "typical_popularity": 56,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 11
+    "typical_popularity": 11,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 26
+    "typical_popularity": 26,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 7
+    "typical_popularity": 7,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000011",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 78
+    "typical_popularity": 78,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 82
+    "typical_popularity": 82,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 76
+    "typical_popularity": 76,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 74
+    "typical_popularity": 74,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 66
+    "typical_popularity": 66,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 86
+    "typical_popularity": 86,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 80
+    "typical_popularity": 80,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 66
+    "typical_popularity": 66,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 78
+    "typical_popularity": 78,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 7
+    "typical_popularity": 7,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 56
+    "typical_popularity": 56,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 76
+    "typical_popularity": 76,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 70
+    "typical_popularity": 70,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 6,
     "hour_of_day": 9,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 6,
     "hour_of_day": 10,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 6,
     "hour_of_day": 11,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 6,
     "hour_of_day": 12,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 6,
     "hour_of_day": 13,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 6,
     "hour_of_day": 14,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 6,
     "hour_of_day": 15,
-    "typical_popularity": 15
+    "typical_popularity": 15,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000012",
     "day_of_week": 6,
     "hour_of_day": 16,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 82
+    "typical_popularity": 82,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 78
+    "typical_popularity": 78,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 85
+    "typical_popularity": 85,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 80
+    "typical_popularity": 80,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 32
+    "typical_popularity": 32,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 16
+    "typical_popularity": 16,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 90
+    "typical_popularity": 90,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 84
+    "typical_popularity": 84,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 24
+    "typical_popularity": 24,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 13
+    "typical_popularity": 13,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 26
+    "typical_popularity": 26,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 54
+    "typical_popularity": 54,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 80
+    "typical_popularity": 80,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 76
+    "typical_popularity": 76,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 53
+    "typical_popularity": 53,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 72
+    "typical_popularity": 72,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 65
+    "typical_popularity": 65,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 18,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 5,
     "hour_of_day": 19,
-    "typical_popularity": 3
+    "typical_popularity": 3,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 6,
     "hour_of_day": 10,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 6,
     "hour_of_day": 11,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 6,
     "hour_of_day": 12,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 6,
     "hour_of_day": 13,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 6,
     "hour_of_day": 14,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 6,
     "hour_of_day": 15,
-    "typical_popularity": 28
+    "typical_popularity": 28,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 6,
     "hour_of_day": 16,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000013",
     "day_of_week": 6,
     "hour_of_day": 17,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 8,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 9,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 10,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 11,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 12,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 13,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 14,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 15,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 16,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 17,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 18,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 19,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 1,
     "hour_of_day": 20,
-    "typical_popularity": 5
+    "typical_popularity": 5,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 8,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 9,
-    "typical_popularity": 45
+    "typical_popularity": 45,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 10,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 11,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 12,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 13,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 14,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 15,
-    "typical_popularity": 64
+    "typical_popularity": 64,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 16,
-    "typical_popularity": 55
+    "typical_popularity": 55,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 17,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 18,
-    "typical_popularity": 22
+    "typical_popularity": 22,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 19,
-    "typical_popularity": 12
+    "typical_popularity": 12,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 2,
     "hour_of_day": 20,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 8,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 9,
-    "typical_popularity": 48
+    "typical_popularity": 48,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 10,
-    "typical_popularity": 66
+    "typical_popularity": 66,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 11,
-    "typical_popularity": 60
+    "typical_popularity": 60,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 12,
-    "typical_popularity": 46
+    "typical_popularity": 46,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 13,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 14,
-    "typical_popularity": 62
+    "typical_popularity": 62,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 15,
-    "typical_popularity": 68
+    "typical_popularity": 68,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 16,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 17,
-    "typical_popularity": 44
+    "typical_popularity": 44,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 18,
-    "typical_popularity": 25
+    "typical_popularity": 25,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 19,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 3,
     "hour_of_day": 20,
-    "typical_popularity": 7
+    "typical_popularity": 7,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 8,
-    "typical_popularity": 11
+    "typical_popularity": 11,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 9,
-    "typical_popularity": 40
+    "typical_popularity": 40,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 10,
-    "typical_popularity": 56
+    "typical_popularity": 56,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 11,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 12,
-    "typical_popularity": 38
+    "typical_popularity": 38,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 13,
-    "typical_popularity": 34
+    "typical_popularity": 34,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 14,
-    "typical_popularity": 52
+    "typical_popularity": 52,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 15,
-    "typical_popularity": 58
+    "typical_popularity": 58,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 16,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 17,
-    "typical_popularity": 36
+    "typical_popularity": 36,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 18,
-    "typical_popularity": 18
+    "typical_popularity": 18,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 19,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 4,
     "hour_of_day": 20,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 5,
     "hour_of_day": 8,
-    "typical_popularity": 8
+    "typical_popularity": 8,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 5,
     "hour_of_day": 9,
-    "typical_popularity": 35
+    "typical_popularity": 35,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 5,
     "hour_of_day": 10,
-    "typical_popularity": 50
+    "typical_popularity": 50,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 5,
     "hour_of_day": 11,
-    "typical_popularity": 42
+    "typical_popularity": 42,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 5,
     "hour_of_day": 12,
-    "typical_popularity": 30
+    "typical_popularity": 30,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 5,
     "hour_of_day": 13,
-    "typical_popularity": 20
+    "typical_popularity": 20,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 5,
     "hour_of_day": 14,
-    "typical_popularity": 14
+    "typical_popularity": 14,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 5,
     "hour_of_day": 15,
-    "typical_popularity": 10
+    "typical_popularity": 10,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 5,
     "hour_of_day": 16,
-    "typical_popularity": 6
+    "typical_popularity": 6,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   },
   {
     "building_id": "b0000000-0000-0000-0000-000000000014",
     "day_of_week": 5,
     "hour_of_day": 17,
-    "typical_popularity": 4
+    "typical_popularity": 4,
+    "seeded_at": "2026-08-15T00:00:00.000Z"
   }
-] as unknown as GooglePopularTime[]
+]

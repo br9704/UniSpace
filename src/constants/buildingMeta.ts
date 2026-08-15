@@ -89,7 +89,11 @@ export const BUILDING_META: Record<string, BuildingMeta> = {
   'redmond-barry': {
     description: 'Home to Psychological Sciences (levels 6-12) and Biosciences (levels 2-5). Houses the Rivett Theatre for lectures.',
     address: 'Tin Alley, Parkville',
-    tips: ['Rivett Theatre on lower levels — arrive early for good seats.', 'Wheelchair access via northern or eastern entrances.'],
+    // No wheelchair-access tip here. It previously claimed access "via northern
+    // or eastern entrances" with no source, directly above an accessibility
+    // panel that renders [?] for this building. PRD § 13.4 treats wrong
+    // accessibility data as harmful rather than merely inaccurate.
+    tips: ['Rivett Theatre on lower levels — arrive early for good seats.'],
     nearbyFood: ['Standing Room at Glyn Davis Building', 'Professors Walk Cafe (2 min)'],
     capacityNote: '12 levels with Rivett Theatre and computer labs',
   },
