@@ -13,3 +13,13 @@ opencode.json
 .claude/settings.local.json
 .vercel
 .env*
+
+# --- machine-local agent + secret config (uniform block) ---
+# .env, .env.*, .mcp.json, opencode.json, .vscode/mcp.json and .vercel
+# are already covered above and are deliberately not repeated here.
+!.env.example
+.aethereum*
+.claude/
+.codex/
+.cursor/
+*-ENGINEERPROMPT.md
