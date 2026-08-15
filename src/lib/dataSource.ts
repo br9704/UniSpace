@@ -1,4 +1,4 @@
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
+import { isSupabaseConfigured } from '@/lib/supabaseConfig'
 import { getFixtureRows, subscribeToFixtureTable } from '@/lib/fixtures'
 import { TABLE_SCHEMAS, describeIssue } from '@/lib/schemas'
 
@@ -122,6 +122,11 @@ async function fetchAllPages<T>(
   table: ReadableTable,
   options: { unexpiredOnly?: boolean },
 ): Promise<QueryResult<T>> {
+  // Loaded here rather than at module scope so the 42 KB client never reaches
+  // users running on fixtures — which, with no backend provisioned, is all of
+  // them. Guarded by isSupabaseConfigured above, so this only runs when there
+  // is genuinely something to connect to.
+  const { supabase } = await import('@/lib/supabase')
   const rows: T[] = []
 
   for (let page = 0; ; page++) {
@@ -188,14 +193,31 @@ export function subscribeRows<T>(
     return subscribeToFixtureTable<unknown>(table, forwardValidRow)
   }
 
-  const channel = supabase
-    .channel(`${table}-realtime`)
-    .on(
-      'postgres_changes',
-      { event, schema: 'public', table },
-      (payload) => forwardValidRow(payload.new),
-    )
-    .subscribe()
+  // Subscribing is synchronous to callers but the client now arrives
+  // asynchronously, so the teardown has to cope with being called before the
+  // channel exists — a component that mounts and unmounts inside one tick must
+  // not leak a subscription.
+  let cancelled = false
+  let teardown: (() => void) | null = null
 
-  return () => { supabase.removeChannel(channel) }
+  void (async () => {
+    const { supabase } = await import('@/lib/supabase')
+    if (cancelled) return
+
+    const channel = supabase
+      .channel(`${table}-realtime`)
+      .on(
+        'postgres_changes',
+        { event, schema: 'public', table },
+        (payload) => forwardValidRow(payload.new),
+      )
+      .subscribe()
+
+    teardown = () => { supabase.removeChannel(channel) }
+  })()
+
+  return () => {
+    cancelled = true
+    teardown?.()
+  }
 }

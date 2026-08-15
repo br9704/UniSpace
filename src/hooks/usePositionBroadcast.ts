@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { supabase } from '@/lib/supabase'
 import { getSessionId } from '@/lib/sessionId'
 import { REALTIME_UPDATE_INTERVAL_MS } from '@/constants/occupancy'
 
@@ -47,6 +46,7 @@ export function usePositionBroadcast({ zoneId, campusSlug, enabled }: UsePositio
       const sessionId = getSessionId()
 
       try {
+        const { supabase } = await import('@/lib/supabase')
         await supabase.functions.invoke('aggregate-occupancy', {
           body: {
             positions: [{

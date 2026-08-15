@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import { isFixtureMode } from '@/lib/dataSource'
 import { submitFixtureReport } from '@/lib/fixtures'
 import { canReportAgain, markReported } from '@/lib/localStore'
@@ -46,6 +45,8 @@ export function useReportSubmit(): UseReportSubmitResult {
         markReported(buildingId)
         return true
       }
+
+      const { supabase } = await import('@/lib/supabase')
 
       const { data, error: fnError } = await supabase.functions.invoke('submit-report', {
         body: {

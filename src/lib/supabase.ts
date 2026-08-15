@@ -1,28 +1,18 @@
 import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+import { SUPABASE_URL, SUPABASE_ANON_KEY, supabaseConfigError } from '@/lib/supabaseConfig'
 
 /**
- * Whether the app has usable Supabase credentials.
+ * The Supabase client.
  *
- * This module used to `throw` at import time when the vars were absent. Because
- * it sits at the root of nearly every hook's import graph, that took the whole
- * bundle down before React mounted — a blank white page with nothing in the UI
- * to explain it. A misconfigured deploy is a likely, recoverable situation, so
- * it has to be reportable rather than fatal. See WIRING-AUDIT.md B7.
+ * **Import this module dynamically**, never at the top level. It pulls in
+ * `@supabase/supabase-js`, which is 42 KB gzipped and lands in whichever chunk
+ * references it. This app ships with no backend provisioned and reads committed
+ * fixtures instead, so for every current user that is 42 KB of a database
+ * client they will never open a connection with.
+ *
+ * Ask `isSupabaseConfigured` from `@/lib/supabaseConfig` first — it is free —
+ * and `await import('@/lib/supabase')` only once the answer is yes.
  */
-export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
-
-/** Human-readable reason the client is unusable, or null when it is fine. */
-export const supabaseConfigError: string | null = isSupabaseConfigured
-  ? null
-  : `Missing ${[
-      !supabaseUrl && 'VITE_SUPABASE_URL',
-      !supabaseAnonKey && 'VITE_SUPABASE_ANON_KEY',
-    ]
-      .filter(Boolean)
-      .join(' and ')}. Set them in .env.local (local) or the Vercel project settings (deployed).`
 
 if (supabaseConfigError) {
   console.error(`[UniSpace] Supabase is not configured. ${supabaseConfigError}`)
@@ -37,6 +27,6 @@ if (supabaseConfigError) {
  * should read `isSupabaseConfigured`.
  */
 export const supabase = createClient(
-  supabaseUrl || 'https://unconfigured.invalid',
-  supabaseAnonKey || 'unconfigured',
+  SUPABASE_URL || 'https://unconfigured.invalid',
+  SUPABASE_ANON_KEY || 'unconfigured',
 )

@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import { isFixtureMode } from '@/lib/dataSource'
 import type { FeedbackCategory } from '@/types'
 
@@ -42,6 +41,8 @@ export function useFeedbackSubmit(): UseFeedbackSubmitResult {
           })
           return true
         }
+
+        const { supabase } = await import('@/lib/supabase')
 
         const { data, error: fnError } = await supabase.functions.invoke('submit-feedback', {
           body: {

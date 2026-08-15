@@ -7,7 +7,7 @@ import AlertsPage from '@/pages/AlertsPage'
 import InstallBanner from '@/components/InstallBanner'
 import OfflineBanner from '@/components/OfflineBanner'
 import ConfigError from '@/components/ConfigError'
-import { isSupabaseConfigured, supabaseConfigError } from '@/lib/supabase'
+import { isSupabaseConfigured, supabaseConfigError } from '@/lib/supabaseConfig'
 import { isFixtureMode } from '@/lib/dataSource'
 import ErrorBoundary from '@/components/ErrorBoundary'
 
