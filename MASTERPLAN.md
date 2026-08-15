@@ -1770,6 +1770,45 @@ rather than installed, per CLAUDE.md § 6.
 
 ## Architecture Decisions Log
 
+### 2026-08-15 — SIGNAL reverted; PRD § 11's UoM palette restored
+
+**Decision.** R3's SIGNAL design system is retired in this project. The palette,
+radii, shadows and map style return to the pre-SIGNAL look. `~/bruno-portfolio`
+keeps SIGNAL and is unaffected.
+
+**Why.** Bruno ran the current build and the pre-R3 build side by side on
+localhost and chose the older one. That is the whole reason, and it is a
+sufficient one — it is his product.
+
+**How, and what it cost.** A re-valuing, not a rewind. Every SIGNAL token *name*
+survives carrying a UoM value, so R4's motion work and Sprints 19–25 are
+untouched; nothing outside four files references a colour. R3's own decision to
+centralise the palette is what made its removal cheap.
+
+Two things could not simply be restored:
+
+- **The UoM palette fails WCAG AA.** Sprint 19's `contrast.test.ts` was written
+  after R3, so PRD § 11's colours had never been measured against it. Gold
+  #C8A951 scores 2.02:1 on the light ground and green #4CAF7D 2.42:1, against a
+  4.5:1 floor — 13 assertions failed. The values shipped are hue- and
+  saturation-preserved and darkened until they pass, computed rather than
+  eyeballed. They are *not* PRD § 11's literal hexes, and PRD § 11 should be
+  updated to match when Bruno next opens it.
+- **The occupancy ramp.** Restored to green→red, but with lightness falling
+  monotonically across it so adjacent steps stay separable without colour vision.
+  MOTION.md's "never draw attention toward busy-ness" is amended in place: it
+  governs motion, not colour.
+
+**Also fixed in the same pass, and unrelated to taste:** every building on the map
+was a rectangle because the fixture generator silently skipped migrations 010 and
+011 — both use `WHERE id = '...'`, a form the seed parser had no helper for. Even
+011's shapes were hand-simplified quads. Migration `022` commits the real
+OpenStreetMap ways (14–57 vertices, ODbL, attributed in README) for the 15
+buildings identifiable by name, and leaves 3 alone. Matching is by name, not
+proximity: Melbourne School of Design was seeded 428 m from the building it
+occupies, and proximity matching inherits that error rather than revealing it.
+
+
 | Date | Decision | Rationale |
 |------|----------|-----------|
 | 2026-03-19 | Tailwind v4 installed (no CLI init) | Latest version via pnpm, PostCSS config created manually |

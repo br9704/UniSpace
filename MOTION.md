@@ -60,6 +60,12 @@ Blended occupancy (modelled weekly estimates + crowd reports + live broadcasts) 
 ## Rules that will otherwise be broken
 
 - The heatmap never *animates attention toward busy-ness* — this app sells quiet, not crowds. No pings on "busiest".
+  > ⚠️ **Amended 2026-08-15.** This still governs *motion*, which is what MOTION.md is
+  > for: nothing animates or pulses toward a busy building. It no longer governs
+  > *colour*. R3 read it as forbidding a green-to-red ramp and encoded occupancy as
+  > luminance instead; the SIGNAL palette was reverted to PRD § 11's UoM colours,
+  > and the ramp is a conventional heatmap again. Static colour telling the truth
+  > about a full building is not the same thing as animation dragging the eye there.
 - No animation on data the user is mid-reading: if a card is open, its numbers update by count, but the map beneath does not reflow until the card closes.
 - Realtime updates are batched to at most one visual pass per 5s. Sub-second heatmap flicker reads as broken, not live.
 - Every animated state has a static screenshot-safe frame (the case study needs stills).

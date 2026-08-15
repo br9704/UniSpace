@@ -3,7 +3,7 @@
  * `dark-v11` is the closest Mapbox base to the warm-black ground; the building
  * layer's own steel outlines and luminance ramp carry the rest.
  */
-export const MAPBOX_STYLE = 'mapbox://styles/mapbox/dark-v11'
+export const MAPBOX_STYLE = 'mapbox://styles/mapbox/light-v11'
 
 export const DEFAULT_CAMPUS_CENTER: [number, number] = [144.9631, -37.7964] // UoM Parkville
 export const DEFAULT_ZOOM = 15.5

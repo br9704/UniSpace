@@ -38,12 +38,12 @@ export type OccupancyLevel = keyof typeof OCCUPANCY_COLOUR_VARS
  * index.css by `occupancy.test.ts`.
  */
 export const OCCUPANCY_COLOURS: Record<OccupancyLevel, string> = {
-  empty: '#2c2925',
-  quiet: '#454039',
-  moderate: '#625c53',
-  busy: '#857e73',
-  packed: '#ada496',
-  none: '#141210',
+  empty: '#94D0B2',
+  quiet: '#9DBB3E',
+  moderate: '#DA8C0A',
+  busy: '#E6622D',
+  packed: '#DD4141',
+  none: '#E2E8F0',
 }
 
 export function getOccupancyLevel(pct: number | null): OccupancyLevel {

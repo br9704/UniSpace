@@ -8,9 +8,16 @@
  * "@import must precede all other statements" during `vite build` and then
  * silently DROPPED it from the emitted stylesheet — the build still succeeded,
  * so production shipped with no DM Sans and no JetBrains Mono, falling back to
- * system fonts. Nothing in the app surfaced that. Keep this line here.
+ * Helvetica Neue and the platform monospace. Nothing in the app surfaced that.
+ *
+ * Fixing the mechanism revealed the intended type for the first time, and it
+ * looked worse than the accident. So the fallbacks are now the specification
+ * rather than a consequence, and the webfonts are gone. See --font-body below.
+ *
+ * Keeping them out is better on its own terms too: no render-blocking request
+ * to a third party, no reflow when it lands, and no font handshake with Google
+ * on a page whose whole promise is that it does not hand you to anyone.
  */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 /*
  * Exclude documentation from class detection.
@@ -27,18 +34,34 @@
 @source not "../**/*.md";
 
 /*
- * ══ SIGNAL ══════════════════════════════════════════════════════════════════
+ * ══ UoM palette ═════════════════════════════════════════════════════════════
  *
- * A warm-black precision instrument. Locked cross-project system; the source of
- * truth is ~/bruno-portfolio/CLAUDE.md § "Redesign Design Decisions (2026-07 ·
- * SIGNAL)". This supersedes PRD § 11, whose UoM navy/gold palette is retired.
+ * PRD § 11's navy and gold, on a light ground.
  *
- * Non-negotiable:
- *   · Amber #ffb000 is THE one accent, used sparingly — status, focus, CTAs,
- *     the single recommended result. Everything else is grayscale on steel.
- *   · No light theme. No gradients. No shadows. No colour beyond amber.
- *   · Border radius max 2px. Effectively square.
- *   · Monospace for data, labels, readouts.
+ * R3 replaced this with SIGNAL — a warm-black system with a single amber
+ * accent, square corners and no shadows. On 2026-08-15 Bruno compared the two
+ * builds running side by side and reverted to this one. SIGNAL is retired here;
+ * ~/bruno-portfolio remains its own system and is unaffected.
+ *
+ * The revert is a re-valuing, not a rewind. Every SIGNAL token NAME survives
+ * and carries a UoM value, so R4's motion work and Sprints 19-25 keep working
+ * untouched — nothing references a palette directly. That is the payoff from
+ * R3's own decision to centralise colour: 169 scattered hex literals became
+ * four files, and this took four files to undo.
+ *
+ * What that means in practice:
+ *   · Gold #806A29 is the accent; navy #003865 carries emphasis and headers.
+ *     The gold and green are darker than PRD § 11's originals: #C8A951 measures
+ *     2.02:1 on this background and #4CAF7D 2.42:1, both far below the 4.5:1
+ *     WCAG AA floor that Sprint 19 enforces in contrast.test.ts. Hue and
+ *     saturation are preserved; only lightness moved, computed rather than
+ *     eyeballed. The pre-SIGNAL palette never faced these tests — they were
+ *     written after it was retired — and it does not pass them unmodified.
+ *   · Occupancy runs green through amber to red again, so it reads at a glance.
+ *     SIGNAL encoded it as luminance because its rules permitted one colour;
+ *     that constraint is gone. MOTION.md's "the map must not draw the eye
+ *     toward busy buildings" no longer holds and is annotated there.
+ *   · Rounded corners (6/12/20px) and soft shadows are back.
  *   · Nothing flashes >3x/s; prefers-reduced-motion means fully static.
  *
  * These are BOTH design tokens and the source of Tailwind's utility scales, so
@@ -55,81 +78,100 @@
   --breakpoint-lg: 1024px;
 
   /* ── Core palette (locked) ── */
-  --color-bg: #050505;
-  --color-surface: #0b0a09;
-  --color-steel: #2c2925;
-  --color-hairline: #1b1916;
+  /* ── UoM palette, restored from the pre-SIGNAL system ── */
+  --color-uom-navy: #003865;
+  --color-uom-blue: #0080A4;
+  --color-uom-gold: #806A29;
+  --color-uom-gold-light: #E8C97A;
+  --color-text-on-navy: #FFFFFF;
+  --color-text-on-navy-muted: rgba(255, 255, 255, 0.55);
+  --color-text-on-navy-subtle: rgba(255, 255, 255, 0.4);
+  --color-source-live: #26583F;
+  --color-source-google: #0080A4;
+  --color-source-predicted: #806A29;
+  --color-source-stale: #94A3B8;
 
-  --color-text-primary: #f0ece4;
-  --color-text-secondary: #98928a;
+  --color-bg: #F0F2F5;
+  --color-surface: #FFFFFF;
+  --color-steel: #CBD5E1;
+  --color-hairline: #E2E8F0;
+
+  --color-text-primary: #1E293B;
+  --color-text-secondary: #556376;
 
   /*
-   * SIGNAL's locked `--text-dim` is #55504a, which measures 2.56:1 against the
-   * warm-black ground — well under WCAG AA's 4.5:1 for text. The system's own
-   * rules make accessibility non-negotiable, so the token keeps its locked
-   * value and its locked purpose (decoration: aria-hidden glyphs, the unfilled
-   * half of a meter) while a third *text* level sits above it, at 4.79:1 on the ground and 4.65:1
-   * on raised surfaces — both clear of AA.
+   * `--text-dim` is decoration only and cannot carry readable text — it sits far
+   * below WCAG AA's 4.5:1 by design. Every use must be inside an aria-hidden
+   * element: a glyph, a bracket, the unfilled half of a meter. `--text-muted` is
+   * the lowest level that may hold words, at 4.71:1 on the ground.
    *
    * Enforced by `contrast.test.ts`, which computes the ratios rather than
-   * trusting them.
+   * trusting them, and greps every .tsx for unguarded `--color-text-dim`.
    */
-  --color-text-dim: #55504a;
-  --color-text-muted: #807a70;
+  --color-text-dim: #CBD5E1;
+  --color-text-muted: #5A6D88;
 
-  --color-amber: #ffb000;
-  --color-amber-bright: #ffc94d;
-  --color-amber-dim: #8f6300;
+  --color-amber: #806A29;
+  --color-amber-bright: #E8C97A;
+  --color-amber-dim: #9A803C;
 
   /*
-   * The only colour outside the warm-grey/amber system. MOTION.md reserves
-   * green exclusively for live/positive state — the `● LIVE` dot and nothing
-   * else. If it appears anywhere a human is not being told "this is real,
-   * right now", it is being misused.
+   * Reserved for live/positive state — the `● LIVE` dot and open/closed. If it
+   * appears anywhere a human is not being told "this is real, right now", it is
+   * being misused.
+   *
+   * Darker than PRD § 11's #4CAF7D because that measures 2.42:1 here and this
+   * token carries text. It also has to stay 1.5:1 clear of `--text-muted`, or
+   * "live" and "estimated" become the same shade of nothing.
    */
-  --color-live: #4caf7d;
+  --color-live: #26583F;
 
   /*
    * ── Occupancy ramp ──
    *
-   * Luminance, not hue: fuller buildings render lighter and denser, emptier
-   * ones recede toward the background. Two constraints force this.
+   * Green through amber to red, the conventional heatmap reading. R3 replaced
+   * this with a luminance ramp because SIGNAL permitted one colour and MOTION.md
+   * forbade the map drawing the eye toward busy buildings; both constraints went
+   * with the revert.
    *
-   * A conventional green-to-red heatmap is impossible here — amber is the only
-   * permitted colour. And MOTION.md is explicit that the map must never draw
-   * attention toward busyness: "this app sells quiet, not crowds". So the ramp
-   * is deliberately undramatic, and amber is spent on the *recommended* result
-   * instead, which is where a user's eye is actually useful.
-   *
-   * Occupancy is never communicated by shade alone — every surface carries the
-   * text label too (Empty / Quiet / Moderate / Busy / Packed), which WCAG
-   * requires and which the old palette also relied on.
+   * Hue is not the only signal. Lightness also falls monotonically across the
+   * ramp, computed so each step clears 1.2:1 against its neighbour — red/green
+   * is the commonest colour blindness, and a ramp separable only by hue is
+   * decoration pretending to be information. Occupancy is never communicated by
+   * colour alone either: every surface carries the text label (Empty / Quiet /
+   * Moderate / Busy / Packed), per WCAG 1.4.1.
    */
-  --color-occ-none: #141210;
-  --color-occ-empty: #2c2925;
-  --color-occ-quiet: #454039;
-  --color-occ-moderate: #625c53;
-  --color-occ-busy: #857e73;
-  --color-occ-packed: #ada496;
+  --color-occ-none: #E2E8F0;
+  --color-occ-empty: #94D0B2;
+  --color-occ-quiet: #9DBB3E;
+  --color-occ-moderate: #DA8C0A;
+  --color-occ-busy: #E6622D;
+  --color-occ-packed: #DD4141;
 
   /* ── Aliases kept for surfaces that read as containers ── */
-  --color-bg-primary: #050505;
-  --color-bg-secondary: #0b0a09;
-  --color-bg-elevated: #0b0a09;
-  --color-bg-card: #0b0a09;
-  --color-bg-chip: #141210;
-  --color-bg-input: #0b0a09;
-  --color-bg-page: #050505;
-  --color-bg-overlay: rgba(5, 5, 5, 0.82);
-  --color-border: #2c2925;
-  --color-border-bright: #454039;
-  --color-text-tertiary: #807a70;
-  --color-text-accent: #ffb000;
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F5F7FA;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-card: #FAFBFD;
+  --color-bg-chip: #F0F2F5;
+  --color-bg-input: #FAFBFD;
+  --color-bg-page: #F0F2F5;
+  --color-bg-overlay: rgba(0, 0, 0, 0.3);
+  --color-border: #E2E8F0;
+  --color-border-bright: #CBD5E1;
+  --color-text-tertiary: #5A6D88;
+  --color-text-accent: #003865;
 
   /* ── Typography ── */
-  --font-body: 'DM Sans', 'Helvetica Neue', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --font-display: 'DM Sans', 'Helvetica Neue', sans-serif;
+  /*
+   * These are exactly what the app rendered in before the webfont import was
+   * repaired — Helvetica Neue and the platform monospace. That rendering is the
+   * one that looks right, so DM Sans and JetBrains Mono are deliberately not
+   * listed. Do not re-add them without looking at the result.
+   */
+  --font-body: 'Helvetica Neue', sans-serif;
+  --font-mono: ui-monospace, monospace;
+  --font-display: 'Helvetica Neue', sans-serif;
 
   --text-xs: 0.6875rem;
   --text-sm: 0.8125rem;
@@ -140,13 +182,13 @@
   --text-4xl: 3rem;
 
   /* ── Shape: effectively square ── */
-  --radius-sm: 1px;
-  --radius-md: 2px;
-  --radius-lg: 2px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
 
   /* No shadows in this system. Depth comes from hairlines and steel borders. */
-  --shadow-card: none;
-  --shadow-elevated: none;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 56, 101, 0.06);
+  --shadow-elevated: 0 8px 30px rgba(0, 56, 101, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 /*

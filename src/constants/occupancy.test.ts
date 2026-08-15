@@ -31,18 +31,25 @@ describe('occupancy ramp', () => {
     }
   })
 
-  it('gets lighter as buildings get fuller', () => {
-    // The ramp encodes occupancy as luminance, so the ordering is the design.
-    const luminance = (hex: string) => {
+  it('runs green to red as buildings get fuller', () => {
+    // SIGNAL encoded occupancy as luminance, because its rules allowed one
+    // accent colour and MOTION.md forbade the map drawing the eye toward busy
+    // buildings. That system was reverted, so the invariant is a hue ramp
+    // again: green through amber to red, monotonically decreasing in hue.
+    const hue = (hex: string) => {
       const n = parseInt(hex.slice(1), 16)
-      return ((n >> 16) & 255) * 0.299 + ((n >> 8) & 255) * 0.587 + (n & 255) * 0.114
+      const r = ((n >> 16) & 255) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255
+      const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min
+      if (d === 0) return 0
+      const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4
+      return ((h * 60) + 360) % 360
     }
     const ordered: OccupancyLevel[] = ['empty', 'quiet', 'moderate', 'busy', 'packed']
-    const values = ordered.map((l) => luminance(OCCUPANCY_COLOURS[l]))
+    const values = ordered.map((l) => hue(OCCUPANCY_COLOURS[l]))
 
     for (let i = 1; i < values.length; i++) {
-      expect(values[i], `${ordered[i]} is not lighter than ${ordered[i - 1]}`)
-        .toBeGreaterThan(values[i - 1])
+      expect(values[i], `${ordered[i]} is not warmer than ${ordered[i - 1]}`)
+        .toBeLessThan(values[i - 1])
     }
   })
 
@@ -52,8 +59,9 @@ describe('occupancy ramp', () => {
   })
 
   it('always pairs a level with a text label', () => {
-    // WCAG 2.1 AA: occupancy is never communicated by colour alone. With a
-    // monochrome ramp this matters more than it did with green-to-red.
+    // WCAG 2.1 AA: occupancy is never communicated by colour alone. This
+    // matters more with a green-to-red ramp than it did with the monochrome
+    // one, because red/green is the commonest form of colour blindness.
     for (const pct of [null, 0, 25, 26, 50, 51, 70, 71, 85, 86, 100]) {
       const label = getOccupancyLabel(pct)
       expect(label.length, `no label for ${pct}`).toBeGreaterThan(0)
@@ -71,21 +79,30 @@ describe('occupancy ramp', () => {
   })
 })
 
-describe('SIGNAL palette', () => {
-  it('defines the locked core tokens', () => {
-    expect(tokenValue('--color-bg')).toBe('#050505')
-    expect(tokenValue('--color-amber')).toBe('#ffb000')
-    expect(tokenValue('--color-text-primary')).toBe('#f0ece4')
-    expect(tokenValue('--color-steel')).toBe('#2c2925')
+describe('UoM palette', () => {
+  // SIGNAL — warm black, a single amber accent, <=2px radius, no shadows — was
+  // reverted on 2026-08-15 at Bruno's instruction after seeing it beside the
+  // pre-SIGNAL build. These pin what replaced it so the two cannot half-mix.
+  it('defines the core tokens', () => {
+    expect(tokenValue('--color-bg')).toBe('#F0F2F5')
+    expect(tokenValue('--color-amber')).toBe('#806A29')
+    expect(tokenValue('--color-text-primary')).toBe('#1E293B')
+    expect(tokenValue('--color-uom-navy')).toBe('#003865')
   })
 
-  it('keeps every radius at 2px or less', () => {
-    // "Border-radius max 2px. Effectively square." — a hard rule of the system.
-    for (const name of ['--radius-sm', '--radius-md', '--radius-lg', '--radius-full']) {
-      const value = tokenValue(name)
-      expect(value, `${name} is missing`).not.toBeNull()
-      expect(parseInt(value!, 10), `${name} is ${value}, above the 2px cap`).toBeLessThanOrEqual(2)
+  it('has no SIGNAL colour left anywhere in the stylesheet', () => {
+    // The failure mode being guarded against is a half-revert: warm-black
+    // surfaces surviving under light-theme text, which is unreadable rather
+    // than merely ugly.
+    for (const hex of ['#050505', '#0b0a09', '#ffb000', '#f0ece4', '#2c2925']) {
+      expect(CSS.toLowerCase(), `${hex} survives the revert`).not.toContain(hex)
     }
+  })
+
+  it('uses the rounded UoM radius scale', () => {
+    expect(tokenValue('--radius-sm')).toBe('6px')
+    expect(tokenValue('--radius-md')).toBe('12px')
+    expect(tokenValue('--radius-lg')).toBe('20px')
   })
 
   it('has no light theme left in the stylesheet', () => {

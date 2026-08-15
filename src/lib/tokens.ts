@@ -1,31 +1,32 @@
 /**
- * Reads SIGNAL design tokens as literal values.
+ * Reads the app's design tokens as literal values.
  *
  * Almost everything in the app styles itself with `var(--token)` directly. This
  * exists for the handful of consumers that cannot: Recharts and Mapbox both
  * take colours as plain strings and never resolve CSS custom properties.
  *
  * Going through here rather than hardcoding hex is what keeps the palette in
- * one place. The previous version of this app had 169 hex literals scattered
+ * one place — which is what made reverting from SIGNAL to the UoM palette a
+ * four-file change rather than a hunt. The previous version of this app had 169 hex literals scattered
  * across 17 files, which is how it ended up with a light theme nobody had
  * chosen.
  */
 
 /** Values used when there is no document — SSR, tests, pre-paint Mapbox setup. */
 const FALLBACKS: Record<string, string> = {
-  '--color-bg': '#050505',
-  '--color-surface': '#0b0a09',
-  '--color-steel': '#2c2925',
-  '--color-hairline': '#1b1916',
-  '--color-text-primary': '#f0ece4',
-  '--color-text-secondary': '#98928a',
-  '--color-text-dim': '#55504a',
-  '--color-text-tertiary': '#55504a',
-  '--color-amber': '#ffb000',
-  '--color-amber-bright': '#ffc94d',
-  '--color-amber-dim': '#8f6300',
-  '--color-live': '#4caf7d',
-  '--color-border': '#2c2925',
+  '--color-bg': '#F0F2F5',
+  '--color-surface': '#FFFFFF',
+  '--color-steel': '#CBD5E1',
+  '--color-hairline': '#E2E8F0',
+  '--color-text-primary': '#1E293B',
+  '--color-text-secondary': '#556376',
+  '--color-text-dim': '#CBD5E1',
+  '--color-text-tertiary': '#5A6D88',
+  '--color-amber': '#806A29',
+  '--color-amber-bright': '#E8C97A',
+  '--color-amber-dim': '#9A803C',
+  '--color-live': '#26583F',
+  '--color-border': '#E2E8F0',
 }
 
 /**
