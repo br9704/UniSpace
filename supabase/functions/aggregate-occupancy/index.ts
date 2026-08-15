@@ -10,6 +10,32 @@
 //   3. Positions older than 30 minutes are expired
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://esm.sh/zod@3";
+
+/**
+ * The request body, validated at the boundary.
+ *
+ * `.strict()` is the load-bearing part, and it is a privacy control rather than
+ * a hygiene one. Invariant 2 above says raw coordinates are never received —
+ * until now that was true only because the one client happens not to send them.
+ * A strict schema makes it true because the function *refuses* them: a body
+ * carrying `latitude`, `lng`, `accuracy` or anything else beyond the two fields
+ * below is rejected with a 400 and never enters the process. The invariant is
+ * enforced here, not merely documented.
+ *
+ * Both ids are UUIDs. Requiring that of `session_id` also stops a caller
+ * substituting a stable identifier of their own shape (a device id, an email)
+ * for the rotating anonymous token this design depends on.
+ */
+const PositionSchema = z.object({
+  zone_id: z.string().uuid(),
+  session_id: z.string().uuid(),
+}).strict();
+
+const BodySchema = z.object({
+  // Bounded so one request cannot inflate a zone's count arbitrarily.
+  positions: z.array(PositionSchema).max(100).optional(),
+}).strict();
 
 // In-memory store: Map<zone_id, Map<session_id, timestamp>>
 // Ephemeral — lost on cold start, which is acceptable.
@@ -22,6 +48,22 @@ const HISTORY_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
 
 // Module-scoped: tracks when we last wrote history snapshots
 let lastHistoryWriteAt = 0;
+
+/**
+ * This function is called from the browser, so it must answer the preflight
+ * itself — Supabase does not add CORS headers for you. Without this the
+ * OPTIONS request returns no `Access-Control-Allow-Origin`, the browser blocks
+ * the POST before it is sent, and every broadcast fails into the client's
+ * catch block where it is only ever console.error'd. Same headers as
+ * manage-alerts.
+ */
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
+};
+
+const JSON_HEADERS = { ...CORS_HEADERS, "Content-Type": "application/json" };
 
 interface ZoneCapacity {
   id: string;
@@ -49,6 +91,10 @@ function getDataQuality(sessions: Map<string, number> | undefined, now: number):
 }
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -56,11 +102,16 @@ Deno.serve(async (req) => {
 
     // --- Step 1: Process incoming position broadcasts ---
     if (req.method === "POST") {
-      const body = await req.json();
-      const positions: Array<{
-        zone_id: string;
-        session_id: string;
-      }> = body.positions ?? [];
+      const parsed = BodySchema.safeParse(await req.json());
+
+      if (!parsed.success) {
+        return new Response(
+          JSON.stringify({ success: false, error: parsed.error.issues }),
+          { status: 400, headers: JSON_HEADERS }
+        );
+      }
+
+      const positions = parsed.data.positions ?? [];
 
       const now = Date.now();
 
@@ -197,13 +248,13 @@ Deno.serve(async (req) => {
         active_positions: activePositions.size,
         history_written: shouldWriteHistory,
       }),
-      { headers: { "Content-Type": "application/json" } }
+      { headers: JSON_HEADERS }
     );
   } catch (error) {
     console.error("aggregate-occupancy error:", error);
     return new Response(
       JSON.stringify({ success: false, error: String(error) }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 500, headers: JSON_HEADERS }
     );
   }
 });

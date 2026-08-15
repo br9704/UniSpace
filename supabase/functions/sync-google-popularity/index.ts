@@ -14,6 +14,7 @@
 //   - ~480 requests/day for 10 buildings = ~$8/month
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://esm.sh/zod@3";
 
 interface BuildingWithPlaceId {
   id: string;
@@ -21,12 +22,27 @@ interface BuildingWithPlaceId {
   google_place_id: string;
 }
 
-interface GooglePlaceResult {
-  current_popularity?: number;
-  opening_hours?: {
-    open_now?: boolean;
-  };
-}
+/**
+ * Google's Place Details response, validated before anything is believed.
+ *
+ * This is the only genuinely third-party data in the system: a shape we do not
+ * control, from a service that has changed its response format before. Casting
+ * it to an interface asserts a shape rather than checking one, so a renamed
+ * field or a string where a boolean was expected would flow straight into
+ * `google_popularity_cache` and out to users as fact.
+ *
+ * `.passthrough()` because the response carries many fields we do not read —
+ * the point is to validate what we *do* read, not to forbid the rest.
+ */
+const PlaceDetailsSchema = z.object({
+  status: z.string(),
+  result: z.object({
+    current_popularity: z.number().int().min(0).max(100).optional(),
+    opening_hours: z.object({
+      open_now: z.boolean().optional(),
+    }).passthrough().optional(),
+  }).passthrough().optional(),
+}).passthrough();
 
 interface SyncResult {
   building_id: string;
@@ -100,7 +116,19 @@ Deno.serve(async (_req) => {
         url.searchParams.set("key", googleApiKey);
 
         const response = await fetch(url.toString());
-        const data = await response.json();
+        const parsed = PlaceDetailsSchema.safeParse(await response.json());
+
+        if (!parsed.success) {
+          results.push({
+            building_id: building.id,
+            building_name: building.name,
+            status: "error",
+            error: `Unexpected Google API response shape: ${parsed.error.message}`,
+          });
+          continue;
+        }
+
+        const data = parsed.data;
 
         if (data.status !== "OK" && data.status !== "ZERO_RESULTS") {
           results.push({
@@ -112,7 +140,7 @@ Deno.serve(async (_req) => {
           continue;
         }
 
-        const result: GooglePlaceResult = data.result ?? {};
+        const result = data.result ?? {};
 
         const newPopularity = result.current_popularity ?? null;
         const newIsOpen = result.opening_hours?.open_now ?? null;

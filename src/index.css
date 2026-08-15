@@ -1,4 +1,16 @@
 @import "tailwindcss";
+/*
+ * Fonts must be imported here, immediately after the Tailwind import and before
+ * any other statement.
+ *
+ * CSS requires every @import to precede all other at-rules and rules. This one
+ * used to sit below the `@source` directive, where PostCSS warned
+ * "@import must precede all other statements" during `vite build` and then
+ * silently DROPPED it from the emitted stylesheet — the build still succeeded,
+ * so production shipped with no DM Sans and no JetBrains Mono, falling back to
+ * system fonts. Nothing in the app surfaced that. Keep this line here.
+ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 /*
  * Exclude documentation from class detection.
@@ -13,8 +25,6 @@
  * @import before Tailwind's plugin runs, so the option leaks into the output.)
  */
 @source not "../**/*.md";
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 /*
  * ══ SIGNAL ══════════════════════════════════════════════════════════════════

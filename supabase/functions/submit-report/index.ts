@@ -18,15 +18,44 @@ const ReportSchema = z.object({
 const MAX_REPORTS_PER_HOUR = 5;
 
 /**
- * Salted hash of the caller's IP, for rate limiting only.
- *
+ * Called from the browser, so the preflight has to be answered here — Supabase
+ * adds no CORS headers of its own. Without them the OPTIONS request comes back
+ * without `Access-Control-Allow-Origin` and the POST is blocked before it is
+ * ever sent.
+ */
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
+};
+
+const JSON_HEADERS = { ...CORS_HEADERS, "Content-Type": "application/json" };
+
+/**
  * The salt is load-bearing. An *unsalted* SHA-256 of an IPv4 address is
  * trivially reversible by brute force — there are only four billion of them, so
  * the whole space can be enumerated in seconds — which would make this column a
  * stored identifier in all but name, and PRD § 13.1 promises there are none.
+ *
+ * So a missing secret must not degrade to an empty salt, which is exactly the
+ * unsalted case the paragraph above rules out, and would do so silently. It
+ * falls back to a random per-instance salt instead: hashes stay unreversible
+ * (the privacy invariant holds), and what degrades is rate limiting, which
+ * resets on every cold start. That is the right way round — a deployment that
+ * forgets the secret gets weaker abuse protection, not a de-anonymised table.
  */
+const IP_HASH_SALT: string = Deno.env.get("IP_HASH_SALT") || (() => {
+  console.error(
+    "[submit-report] IP_HASH_SALT is not set. Using a random per-instance " +
+    "salt: IP hashes remain unreversible, but rate limiting resets on every " +
+    "cold start. Set the Edge Function secret.",
+  );
+  return crypto.randomUUID();
+})();
+
+/** Salted hash of the caller's IP, for rate limiting only. */
 async function hashIP(ip: string): Promise<string> {
-  const salt = Deno.env.get("IP_HASH_SALT") ?? "";
+  const salt = IP_HASH_SALT;
   const data = new TextEncoder().encode(`${salt}:${ip}`);
   const digest = await crypto.subtle.digest("SHA-256", data);
   return Array.from(new Uint8Array(digest))
@@ -35,10 +64,14 @@ async function hashIP(ip: string): Promise<string> {
 }
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+
   if (req.method !== "POST") {
     return new Response(
       JSON.stringify({ success: false, error: "Method not allowed" }),
-      { status: 405, headers: { "Content-Type": "application/json" } },
+      { status: 405, headers: JSON_HEADERS },
     );
   }
 
@@ -54,7 +87,7 @@ Deno.serve(async (req) => {
     if (!parsed.success) {
       return new Response(
         JSON.stringify({ success: false, error: parsed.error.issues }),
-        { status: 400, headers: { "Content-Type": "application/json" } },
+        { status: 400, headers: JSON_HEADERS },
       );
     }
 
@@ -83,7 +116,7 @@ Deno.serve(async (req) => {
           success: false,
           error: "Rate limit exceeded. Maximum 5 reports per hour.",
         }),
-        { status: 429, headers: { "Content-Type": "application/json" } },
+        { status: 429, headers: JSON_HEADERS },
       );
     }
 
@@ -112,13 +145,13 @@ Deno.serve(async (req) => {
           expires_at: report.expires_at,
         },
       }),
-      { status: 201, headers: { "Content-Type": "application/json" } },
+      { status: 201, headers: JSON_HEADERS },
     );
   } catch (error) {
     console.error("submit-report error:", error);
     return new Response(
       JSON.stringify({ success: false, error: String(error) }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
+      { status: 500, headers: JSON_HEADERS },
     );
   }
 });

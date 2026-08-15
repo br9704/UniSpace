@@ -33,21 +33,46 @@ const FeedbackSchema = z.object({
 /** Generous — this is abuse protection, not a quota on being helpful. */
 const MAX_SUBMISSIONS_PER_HOUR = 10;
 
+/**
+ * Called from the browser, so the preflight has to be answered here — Supabase
+ * adds no CORS headers of its own. Without them the OPTIONS request comes back
+ * without `Access-Control-Allow-Origin` and the POST is blocked before it is
+ * ever sent.
+ */
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, apikey",
+};
+
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
   });
 
 /**
- * Salted hash of the caller's IP.
- *
  * The salt matters: an unsalted hash of an IPv4 address is trivially reversible
  * by brute force — there are only four billion of them — which would make this
  * a stored identifier in all but name.
+ *
+ * So a missing secret must not degrade to an empty salt, which is precisely the
+ * unsalted case, and would do so silently. It falls back to a random
+ * per-instance salt: hashes stay unreversible, and what degrades instead is
+ * rate limiting, which resets on every cold start.
  */
+const IP_HASH_SALT: string = Deno.env.get("IP_HASH_SALT") || (() => {
+  console.error(
+    "[submit-feedback] IP_HASH_SALT is not set. Using a random per-instance " +
+    "salt: IP hashes remain unreversible, but rate limiting resets on every " +
+    "cold start. Set the Edge Function secret.",
+  );
+  return crypto.randomUUID();
+})();
+
+/** Salted hash of the caller's IP. */
 async function hashIP(ip: string): Promise<string> {
-  const salt = Deno.env.get("IP_HASH_SALT") ?? "";
+  const salt = IP_HASH_SALT;
   const data = new TextEncoder().encode(`${salt}:${ip}`);
   const digest = await crypto.subtle.digest("SHA-256", data);
   return Array.from(new Uint8Array(digest))
@@ -56,6 +81,10 @@ async function hashIP(ip: string): Promise<string> {
 }
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+
   if (req.method !== "POST") {
     return json({ success: false, error: "Method not allowed" }, 405);
   }
