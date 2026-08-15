@@ -267,7 +267,23 @@
   --dur-slow: 400ms;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/*
+ * The reset MUST stay inside @layer base.
+ *
+ * Unlayered rules outrank every cascade layer, and Tailwind v4 puts all
+ * utilities in `@layer utilities`. Left unlayered, this single line silently
+ * overrode every margin and padding utility in the entire app — `p-6`, `mx-6`,
+ * `mt-5`, all of it computed to 0. Nothing failed: the classes were in the
+ * markup, the CSS was emitted correctly, `.mx-6` resolved to the right value,
+ * and the build was green. The page just rendered with everything glued to
+ * everything else, which reads as a design problem rather than a cascade one.
+ *
+ * Verified by probing a live element rather than by reading the CSS:
+ *   getComputedStyle(div.className = 'mx-6 p-6')  ->  margin 0px, padding 0px
+ */
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+}
 
 html, body, #root {
   height: 100%;
