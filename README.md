@@ -1,181 +1,245 @@
-<p align="center">
-  <img src="public/favicon.svg" width="80" alt="UniSpace logo" />
-</p>
-
-<h1 align="center">UniSpace</h1>
+UniSpace shows how full every building on a university campus is, so students stop walking fifteen minutes to a library that turns out to be packed. No accounts, no sensors, and no GPS coordinate ever leaves the phone.
 
 <p align="center">
-  <strong>Campus occupancy for university students — live where it can be, honestly estimated where it can't.</strong>
+  <img src="docs/media/hero.png" alt="UniSpace on mobile: campus overview, occupancy heatmap over real building footprints, and a building card showing unverified hours and mixed accessibility data" width="100%" />
 </p>
 
 <p align="center">
-  <a href="https://unispace-tawny.vercel.app"><strong>unispace-tawny.vercel.app →</strong></a>
+  <strong><a href="https://unispace-tawny.vercel.app">unispace-tawny.vercel.app</a></strong>
+  &nbsp;·&nbsp;
+  <code>pnpm install && pnpm dev</code> — runs fully, no backend, no API keys but a Mapbox token
 </p>
 
-<p align="center">
-  <em>Running on committed fixture data for 18 real UoM buildings — the app says so on screen.</em>
-</p>
+| | |
+|---|---|
+| **Landing route** | **171 KB gzip**, down from 637 KB — Mapbox's 439 KB stays off it entirely |
+| **Tests** | **380** across 32 files, including four that assert properties most projects only write down |
+| **Campus data** | **18** buildings · **47** zones · **890** rooms · **1,156** modelled occupancy rows |
+| **Coordinates sent to a server** | **None.** Zone matching runs on the device; a test fails the build if that changes |
 
-<p align="center">
-  <img src="https://img.shields.io/badge/status-live-brightgreen" alt="Status: Live" />
-  <img src="https://img.shields.io/badge/phase-feature%20complete-blue" alt="Phase: Feature complete" />
-  <img src="https://img.shields.io/badge/pilot-UoM%20Parkville-003366" alt="Pilot: UoM Parkville" />
-  <img src="https://img.shields.io/badge/license-All%20Rights%20Reserved-lightgrey" alt="License" />
-</p>
-
-<p align="center">
-  <a href="#the-problem">Problem</a> &middot;
-  <a href="#how-unispace-works">How It Works</a> &middot;
-  <a href="#tech-stack">Tech Stack</a> &middot;
-  <a href="#local-setup">Setup</a> &middot;
-  <a href="#documentation">Docs</a> &middot;
-  <a href="#pilot-campus">Pilot Campus</a> &middot;
-  <a href="#roadmap">Roadmap</a>
-</p>
+[![CI](https://github.com/br9704/UniSpace/actions/workflows/ci.yml/badge.svg)](https://github.com/br9704/UniSpace/actions/workflows/ci.yml)
+![tests](https://img.shields.io/badge/tests-380%20passing-2ea043)
+![license](https://img.shields.io/badge/license-all%20rights%20reserved-8b949e)
+[![live](https://img.shields.io/badge/live-unispace--tawny.vercel.app-003366)](https://unispace-tawny.vercel.app)
 
 ---
 
-> **Status: live, and running on fixture data.** Every engineering task through Sprint 25 is closed
-> and the app is deployed. It shows modelled occupancy estimates for 18 real UoM buildings and
-> labels itself as such on screen.
->
-> Runs locally with no backend at all: `pnpm install && pnpm dev`.
+## What it does
+
+During semester, finding a free desk means guessing. The cost of a wrong guess is not evenly
+distributed: a commuter with ninety minutes between classes, or someone for whom each failed
+attempt is ten minutes of physical effort, pays far more for it than someone who lives on campus.
+UniSpace tries to answer the question before the walk instead of after it.
+
+Buildings on the map are shaded by occupancy. Tapping one opens a floor-by-floor breakdown,
+amenities, a room directory, a 24-hour prediction curve, and a "usually 38% at this time" line. A
+filter panel ranks buildings by a score combining emptiness, walking distance and amenity match,
+and a cross-building room search answers the question a first-year actually has — *which building
+is Redmond Barry 101 in?* None of it requires an account, because requiring one would exclude
+exactly the person who opens the app once a week on a train platform.
+
+The real design problem is not showing occupancy. It is **showing occupancy honestly when you are
+not sure** — which, for a crowdsourced app, is most of the time and all of the first week.
+Occupancy is assembled from whichever source is best available, and the interface always says
+which, in text as well as colour:
+
+| | Source | | In the live demo |
+|:--:|---|---|---|
+| 1 | **Live crowdsourced** | People currently in the building | never — needs a backend |
+| 2 | **Crowd reports** | Anonymous 1–5 reports, decaying over 30 min | only within your own session |
+| 3 | **Predicted** | Model over the campus's own accumulated history | never — no history collected |
+| 4 | **Typical estimate** | A modelled weekly curve, labelled as an estimate | **this is what you see** |
+| 5 | **No data** | Grey polygon, stated plainly | outside a building's open hours |
+
+Confidence is a visual state rather than a footnote. Estimates render at reduced intensity with a
+dashed border and a `~` qualifier; only genuinely live data gets the status dot and the slow
+breathing animation on the map. Cached readings are downgraded to `stale` rather than keeping the
+source they arrived with, so they inherit the low-confidence treatment automatically. A test
+enforces that an estimate can never render as a live reading.
+
+That principle runs all the way down into the data. A building whose opening hours have no
+published source shows `[?] HOURS NOT VERIFIED` and a hollow status dot instead of a confident
+OPEN or CLOSED — and is deliberately *not* excluded by the "Open Now" filter, because filtering on
+invented hours quietly cut the campus to five libraries on weekends. Accessibility flags are
+nullable and render `[?]` when nobody has checked, with the provenance shown inline.
+
+The privacy design is the constraint everything else bends around. The browser reads GPS, matches
+the point against building polygons locally with Turf.js, and sends a `zone_id` — never a
+coordinate. Session identifiers rotate every thirty minutes, exist only in memory inside an Edge
+Function, and are never written to a table. There is no analytics SDK of any kind. These are not
+policies in a document; six of them fail the build if violated.
 
 ---
 
-## There is no backend, on purpose
+## Architecture
 
-The demo at [unispace-tawny.vercel.app](https://unispace-tawny.vercel.app) reads from a **committed
-fixture layer**, not a database. No Supabase project is provisioned, and none is going to be. A
-hosted Postgres, Realtime and Edge Function stack costs money every month, and this is a portfolio
-project — so the backend is deliberately closed rather than pending.
+```mermaid
+flowchart TB
+    subgraph device["Browser — the privacy firewall"]
+        gps["Geolocation API<br/><i>raw lat / lng</i>"]
+        zd["zoneDetection.ts<br/>Turf.js point-in-polygon<br/><i>pure, no side effects</i>"]
+        sid["sessionId.ts<br/><i>rotates every 30 min</i>"]
+        gps --> zd
+    end
 
-That is a smaller gap than it sounds, because the backend was never the part that was hand-waved:
+    subgraph read["Read path"]
+        ds["dataSource.ts<br/><i>fetchRows / subscribeRows</i>"]
+        zod["schemas.ts<br/><i>Zod — every external payload</i>"]
+        fx["fixtures/seedData.generated.ts<br/><i>generated from the committed seed SQL</i>"]
+        blend["blending.ts<br/>live → crowd → predicted → modelled → none"]
+        conf["confidence.ts<br/><i>one definition of the three tiers</i>"]
+        ds --> zod --> blend --> conf
+        fx -->|"no Supabase configured"| ds
+    end
+
+    subgraph ui["UI"]
+        map["Map<br/><i>Mapbox, real OSM footprints</i>"]
+        card["BuildingCard<br/><i>lazy — Recharts ships with it</i>"]
+        find["FindPanel<br/><i>scored recommendations</i>"]
+    end
+
+    subgraph edge["Edge Functions (Deno) — 7, written, not hosted"]
+        agg["aggregate-occupancy<br/><i>counts sessions in memory only</i>"]
+        rep["submit-report · submit-feedback"]
+        alerts["manage-alerts · send-alerts"]
+        pred["compute-predictions"]
+        hours["sync-google-popularity<br/><i>opening hours only</i>"]
+    end
+
+    db[("Postgres — 22 migrations<br/>RLS on every table<br/><i>anon reads, service role writes</i>")]
+    google["Google Places API"]
+
+    zd -->|"zone_id only"| agg
+    sid -.->|"in-memory count, never persisted"| agg
+    agg --> db
+    rep --> db
+    pred --> db
+    google --> hours --> db
+    db -.->|"not provisioned — see below"| ds
+    conf --> map & card & find
+    card --> rep & alerts
+    alerts --> db
+```
+
+Two decisions shaped everything downstream.
+
+**Zone matching happens on the client.** The moment a raw coordinate reaches a server, "we never
+see where you are" becomes a claim about server-side behaviour that nobody outside the project can
+check. So the point-in-polygon test was pushed into a pure function on the device and the wire
+format reduced to a zone identifier — a promise a stranger can verify by opening the network tab.
+
+**Every hook reads through one seam.** `dataSource.ts` exposes `fetchRows` / `subscribeRows`, and
+nothing above it knows whether the rows came from Postgres or from a local fixture. It was
+introduced to make the app runnable without a backend; the payoff turned out to be larger. The
+fixtures are generated from the same committed seed SQL a real database would be seeded from, a
+test fails if the two fall out of step, and the integration suite runs the whole read path — 18
+buildings, blending, rendered values — with no network at all.
+
+### There is no backend, and that is a decision
+
+The demo reads from that committed fixture layer, not a database. **No Supabase project is
+provisioned, and none will be** — hosted Postgres, Realtime and Edge Functions cost money every
+month, and this is a portfolio project. The backend is deliberately parked, not pending.
+
+That is a smaller gap than it sounds, because the backend was never the hand-waved part:
 
 | Committed and reviewable | Running |
 |---|---|
-| 21 SQL migrations, applied in order, RLS on every table | — |
-| 8 seed files: 18 buildings, 47 zones, 890 rooms, 1,156 typical-occupancy rows | — |
-| 7 Deno Edge Functions — aggregation, predictions, reports, alerts, feedback, Google sync | — |
-| The full React app, and the test suite that covers it | ✅ deployed |
+| 22 SQL migrations, applied in order, RLS on every table | — |
+| 8 seed files: 18 buildings, 47 zones, 890 rooms, 1,156 occupancy rows | — |
+| 7 Deno Edge Functions — aggregation, predictions, reports, alerts, feedback, hours sync | — |
+| The React client and the 380-test suite that covers it | deployed |
 
-Run `pnpm test` to see the suite for yourself — 325 tests across 30 files.
-
-The fixture layer (Sprint R2) is what makes that tenable. It is **generated from the same committed
-seed SQL the database would be seeded from** — `pnpm generate:fixtures`, with a test that fails if
-the two fall out of step — so the app is exercising the real data shapes, not a mock someone wrote
-by hand. Every hook reads through one seam (`src/lib/dataSource.ts`); pointing it at a live Supabase
-project is an environment-variable change, not a rewrite.
-
-The honest consequence, stated plainly: **the live-crowdsourced path has never run against real
-users.** Its code is written and unit-tested, and the app is built to degrade to estimates when that
-path returns nothing — which, today, is always. What you can evaluate here is the client, the data
-model, and how the UI behaves when it does not know something. What you cannot evaluate is a
-production backend under load.
+The honest consequence, stated once: **the live-crowdsourced path has never run against real
+users.** Its code is written and unit-tested, and the app is built to fall through to estimates
+when it returns nothing — which, today, is always. What you can evaluate here is the client, the
+data model, and how the interface behaves when it does not know something. What you cannot
+evaluate is a production backend under load. Pointing `dataSource.ts` at a live project is an
+environment-variable change, not a rewrite.
 
 ---
 
-## What is UniSpace?
+## How it was built
 
-UniSpace shows university students how busy campus buildings are, so fewer trips end at a full library. It combines crowdsourced, privacy-preserving location data with anonymous crowd reports and modelled estimates of each building's weekly rhythm — check it before you leave, not after you arrive.
+Most of this project's engineering time went into repairing itself. An audit was run against a
+codebase whose plan recorded 199 completed tasks, treating every checkmark as a claim rather than
+a fact. All three load-bearing claims were false. The Supabase project the app pointed at had been
+**deleted** — three independent resolvers returned NXDOMAIN while `supabase.co` itself resolved
+fine — taking with it a migration applied to the cloud but never committed. Tailwind was installed
+at v4 while `index.css` used v3 syntax, so the theme scale never loaded and every utility drawing
+a value from it silently emitted nothing; 53 non-Mapbox utilities existed in the entire shipped
+bundle. And `pnpm build` had been failing for five sprints, because the audit step ran
+`vite build`, which succeeds while `tsc -b` fails. Full findings: [`WIRING-AUDIT.md`](WIRING-AUDIT.md).
 
-The design problem it actually solves is not "show occupancy". It is **showing occupancy honestly when you are not sure** — which, for a crowdsourced app on day one, is most of the time.
+Six recovery sprints fixed roots rather than symptoms, and each left behind a test whose job is to
+make that failure mode impossible rather than merely fixed. The CSS assertion compiles the real
+stylesheet and checks the **build output**, because a source-level check would have passed happily
+throughout the outage. Rebuilding the data layer as fixtures immediately surfaced a P0 that would
+have shipped: `blendOccupancy` checked whether occupancy data was *fresh* but not whether it was
+*real*, and since the aggregation function rewrites every row every ten seconds, a campus with
+zero users would have reported every building as `Live · 0%` — confidently telling a student that
+a full library was empty. All 23 existing blending tests passed throughout, because the test
+helper defaulted to `data_quality: 'live'` and no test ever varied it.
 
-No accounts. No hardware. No tracking. Just open the app and see where the space is.
+That generator has been the most productive place to look for bugs, because everything downstream
+inherits whatever it gets wrong. It was silently dropping every database-default timestamp column
+behind an `as unknown as Building[]` cast, so `last_updated` was `undefined` campus-wide and every
+freshness stamp in the deployed app failed its truthiness guard and rendered nothing. It was also
+skipping migrations `010` and `011` entirely — both use a `WHERE id = '...'` form the seed parser
+had no helper for — which meant no version of this database had ever held a real
+footprint — a courtyard building like Old Arts was a flat four-cornered slab. Fifteen of eighteen
+now carry their actual unsimplified OpenStreetMap way, 14 to 57 vertices each. The three that
+could not be identified with confidence are still quadrilaterals and are named as such rather than
+matched to a guess.
 
-## The Problem
+Measurement changed decisions repeatedly, and not always in the expected direction. Splitting
+Mapbox out took the landing route from 637 KB to 171 KB gzip; the next optimisation, naming a
+`charts` chunk for Recharts, made things **worse** — it was already correctly split behind the
+lazy building card, and naming it caused the bundler to hoist it into a static import, adding
+108 KB to the route in the name of shrinking it. Computing contrast ratios rather than eyeballing
+them caught a regression introduced two sprints earlier: a text token measuring 2.56:1 was
+carrying 49 pieces of real content. The same test later blocked a design revert — restoring the
+university palette's literal gold (2.02:1) and green (2.42:1) failed 13 contrast assertions, so
+the shipped values are hue- and saturation-preserved and darkened until they pass.
 
-University students have no reliable way to know whether a study space is available before physically going there. During peak hours, students try **5–8 buildings** before finding a free spot, wasting **30–40 minutes** each time.
+The most interesting finding was not a bug but a schema limitation. Researching accessibility data
+against the university's own sources showed that every flag in the database had been invented —
+and, worse, that the columns could only say yes or no, so the true answer for most buildings,
+*nobody has checked*, was unrepresentable. The columns are now nullable, a flag may never be set
+`false` from an absence of evidence, and unverified flags render `[?]` with their provenance shown
+inline. The same rule was then applied to opening hours. That is the third screenshot above: a
+building the app knows things about, being explicit about the things it does not.
 
-*(Those figures, and the ones below, are the problem estimates recorded in [`PRD.md`](PRD.md) § 2.3.
-They are the premise this was built on, not measurements taken by this app.)*
-
-This is especially costly for:
-- **Commuter students** — limited campus time between classes
-- **Students with disabilities** — each failed attempt costs 10–15 minutes of physical effort
-- **Students with anxiety** — walking into a packed room and leaving is stressful
-- **Group coordinators** — finding a table for 5 requires more effort than solo study
-- **Night owls** — need to know which buildings are open and occupied (safety)
-
-## How UniSpace Works
-
-1. **Open the app** — no account required. A full-viewport heatmap shows every building on campus.
-2. **Check occupancy** — buildings are colour-coded from green (empty) to red (packed), with percentage labels and trend arrows (filling / emptying / stable).
-3. **Tap a building** — bottom sheet shows floor-by-floor breakdown, amenities, 24-hour prediction chart, and a "Usually X% at this time" insight.
-4. **"Find me a spot"** — filter by amenities (WiFi, power, quiet, accessible), walking distance, and max occupancy. Results ranked by a scoring algorithm.
-5. **Set alerts** — push notification when a building drops below your chosen threshold.
-
-### Data Source Fallback
-
-UniSpace always shows the best available data, and says which it is:
-
-| Priority | Source | When it's used | In the live demo |
-|:--------:|--------|----------------|------------------|
-| 1 | **Live crowdsourced** | Active UniSpace users currently in the building | never — needs a backend |
-| 2 | **Crowd reports** | Anonymous 1–5 busyness reports (30-min decay) | only within your own session |
-| 3 | **UniSpace predicted** | Model trained on this campus's own accumulated occupancy history | never — no history has been collected |
-| 4 | **Typical estimate** | UniSpace's modelled weekly rhythm for that building — an estimate, labelled as one | **this is what you see** |
-| 5 | **No data** | Grey polygon — "No data available" | outside a building's open hours |
-
-The hierarchy is not decoration for the demo: it is why the demo is usable at all. With no backend
-every zone returns `data_quality: 'none'`, blending falls through to tier 4, and the UI renders the
-estimated treatment — dimmed, no green dot, `~` qualifier. That is the same code path a real
-deployment runs on day one, before it has any users.
-
-> **On Google.** Google's public Places API does **not** expose live or typical busyness — the
-> Popular Times you see in Google Maps is an internal feature with no public endpoint. UniSpace
-> therefore uses Google only for opening hours. The weekly curves in tiers 3 and 4 are our own
-> modelled estimates of campus rhythm, and the UI labels them as estimates wherever they appear. We
-> would rather show an honest estimate than borrow someone else's credibility for it.
-
-Confidence is a visible state, not a footnote: live data, estimates and stale data are rendered
-differently, so "we don't really know" never looks like "it's empty".
-
-### Privacy by Design
-
-Privacy is a core architectural constraint, not an afterthought:
-
-- **GPS coordinates never leave the device.** Zone detection is client-side via Turf.js — only a `zone_id` is broadcast.
-- **No accounts required** for viewing, recommendations, or alerts.
-- **Session IDs rotate every 30 minutes** and are never persisted to any database.
-- **No analytics or tracking libraries.** Zero third-party telemetry.
-- **All position data expires after 30 minutes.** Nothing is retained.
-
-> For the full privacy specification, see [`PRD.md` Section 13](PRD.md).
+The receipts are in [`MASTERPLAN.md`](MASTERPLAN.md) — the corrections, as-shipped deltas, and the
+reasoning behind every deferral.
 
 ---
 
-## Tech Stack
+## Verification
 
-| Layer | Technology |
-|-------|------------|
-| **Frontend** | React 19 + TypeScript, Vite 8 (PWA) |
-| **Styling** | Tailwind CSS v4 |
-| **Map** | Mapbox GL JS |
-| **Routing** | React Router 7 |
-| **Backend** | Supabase — Postgres, Realtime, Edge Functions (Deno) |
-| **External data** | Google Places API (opening hours only) |
-| **Charts** | Recharts |
-| **Animations** | Framer Motion |
-| **Geospatial** | Turf.js (client-side point-in-polygon) |
-| **Validation** | Zod (runtime validation of all external data) |
-| **State** | React hooks — no state library |
+`pnpm build` runs `tsc -b` before `vite build`, because the gap between those two is how three
+fatal defects passed two separate audits. **380 tests across 32 files**, no DOM required —
+component logic is extracted into pure functions and tested there.
+
+Four assert properties rather than behaviour, which is the part worth stealing:
+
+| File | Tests | What it makes impossible |
+|---|---|---|
+| [`src/lib/privacy.test.ts`](src/lib/privacy.test.ts) | 6 | Persisting a session id, writing one in an Edge Function `insert`/`upsert`/`update`, putting a coordinate in a request body, adding an analytics SDK, exposing the Google key to the client, or giving `zoneDetection` a side effect |
+| [`src/lib/contrast.test.ts`](src/lib/contrast.test.ts) | 17 | Any text token dropping below WCAG AA — ratios computed from `index.css`, not inspected |
+| [`src/lib/bundleBudget.test.ts`](src/lib/bundleBudget.test.ts) | 4 | The landing route exceeding budget, or Mapbox or Recharts reappearing on it. Measures the real `dist/` output |
+| [`src/index.css.test.ts`](src/index.css.test.ts) | 14 | A framework config change silently emitting no CSS. Compiles the stylesheet through Vite and asserts against the build output |
+
+Also enforced: no animation may ignore `prefers-reduced-motion`
+([`motion.test.ts`](src/lib/motion.test.ts)); an estimate may never render as a live reading
+([`confidence.test.ts`](src/lib/confidence.test.ts)); no building may carry occupancy curves for a
+day it is closed ([`seedData.test.ts`](src/lib/fixtures/seedData.test.ts)); no clickable `div` may
+reappear where a `<button>` belongs ([`a11y.test.ts`](src/lib/a11y.test.ts)); and every external
+payload is parsed through a Zod schema ([`schemas.test.ts`](src/lib/schemas.test.ts)).
 
 ---
 
-## Local Setup
-
-### Prerequisites
-
-- Node.js 20+
-- pnpm 11 (`npm install -g pnpm`)
-- A Mapbox account (free tier is sufficient) — needed for the map tiles
-- A Supabase project — optional, and not required for anything described below
-
-### Quick start — this is the normal path
-
-The app runs entirely on local fixtures, generated from the committed seed SQL. Everything except
-the database itself can be developed and tested this way, which is why it is the default.
+## Usage
 
 ```bash
 git clone https://github.com/br9704/UniSpace.git
@@ -183,239 +247,123 @@ cd UniSpace
 pnpm install
 
 cp .env.example .env.local
-# Add VITE_MAPBOX_TOKEN. Leave the Supabase vars blank and fixtures switch on
-# automatically; set VITE_USE_FIXTURES=true to force them on regardless.
+# Add VITE_MAPBOX_TOKEN. Leave the Supabase vars blank — fixtures switch on
+# automatically, which is what a real deployment looks like before it has users.
 
 pnpm test
 pnpm dev
 ```
 
-You get all 18 buildings, their floor zones and their weekly occupancy curves, with no live
-occupancy — which is exactly what a real deployment looks like before it has users.
+```
+$ pnpm test
 
-### Running against your own Supabase project
-
-Nothing requires this, and the hosted project for UniSpace is deliberately not provisioned. These
-are the instructions for anyone who wants to stand the backend up themselves — the schema and
-functions are all here.
-
-```bash
-supabase db push                    # migrations 001–021
-# then run supabase/seed/001–005 via the SQL editor or CLI
-supabase functions deploy <name>    # for each of the 7 Edge Functions
+ Test Files  32 passed (32)
+      Tests  380 passed (380)
 ```
 
-Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in `.env.local`. See
-[`MASTERPLAN.md`](MASTERPLAN.md) § *Owner-Gated Ship Runbook* for the full provisioning sequence,
-including secrets, `pg_cron` schedules and quota caps.
+You get all 18 buildings, their floor zones, the room directory and the weekly occupancy curves,
+with no live occupancy — the cold-start state, which is the one the interface most needs to handle
+well.
 
-### Regenerating fixtures
+| Command | |
+|---|---|
+| `pnpm dev` | Dev server on fixtures |
+| `pnpm build` | `tsc -b && vite build` — never `vite build` alone |
+| `pnpm test` | 380 unit and integration tests |
+| `pnpm lint` | ESLint, zero suppressions in the codebase |
+| `pnpm generate:fixtures` | Regenerate fixtures after editing `supabase/seed/` |
 
-```bash
-pnpm generate:fixtures   # after editing anything in supabase/seed/
-```
-
-A test fails if the generated fixtures fall out of step with the seed SQL, so the two cannot drift.
-
-### Environment Variables
-
-| Variable | Where | Description |
-|----------|-------|-------------|
-| `VITE_SUPABASE_URL` | `.env.local` | Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | `.env.local` | Supabase anonymous/public key |
-| `VITE_MAPBOX_TOKEN` | `.env.local` | Mapbox GL JS access token |
-| `VITE_USE_FIXTURES` | `.env.local` | `true`/`false` to force local fixtures on or off. Omit to auto-detect from whether Supabase is configured. |
-| `VITE_VAPID_PUBLIC_KEY` | `.env.local` | Web Push VAPID public key (required for push subscription) |
-| `GOOGLE_PLACES_API_KEY` | Supabase secrets | Google Places API key (server-side only) |
-| `VAPID_PUBLIC_KEY` | Supabase secrets | Web Push VAPID public key |
-| `VAPID_PRIVATE_KEY` | Supabase secrets | Web Push VAPID private key |
-| `VAPID_EMAIL` | Supabase secrets | Contact email for VAPID |
-| `IP_HASH_SALT` | Supabase secrets | Any long random string. Required by `submit-report` and `submit-feedback`, which hash the caller's IP for rate limiting. **An unsalted SHA-256 of an IPv4 address is not anonymous** — there are only about four billion of them, so the whole space can be enumerated and the hash reversed. Without the salt, a rate-limiting hash becomes a stored identifier in all but name. |
-
-> **Never commit secrets.** All client-side env vars use the `VITE_` prefix. Server-side secrets are set in the Supabase dashboard only.
+| Variable | Where | |
+|---|---|---|
+| `VITE_MAPBOX_TOKEN` | `.env.local` | Map tiles. The only one needed to run locally |
+| `VITE_SUPABASE_URL` · `VITE_SUPABASE_ANON_KEY` | `.env.local` | Omit to run on fixtures |
+| `VITE_USE_FIXTURES` | `.env.local` | Force fixtures on or off; omit to auto-detect |
+| `VITE_VAPID_PUBLIC_KEY` | `.env.local` | Web Push subscription |
+| `GOOGLE_PLACES_API_KEY` · `VAPID_*` · `IP_HASH_SALT` | Supabase secrets | Server-side only, never `VITE_`-prefixed |
 
 ---
 
-## Project Structure
+## Pilot campus
 
-```
-UniSpace/
-├── src/
-│   ├── components/       # Reusable UI components
-│   ├── hooks/            # Custom React hooks (data fetching, realtime, geo)
-│   ├── lib/              # Data source, fixtures, Mapbox helpers, blending utilities
-│   ├── pages/            # Top-level route components (HomePage, MapPage, AlertsPage)
-│   ├── types/            # Shared TypeScript interfaces and enums
-│   └── constants/        # App constants (colours, thresholds, map defaults)
-├── supabase/
-│   ├── migrations/       # SQL migrations (001–021), applied sequentially
-│   ├── functions/        # Deno Edge Functions
-│   └── seed/             # Seed data scripts
-├── PRD.md                # Product requirements document
-├── MASTERPLAN.md         # Sprint plan and progress tracker
-├── CLAUDE.md             # Development agent instructions
-└── README.md             # You are here
-```
+University of Melbourne, Parkville — 18 buildings, 47 floor zones, 890 rooms.
 
----
-
-## Database Schema
-
-```
-campuses ──< buildings ──< building_zones ──< zone_occupancy
-                │                │
-                │                └──< occupancy_history
-                │
-                ├──< occupancy_predictions
-                ├──< occupancy_reports
-                ├──< google_popularity_cache
-                ├──< google_popular_times
-                ├──< rooms
-                ├──< feedback
-                └──< user_alerts
-```
-
-| Table | Purpose |
-|-------|---------|
-| `campuses` | Campus metadata — name, centre coordinates, default zoom |
-| `buildings` | Building details, amenity flags, hours, GeoJSON polygon |
-| `building_zones` | Floor-level zones with polygon, capacity, and amenity data |
-| `zone_occupancy` | **Live** occupancy counts per zone (Supabase Realtime enabled) |
-| `occupancy_history` | 15-minute snapshots for trend analysis and predictions |
-| `occupancy_predictions` | Pre-computed predicted occupancy by day/hour |
-| `google_popularity_cache` | Cached Google current popularity (30-min TTL) |
-| `google_popular_times` | Google typical weekly popularity histogram |
-| `occupancy_reports` | Anonymous crowd reports (1-5 busyness + optional noise, 30-min expiry) |
-| `rooms` | Room directory — code, floor, type, capacity (no room-level occupancy, by design) |
-| `feedback` | Anonymous data-correction reports (no `user_id` column, no read policy) |
-| `user_alerts` | Push notification subscriptions (keyed by push token, no user ID) |
-
-All tables have **Row Level Security** enabled. Anonymous users can read; only the service role (Edge Functions) can write.
-
----
-
-## Documentation
-
-| Document | Description | Link |
-|----------|-------------|------|
-| **Product Requirements** | Full feature specs, data models, personas, design system, privacy rules, UI screen specs | [`PRD.md`](PRD.md) |
-| **Implementation Plan** | Sprint-by-sprint breakdown with progress tracking, architecture decisions, and risk log | [`MASTERPLAN.md`](MASTERPLAN.md) |
-| **Agent Instructions** | Coding standards, privacy rules, commit conventions, sprint protocol | [`CLAUDE.md`](CLAUDE.md) |
-| **Forensic Audit** | The August 2026 audit that found the three systemic failures, and what it verified as genuinely working | [`WIRING-AUDIT.md`](WIRING-AUDIT.md) |
-| **Motion Spec** | Binding animation specification — how motion encodes liveness, change and confidence | [`MOTION.md`](MOTION.md) |
-| **Environment Template** | Required environment variables with descriptions | [`.env.example`](.env.example) |
-
----
-
-## Pilot Campus
-
-**University of Melbourne — Parkville**
-
-18 UoM Parkville buildings with amenity data, building hours, and typical-occupancy curves (1,156
-rows, covering each building only on the days it is open).
-
-**Building geometry** — 15 of the 18 carry their real OpenStreetMap footprint, 14 to 57 vertices
-each (migration `022`). The other three — Engineering Building 1, the ICT Building and Kwong Lee Dow
-— could not be identified in OSM with any confidence and are left as rectangular approximations
-rather than matched to a guess. Buildings are matched to OSM by name, not by proximity, because
-several seeded coordinates were wrong and proximity matching inherits that error: Melbourne School
-of Design was seeded 428 m from the Glyn Davis Building it actually occupies.
+Fifteen of the 18 carry their real OpenStreetMap footprint, 14 to 57 vertices each. The other
+three — Engineering Building 1, the ICT Building and Kwong Lee Dow — could not be identified in
+OSM with confidence and are left as rectangular approximations rather than matched to a guess.
+Buildings are matched to OSM **by name, never by proximity**, because several seeded coordinates
+were wrong and proximity matching inherits that error instead of exposing it: Melbourne School of
+Design was seeded 428 m from the Glyn Davis Building it actually occupies.
 
 > Building geometry © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors,
 > available under the [Open Database License](https://opendatacommons.org/licenses/odbl/) (ODbL).
 > The ODbL governs that geometry and applies independently of this repository's own licence.
 
-Those curves are UniSpace's own modelled estimates of campus rhythm, not measurements and not Google data — the UI labels them as estimates wherever they are shown. Google's public Places API does not expose live busyness, so it is used only for opening hours.
-
-**What is actually sourced, and what is not.** Seed data verification (Sprint 17) is complete, and it
-found that most of the seeded real-world data had been invented. What has since been replaced with
-published values:
-
-- **Hours** — the five library buildings carry UoM's published opening hours. That source publishes
-  a *current-week* table, so those hours will be wrong over exams, summer and public holidays. The
-  other 13 buildings have no published source and remain unverified.
-- **Accessibility** — the flags are nullable, and default to *unknown* rather than *no*. Only the
-  claim UoM states unambiguously — all libraries have lifts and an accessible toilet — is asserted.
-  Step-free entry, accessible parking, and all 13 non-library buildings render as `[?]`.
-- **Google Place IDs** — 11 of 18 are NULL and the remaining 7 are unverified. Resolving them needs
-  a live Places API key, so they are left undone rather than guessed.
-- **Room directory** — the table and UI exist; no room data has been seeded, so it renders nothing.
-
-> Capacity estimates are directional (~), not precise. The remaining unverified items are tracked in
-> [`MASTERPLAN.md`](MASTERPLAN.md) § *Owner-Gated Ship Runbook*, step 5.
+Capacity figures are directional and marked `~`. The weekly occupancy curves are UniSpace's own
+modelled estimates of campus rhythm — not measurements, and not Google data.
 
 ---
 
-## Roadmap
+## Limitations
 
-### Phase 0 — Foundation
-- [x] **Sprint 0:** Project scaffolding (Vite + React + TypeScript + Tailwind + PWA)
-- [x] **Sprint 1:** Supabase schema, migrations, seed data, Edge Function scaffolds
-- [x] **Sprint 2:** Occupancy blending logic and fallback hierarchy
+**Occupancy is modelled, not measured.** The weekly curves are hand-authored estimates. No reading
+in the live demo has ever come from a person.
 
-### Phase 1 — MVP
-- [x] **Sprint 3:** Mapbox map with building polygons
-- [x] **Sprint 4:** Realtime geolocation broadcasting (zone IDs only)
-- [x] **Sprint 5:** Zone aggregation Edge Function
-- [x] **Sprint 6:** Occupancy blending (live → crowd reports → predicted → estimated)
-- [x] **Sprint 7:** Live heatmap rendering, expanded to 18 buildings
-- [x] **Sprint 8:** Building cards (bottom sheet)
-- [x] **Sprint 9:** Floor-level breakdown
-- [x] **Sprint 10:** Smart recommendations
-- [x] **Sprint 11:** Prediction engine (24h chart, sparkline, insights)
-- [x] **Sprint 12:** UI primitives and production readiness
+**Google does not provide busyness data.** The Places API exposes no live or typical popularity —
+the Popular Times shown in Google Maps is an internal feature with no public endpoint. Google is
+used here for opening hours and nothing else. An earlier version of this app claimed otherwise in
+four places; that was wrong and was removed.
 
-### Phase 1.5 — Competitive edge
-- [x] **Sprint 13:** Manual crowd reporting (1–5 scale, decay, blending)
-- [x] **Sprint 14:** Noise levels & favourites
-- [x] **Sprint 15:** Building photos & tips *(components ready; photo assets pending)*
-- [x] **Sprint 16:** PWA install flow + service worker
-- [x] **Sprint 17:** Seed data verification
+**Accessibility data is partial, and the app says so per building.** From the University's own
+campus map: 16 of 18 buildings have a mapped lift, 17 have a mapped accessible toilet, exactly
+**one** has entrances the map explicitly labels accessible, and **no source exists at all** for
+accessible parking — the map has no such category, so all 18 are `NULL`. Nothing is ever recorded
+as `false` from an absence of evidence. Do not rely on this for access planning; confirm with the
+University.
 
-### Phase 1.9 — Recovery
-> A forensic audit in August 2026 found that the previously-recorded progress overstated reality:
-> the Supabase project had been deleted, Tailwind had silently stopped emitting most of its CSS,
-> and the project had not compiled since Sprint 20. The audit is in
-> [`WIRING-AUDIT.md`](WIRING-AUDIT.md); these six sprints fixed what it found.
+**Opening hours are sourced for 5 of 18 buildings.** The other 13 carry invented seed values and
+are labelled as unverified. Sourced hours come from a current-week table and will be wrong over
+exams and holidays.
 
-- [x] **R0:** Forensic audit and honest correction — the 12 falsely-marked claims catalogued in [`WIRING-AUDIT.md`](WIRING-AUDIT.md) § 2
-- [x] **R1:** Foundation repair — Tailwind v4 migration, build fixed, fail-soft config
-- [x] **R2:** Local fixture layer — the whole app runs with no backend
-- [x] **R3:** SIGNAL design system + component decomposition
-- [x] **R4:** MOTION.md implementation — breathing heatmap, counting numbers, confidence tiers
-- [x] **R5:** Re-verification of Sprints 13–17 against observation
+**The room directory is incomplete.** 890 rooms across 17 of 18 buildings, with code, name, floor
+and type. Capacity, power and bookability are `NULL` because the source publishes none of them.
+One building has no rooms: its seeded name does not match anything the University publishes, and
+guessing which building it is would be exactly the failure this project spent six sprints
+correcting.
 
-### Phase 2 — Polish & reliability
-- [x] **Sprint 19:** Accessibility (WCAG 2.1 AA, contrast computed and enforced)
-- [x] **Sprint 20:** Push notifications & alerts *(code complete; delivery needs the Edge Functions deployed)*
-- [x] **Sprint 21:** Offline graceful degradation
-- [x] **Sprint 22:** Performance — landing route cut from 637 KB to 190 KB gzip, held there by `bundleBudget.test.ts`
-- [x] **Sprint 23:** Error states & edge cases
-- [x] **Sprint 24:** Room directory & cross-building room search *(table and UI ready; no room data seeded yet)*
-- [x] **Sprint 25:** Anonymous feedback system
-- [x] **Sprint 18:** Deployed — [unispace-tawny.vercel.app](https://unispace-tawny.vercel.app)
+**Not verified here:** Lighthouse scores, throttled-3G behaviour, VoiceOver, PWA install on real
+iOS and Android hardware, and two motion claims that need a screen recorder.
 
-### Phase 3+ — Roadmap, not scheduled
-EWMA predictions, anomaly detection, personalised recommendations, multi-campus, an analytics
-dashboard, friend presence. Deliberately unscheduled: the last three would require user accounts,
-which contradicts this app's core promise.
-
-> Full sprint details in [`MASTERPLAN.md`](MASTERPLAN.md)
+**Deliberately out of scope:** friend presence, personalised recommendations and the analytics
+dashboard would all require user accounts, which contradicts the thing this app is for.
 
 ---
 
-## Contributing
+## Status
 
-Built by [Bruno Jaamaa](https://github.com/br9704). Sprints 0–25 are closed; the sprint plan, every
-architectural decision and its reasoning, and the deferrals with their reasons are all in
-[`MASTERPLAN.md`](MASTERPLAN.md). Coding standards are in [`CLAUDE.md`](CLAUDE.md).
+Live and feature-complete. Every engineering task through Sprint 25 is closed, the recovery phase
+is shut, and the deployed build passes CI. The backend stays committed-but-unhosted by choice, and
+what remains genuinely outstanding is real-world data the repository cannot produce: accessible
+parking for any building, step-free entry for 17, hours for 13, and CC-licensed building
+photographs. Each is listed in [`MASTERPLAN.md`](MASTERPLAN.md) rather than quietly rounded up.
 
-If you are reading the code, [`WIRING-AUDIT.md`](WIRING-AUDIT.md) is probably the most interesting
-file here: it is the forensic audit that found this project's checkmarks had drifted badly from
-reality, and it is preserved unedited, including the parts that were embarrassing.
+One note on history: Sprint R3 applied a dark, single-accent design system called SIGNAL. Its
+component decomposition and accessibility work stand, but **the design layer was reverted on
+2026-08-15** in favour of the university palette on a light ground. The reasoning is in the
+masterplan's Architecture Decisions Log.
 
----
+| | |
+|---|---|
+| Product requirements | [`PRD.md`](PRD.md) |
+| Sprint plan, decisions, deferrals | [`MASTERPLAN.md`](MASTERPLAN.md) |
+| The audit that started the recovery | [`WIRING-AUDIT.md`](WIRING-AUDIT.md) |
+| Portfolio card, machine-readable | [`PROJECT.json`](PROJECT.json) |
 
 ## License
 
-All rights reserved. Copyright Bruno Jaamaa 2026.
+All rights reserved. Copyright © 2026 Bruno Jaamaa. See [`LICENSE`](LICENSE).
+
+## Author
+
+Bruno Jaamaa — [brunojaamaa.dev](https://brunojaamaa.dev) · [@br9704](https://github.com/br9704)
+
+Not affiliated with, endorsed by, or connected to the University of Melbourne.

@@ -1,0 +1,132 @@
+{
+  "schema": 1,
+  "slug": "unispace",
+  "name": "UNISPACE",
+  "oneLiner": "Campus occupancy for students, with no coordinate ever leaving the phone",
+  "status": "live",
+  "role": "SOLO BUILD",
+  "year": "2026",
+  "updated": "2026-08-15",
+  "links": {
+    "github": "https://github.com/br9704/UniSpace",
+    "live": "https://unispace-tawny.vercel.app",
+    "npm": null,
+    "huggingface": null,
+    "appstore": null
+  },
+  "stack": [
+    "typescript",
+    "react",
+    "vite",
+    "tailwind",
+    "mapbox-gl",
+    "supabase",
+    "postgres",
+    "deno",
+    "turf",
+    "zod",
+    "recharts",
+    "framer-motion",
+    "vitest",
+    "pwa"
+  ],
+  "metrics": [
+    {
+      "value": "171 KB",
+      "label": "landing route gzip, down from 637 KB",
+      "source": "src/lib/bundleBudget.test.ts"
+    },
+    {
+      "value": "380",
+      "label": "tests across 32 files",
+      "source": ".github/workflows/ci.yml"
+    },
+    {
+      "value": "0",
+      "label": "GPS coordinates that reach a server",
+      "source": "src/lib/privacy.test.ts"
+    },
+    {
+      "value": "890",
+      "label": "rooms sourced from the university's own campus map",
+      "source": "supabase/seed/006_rooms_uom_campus_map.sql"
+    }
+  ],
+  "headline": {
+    "claim": "The privacy promise is executable, not documented: the build fails if a session id is ever persisted, if a coordinate appears in a request body, or if an analytics SDK is added.",
+    "source": "README.md#verification"
+  },
+  "honest": "Occupancy is modelled, not measured — no Supabase project is provisioned (a deliberate cost decision), so every reading in the live demo is an estimate generated from committed seed curves and the live-crowdsourced path has never run against real users. Real-world data is partial and labelled as such: opening hours are sourced for 5 of 18 buildings, exactly one building has a mapped step-free entrance, and no source exists at all for accessible parking.",
+  "media": {
+    "hero": "docs/media/hero.png",
+    "demo": null,
+    "diagram": null,
+    "screenshots": [
+      "docs/media/home.png",
+      "docs/media/map.png",
+      "docs/media/card.png",
+      "docs/media/find.png"
+    ]
+  },
+  "built": {
+    "audit": "199 tasks were recorded complete but never observed: the Supabase project had been deleted, Tailwind v4 was emitting no theme CSS behind v3 syntax, and the project had not compiled since Sprint 20 because the audit step ran `vite build`, which succeeds while `tsc -b` fails.",
+    "repaired": [
+      "Migrated Tailwind v3 syntax to v4 and pinned it with an assertion that compiles the real stylesheet and checks the build output, not the source",
+      "Fixed a P0 where blendOccupancy checked freshness but not data_quality, so a campus with zero users would have reported every building as 'Live · 0%'",
+      "Rewrote the uncommitted migration 013 without inventing the Google Place IDs it originally carried",
+      "Reconciled seed data with the UI: the database described 20 buildings while the app and README said 18",
+      "Made accessibility columns nullable so 'nobody has checked' is representable, and forbade any flag being set false from an absence of evidence",
+      "Fixed a fixture generator that silently dropped every database-default timestamp, so every freshness stamp in the deployed app rendered nothing",
+      "Fixed a fixture generator that skipped two migrations, leaving every building on the map as a rectangle instead of its real OSM footprint"
+    ],
+    "measured": [
+      "Landing route 637 KB to 171 KB gzip, measured from the build output at every step; a budget test fails if Mapbox or Recharts reappear on it",
+      "Naming a Recharts chunk made the landing route 108 KB worse, because it was already correctly split behind a lazy import",
+      "WCAG contrast computed from index.css rather than inspected: caught a 2.56:1 token carrying 49 pieces of real content, and later blocked a palette revert that failed 13 assertions",
+      "1,156 occupancy curve rows, recounted from the committed seeds after three different figures appeared in the repo"
+    ],
+    "decisions": [
+      {
+        "what": "Client-side zone matching with Turf.js",
+        "why": "Once a raw coordinate reaches a server, 'we never see where you are' becomes unverifiable from outside. Only a zone_id crosses the wire, so a stranger can check the claim in the network tab."
+      },
+      {
+        "what": "One read seam (dataSource.ts) instead of hooks calling Supabase",
+        "why": "Made the app runnable with no backend, and let the same fixtures generated from the committed seed SQL serve as integration test data — so production and test data cannot drift."
+      },
+      {
+        "what": "The backend is committed but never hosted",
+        "why": "Hosted Postgres, Realtime and Edge Functions cost money monthly on a portfolio project. Parked deliberately rather than left pending, and the README says so."
+      },
+      {
+        "what": "Unverified data renders [?] rather than a default",
+        "why": "Wrong accessibility data is harmful rather than merely inaccurate. A schema that can only say yes or no cannot express 'nobody has checked', which was the true answer for most buildings."
+      }
+    ]
+  },
+  "ownerGated": [
+    "accessible parking data — no published source exists for any building",
+    "step-free entry for 17 of 18 buildings",
+    "opening hours for the 13 buildings with no published source",
+    "Google Place IDs — 11 of 18 are NULL, needs a Places API key",
+    "CC-licensed building photographs",
+    "Lighthouse, throttled-3G, VoiceOver and PWA install passes on real hardware"
+  ],
+  "github": {
+    "topics": [
+      "react",
+      "typescript",
+      "vite",
+      "mapbox",
+      "supabase",
+      "pwa",
+      "privacy-by-design",
+      "geospatial",
+      "occupancy",
+      "campus",
+      "tailwindcss",
+      "vitest"
+    ]
+  },
+  "masterplan": "MASTERPLAN.md"
+}

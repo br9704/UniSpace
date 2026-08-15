@@ -3,6 +3,29 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "Campus occupancy for students, with no coordinate ever leaving the phone. Privacy-first PWA over 18 University of Melbourne buildings.",
+  "keywords": [
+    "react",
+    "typescript",
+    "vite",
+    "mapbox",
+    "supabase",
+    "pwa",
+    "privacy-by-design",
+    "geospatial",
+    "occupancy",
+    "campus"
+  ],
+  "homepage": "https://unispace-tawny.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/br9704/UniSpace.git"
+  },
+  "bugs": {
+    "url": "https://github.com/br9704/UniSpace/issues"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "Bruno Jaamaa (https://brunojaamaa.dev)",
   "packageManager": "pnpm@11.13.0",
   "scripts": {
     "dev": "vite",

@@ -2150,3 +2150,75 @@ most of its effort on.
 - Re-verify the privacy invariant after any change to the broadcast path:
   `zoneDetection` → `usePositionBroadcast` → `aggregate-occupancy`. `session_id` must never appear
   in a DB write; raw coordinates must never leave the device.
+
+---
+
+## Sprint D — Documentation Pass (2026-08-15)
+
+**Goal:** Make the repository read well to a stranger on GitHub, and emit a machine-readable
+`PROJECT.json` the portfolio consumes. Source: `DOCS-ENGINEERPROMPT.md`. Ground rule, from
+CLAUDE.md § Honesty: every number in the README maps to a committed artifact or it does not go in.
+
+**Subtasks:**
+- [x] D1 — **Committed screenshots** ✅ `docs/media/` — `home` / `map` / `card` / `find` plus a
+      three-panel `hero`, captured with Playwright against a 430×932 viewport at 2× from the real
+      production build. Not external links.
+  - [x] D1.extra — Captured twice. The first set was taken against the deployed URL before the
+        SIGNAL revert landed and showed a design system that no longer exists. Re-shot against the
+        local `dist/` build, then confirmed current by matching the built stylesheet hash
+        (`index-DX5pzFeX.css`) against the one the live site serves — a filename comparison rather
+        than a visual guess.
+- [x] D2 — **README rewritten** ✅ Restructured to the docs prompt's order: hook, visual, run
+      command, results table, badges, what it does, architecture (Mermaid), how it was built,
+      verification, usage, pilot campus, limitations, status. No emoji, sentence-case headings.
+      The OpenStreetMap **ODbL attribution** added in the parallel session is preserved verbatim —
+      it is a licence obligation on a public repo, not prose.
+- [x] D3 — **`PROJECT.json`** ✅ Schema-exact card at the repo root. Four metrics and a headline,
+      every `source` a path that exists. `honest` states the modelled occupancy, the parked
+      backend, and the partial real-world data.
+- [x] D4 — **`LICENSE`** ✅ All-rights-reserved, no grant, view-and-fork-to-read only.
+      **Bruno chose this explicitly when asked** rather than it being inferred; `package.json`
+      declares `SEE LICENSE IN LICENSE` and the README notice agrees with the file.
+- [x] D5 — **`.github/workflows/ci.yml`** ✅ Lint → build → test on push, PR and dispatch. Test runs
+      *after* build on purpose: `bundleBudget.test.ts` and `index.css.test.ts` assert against the
+      real `dist/` output and skip themselves when it is absent. This is what makes the CI badge a
+      real artifact rather than decoration.
+- [x] D6 — **`package.json` metadata** ✅ `description`, `keywords`, `homepage`, `repository`,
+      `bugs`, `license`, `author`.
+- [x] D7 — **Numbers re-counted from files, never restated** ✅ Every figure verified at the moment
+      of writing: 380 tests / 32 files · 22 migrations · 8 seeds · 7 Edge Functions · 18 buildings ·
+      47 zones · 890 rooms across 17 buildings · 1,156 curve rows · 171 KB gzip landing route ·
+      439 KB Mapbox chunk.
+  - [x] D7.extra — The counts moved four times mid-pass (277 → 297 → 325 → 380 tests) because a
+        parallel session was still landing work. Recounted rather than trusting any handoff figure,
+        including the parallel session's own — its final message reported 325/30 and 21 migrations,
+        and the truth at freeze was 380/32 and 22.
+- [⏭️] D8 — GitHub topics ⏭️ **Owner-gated.** Written into `PROJECT.json` under `github.topics` and
+      applied with `gh repo edit`; deferred to Bruno because it mutates the public repo.
+      The repo itself is **already public** (`gh repo view` → `PUBLIC`), so nothing needed flipping.
+
+**Coordination note.** A second Claude session was running a post-ship maintenance pass on this
+repository at the same time, and both sessions were editing `README.md`. One write was lost to a
+mid-air collision before the split was agreed: this session owns `README.md`, `PROJECT.json`,
+`LICENSE`, `.github/`, `docs/media/` and the `package.json` metadata fields; the other owns all
+code, data and the rest of this file. Recorded because the near-miss is the argument for the split,
+not because the split is interesting.
+
+**Decision recorded.** Bruno initially asked for the docs to be written *as if* the owner-gated
+items were implemented. That was declined and escalated rather than executed: the repository is
+public, CLAUDE.md forbids any public claim a committed artifact cannot back, and the live site
+visibly contradicts a "live backend" claim. Bruno then settled the framing directly — Supabase will
+**not** be provisioned, as a cost decision — which is stronger than either the original request or
+the fallback, and is what both the README and § *Owner-Gated Ship Runbook* now say.
+
+**Gate:** ✅ **PASSED 2026-08-15** at commit `8b7991b`. `pnpm build` green · `pnpm lint` clean ·
+**380 tests pass** · every README number traced back to its source file · every `PROJECT.json`
+`source` path exists on disk · Mermaid diagram and all five images render on GitHub.
+
+**As-shipped delta:** the hero is three panels rather than one, because a single 430×932 mobile
+screenshot is unreadably tall on a GitHub page. `WIRING-AUDIT.md` was **kept**, against the docs
+prompt's instruction to delete process artifacts: it is cited by this file and is the receipt for
+the whole recovery narrative, so deleting it would break the one section of the README a stranger
+cannot verify any other way.
+
+**Deferred:** D8 (GitHub topics) — owner-gated, one `gh repo edit` command, listed in the handoff.
