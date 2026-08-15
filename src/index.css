@@ -81,23 +81,23 @@
   /* ── UoM palette, restored from the pre-SIGNAL system ── */
   --color-uom-navy: #003865;
   --color-uom-blue: #0080A4;
-  --color-uom-gold: #806A29;
+  --color-uom-gold: #006C8F;
   --color-uom-gold-light: #E8C97A;
   --color-text-on-navy: #FFFFFF;
   --color-text-on-navy-muted: rgba(255, 255, 255, 0.55);
   --color-text-on-navy-subtle: rgba(255, 255, 255, 0.4);
-  --color-source-live: #26583F;
+  --color-source-live: #145836;
   --color-source-google: #0080A4;
-  --color-source-predicted: #806A29;
+  --color-source-predicted: #006C8F;
   --color-source-stale: #94A3B8;
 
-  --color-bg: #F0F2F5;
+  --color-bg: #F7F8FA;
   --color-surface: #FFFFFF;
-  --color-steel: #CBD5E1;
-  --color-hairline: #E2E8F0;
+  --color-steel: #CFD8E3;
+  --color-hairline: #E4E9F0;
 
-  --color-text-primary: #1E293B;
-  --color-text-secondary: #556376;
+  --color-text-primary: #0B1F33;
+  --color-text-secondary: #44546A;
 
   /*
    * `--text-dim` is decoration only and cannot carry readable text — it sits far
@@ -108,12 +108,12 @@
    * Enforced by `contrast.test.ts`, which computes the ratios rather than
    * trusting them, and greps every .tsx for unguarded `--color-text-dim`.
    */
-  --color-text-dim: #CBD5E1;
-  --color-text-muted: #5A6D88;
+  --color-text-dim: #C3CBD6;
+  --color-text-muted: #5B6B80;
 
-  --color-amber: #806A29;
-  --color-amber-bright: #E8C97A;
-  --color-amber-dim: #9A803C;
+  --color-amber: #006C8F;
+  --color-amber-bright: #0A93BE;
+  --color-amber-dim: #005875;
 
   /*
    * Reserved for live/positive state — the `● LIVE` dot and open/closed. If it
@@ -124,7 +124,7 @@
    * token carries text. It also has to stay 1.5:1 clear of `--text-muted`, or
    * "live" and "estimated" become the same shade of nothing.
    */
-  --color-live: #26583F;
+  --color-live: #145836;
 
   /*
    * ── Occupancy ramp ──
@@ -141,7 +141,7 @@
    * colour alone either: every surface carries the text label (Empty / Quiet /
    * Moderate / Busy / Packed), per WCAG 1.4.1.
    */
-  --color-occ-none: #E2E8F0;
+  --color-occ-none: #D5DDE7;
   --color-occ-empty: #94D0B2;
   --color-occ-quiet: #9DBB3E;
   --color-occ-moderate: #DA8C0A;
@@ -150,16 +150,16 @@
 
   /* ── Aliases kept for surfaces that read as containers ── */
   --color-bg-primary: #FFFFFF;
-  --color-bg-secondary: #F5F7FA;
+  --color-bg-secondary: #F0F3F7;
   --color-bg-elevated: #FFFFFF;
-  --color-bg-card: #FAFBFD;
-  --color-bg-chip: #F0F2F5;
-  --color-bg-input: #FAFBFD;
-  --color-bg-page: #F0F2F5;
+  --color-bg-card: #FFFFFF;
+  --color-bg-chip: #EEF2F7;
+  --color-bg-input: #FFFFFF;
+  --color-bg-page: #F7F8FA;
   --color-bg-overlay: rgba(0, 0, 0, 0.3);
-  --color-border: #E2E8F0;
-  --color-border-bright: #CBD5E1;
-  --color-text-tertiary: #5A6D88;
+  --color-border: #E4E9F0;
+  --color-border-bright: #CFD8E3;
+  --color-text-tertiary: #5B6B80;
   --color-text-accent: #003865;
 
   /* ── Typography ── */
@@ -190,11 +190,11 @@
    * 20 panel → 18 row → 16 tile → 12 input → 6 chip. The step tells you what
    * contains what before a word is read; SIGNAL flattened all five to 12px.
    */
-  --radius-sm: 6px;
+  --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-tile: 16px;
-  --radius-row: 18px;
-  --radius-lg: 20px;
+  --radius-tile: 14px;
+  --radius-row: 16px;
+  --radius-lg: 16px;
 
   /*
    * Two tiers of depth, plus a hover step.
@@ -207,9 +207,9 @@
    * as the page's own light); --shadow-tile under the cards inside them;
    * --shadow-elevated is the pointer hover lift in `.card-lift` below.
    */
-  --shadow-card: 0 4px 20px rgba(0, 56, 101, 0.06);
-  --shadow-tile: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-elevated: 0 8px 30px rgba(0, 56, 101, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 1px 2px rgba(11,31,51,.04), 0 8px 24px -12px rgba(11,31,51,.10);
+  --shadow-tile: 0 1px 2px rgba(11,31,51,.04), 0 4px 12px -8px rgba(11,31,51,.10);
+  --shadow-elevated: 0 2px 4px rgba(11,31,51,.05), 0 16px 40px -16px rgba(11,31,51,.16);
 }
 
 /*
@@ -245,7 +245,7 @@
    * only thing this value ever draws is a rule, so contrast.test.ts has no
    * business policing it and no existing colour token moves to add it.
    */
-  --border-panel: rgba(0, 56, 101, 0.65);
+  --border-panel: #DCE3EC;
 
   /* Font weights — NOT `--font-*`, which is the font-family namespace in v4 */
   --font-regular: 400;
@@ -254,8 +254,8 @@
   --font-bold: 700;
 
   /* Glows, restored with the UoM palette. */
-  --glow-gold: 0 0 20px rgba(128, 106, 41, 0.15);
-  --glow-live: 0 0 12px rgba(38, 88, 63, 0.2);
+  --glow-gold: 0 0 20px rgba(0, 108, 143, 0.14);
+  --glow-live: 0 0 12px rgba(20, 88, 54, 0.18);
 
   /* A ring offset from the surface, not a bracket. */
   --focus-ring: 0 0 0 2px var(--color-bg-primary), 0 0 0 4px var(--color-uom-blue);

@@ -128,7 +128,7 @@ export default function BuildingCardDetails({
         inaccurate, so the correction path has to be where the error is seen.
       */}
       <Button variant="ghost" size="sm" className="w-full" onClick={() => setReportingError(true)}>
-        [ REPORT AN ERROR ]
+        Report an error
       </Button>
 
       <AnimatePresence>

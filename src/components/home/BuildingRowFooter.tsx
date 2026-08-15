@@ -47,7 +47,7 @@ export default function BuildingRowFooter({ building }: BuildingRowFooterProps) 
         // like an action. The 44px minimum stays exactly where it was.
         style={{ color: 'var(--color-text-accent)', minHeight: 44, padding: '0 8px' }}
       >
-        [ DIRECTIONS → ]
+        Directions →
       </a>
     </div>
   )

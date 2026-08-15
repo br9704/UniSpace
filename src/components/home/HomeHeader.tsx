@@ -23,9 +23,9 @@ export default function HomeHeader() {
     // opens the page; the bottom is 32 rather than the pre-SIGNAL 40 because
     // that 40 sat under a filled navy band with its own edge, and on this flat
     // ground the same gap reads as a hole.
-    <header className="px-6 pt-14 pb-8">
+    <header className="px-6 pt-8 pb-6">
       <p className="mono text-[15px]" style={{ color: 'var(--color-text-muted)' }}>
-        &gt; {greeting()}
+        {greeting()}
       </p>
       <h1
         className="mono text-[36px] font-extrabold mt-0.5 tracking-[-1px] leading-[1.1]"

@@ -43,7 +43,7 @@ export default function BuildingListFallback({
           color: 'var(--color-amber)',
         }}
       >
-        &gt; MAP UNAVAILABLE — {reason}
+        Map unavailable — {reason}
         <span className="block mt-1" style={{ color: 'var(--color-text-muted)' }}>
           The building list below still works.
         </span>

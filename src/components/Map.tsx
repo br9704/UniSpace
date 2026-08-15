@@ -141,7 +141,7 @@ export default function Map({ buildings, occupancyMap, onBuildingClick, isChangi
         className="mono h-full w-full flex items-center justify-center p-6 text-center text-sm"
         style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text-secondary)' }}
       >
-        <p>&gt; VITE_MAPBOX_TOKEN is not set — add it to .env.local to load the map</p>
+        <p>VITE_MAPBOX_TOKEN is not set — add it to .env.local to load the map</p>
       </div>
     )
   }

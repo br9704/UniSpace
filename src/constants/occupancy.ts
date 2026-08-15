@@ -43,7 +43,7 @@ export const OCCUPANCY_COLOURS: Record<OccupancyLevel, string> = {
   moderate: '#DA8C0A',
   busy: '#E6622D',
   packed: '#DD4141',
-  none: '#E2E8F0',
+  none: '#D5DDE7',
 }
 
 export function getOccupancyLevel(pct: number | null): OccupancyLevel {

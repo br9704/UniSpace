@@ -57,7 +57,7 @@ export default function ReportSheet({
     <BottomSheet label={`Report how busy ${building.short_name ?? building.name} is`} onDismiss={onDismiss}>
         <div className="px-5 pb-6 pt-2">
           <h2 className="mono text-sm tracking-wide" style={{ color: 'var(--color-text-primary)' }}>
-            &gt; HOW BUSY IS {(building.short_name ?? building.name).toUpperCase()}?
+            How busy is {building.short_name ?? building.name}?
           </h2>
 
           {confirmed ? (

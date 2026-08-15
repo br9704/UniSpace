@@ -55,7 +55,7 @@ export default function AlertSetup({
     return (
       <Card>
         <p className="mono text-xs" style={{ color: 'var(--color-text-muted)' }}>
-          &gt; NOTIFICATIONS BLOCKED — enable them in your browser settings to set alerts
+          Notifications are blocked. Enable them in your browser settings to set alerts.
         </p>
       </Card>
     )

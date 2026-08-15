@@ -58,7 +58,7 @@ export default function InstallBanner() {
                 cursor: 'pointer', borderRadius: 'var(--radius-md)',
               }}
             >
-              [ INSTALL → ]
+              Install →
             </button>
           )}
 

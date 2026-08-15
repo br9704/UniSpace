@@ -35,7 +35,7 @@ export default function AlertActive({ alert, currentPct, busy, onDelete }: Alert
             color: 'var(--color-text-secondary)',
           }}
         >
-          [ REMOVE ]
+          Remove
         </button>
       </div>
     </Card>

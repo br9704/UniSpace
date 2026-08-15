@@ -61,9 +61,15 @@ export function getOutlineLayerConfig(): LineLayerSpecification {
     type: 'line',
     source: BUILDINGS_SOURCE,
     paint: {
-      // Steel hairline — the structural rule of the whole system.
-      'line-color': readToken('--color-steel'),
-      'line-width': 1,
+      // A navy edge, not a steel hairline.
+      //
+      // At 1px in --color-steel the outline was invisible against light-v11's
+      // own pale building layer, so the campus dissolved into the basemap and
+      // a building with no reading was indistinguishable from a road. The
+      // polygons are the whole point of the map; they have to hold their shape
+      // whatever the fill is doing.
+      'line-color': 'rgba(0, 56, 101, 0.42)',
+      'line-width': 1.4,
     },
   }
 }

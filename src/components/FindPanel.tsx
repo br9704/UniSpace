@@ -81,7 +81,7 @@ export default function FindPanel({
               style={{ borderBottom: '1px solid var(--color-hairline)' }}
             >
               <h2 className="mono text-sm tracking-wide" style={{ color: 'var(--color-text-primary)' }}>
-                &gt; FIND A SPOT
+                Find a spot
               </h2>
               <button
                 type="button"

@@ -29,7 +29,7 @@ export default function ReportFAB({ visible, onClick }: ReportFABProps) {
         cursor: 'pointer',
       }}
     >
-      [ REPORT ]
+      Report
     </button>
   )
 }

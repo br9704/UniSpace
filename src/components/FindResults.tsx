@@ -18,7 +18,7 @@ export default function FindResults({ results, onSelect, onReset }: FindResultsP
     return (
       <div className="mono text-center py-8">
         <p className="text-sm" style={{ color: 'var(--color-text-primary)' }}>
-          &gt; NO SPOTS MATCH
+          No spots match
         </p>
         <button
           type="button"
@@ -33,7 +33,7 @@ export default function FindResults({ results, onSelect, onReset }: FindResultsP
             cursor: 'pointer',
           }}
         >
-          [ RESET FILTERS ]
+          Reset filters
         </button>
       </div>
     )

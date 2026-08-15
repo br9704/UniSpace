@@ -19,6 +19,8 @@ export interface CampusOverview {
   /** Buildings whose hours a published source backs (migration 021). */
   verifiedHoursCount: number
   quietCount: number
+  /** Buildings with an actual occupancy reading — the denominator for quietCount. */
+  readingCount: number
   averagePct: number | null
   quietest: CampusItem | null
   busiest: CampusItem | null
@@ -86,7 +88,9 @@ export function useCampusOverview(
 
     return {
       items,
-      quiet: items.filter((item) => (item.occupancy?.pct ?? 100) <= QUIET_THRESHOLD),
+      // `?? 100` would count a building with no reading as completely full.
+      // Absence of data is not evidence of a crowd.
+      quiet: withData.filter((item) => item.occupancy!.pct! <= QUIET_THRESHOLD),
       filling: items.filter((item) => item.occupancy?.trend === 'filling'),
       // Only buildings with sourced hours are counted, in either direction. The
       // other 13 carry invented hours, so counting them as open would inflate
@@ -97,7 +101,13 @@ export function useCampusOverview(
         return status.verified && status.open
       }).length,
       verifiedHoursCount: items.filter((item) => isOpenNow(item.building).verified).length,
-      quietCount: items.filter((item) => (item.occupancy?.pct ?? 100) < 50).length,
+      // Counted among buildings that actually have a reading, not among all 18.
+      // The old form defaulted a missing pct to 100, so the 13 buildings with no
+      // reading were each counted as packed — which is how the headline came to
+      // announce "CAMPUS IS BUSY" while average occupancy read 14% and every
+      // building on screen said EMPTY.
+      quietCount: withData.filter((item) => item.occupancy!.pct! < 50).length,
+      readingCount: withData.length,
       averagePct: withData.length
         ? Math.round(withData.reduce((sum, item) => sum + item.occupancy!.pct!, 0) / withData.length)
         : null,

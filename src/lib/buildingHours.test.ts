@@ -98,7 +98,10 @@ describe('hours provenance', () => {
     for (const now of [monMorning, monNight]) {
       for (const detailed of [false, true]) {
         const label = openStatusLabel(isOpenNow(makeBuilding(), now), detailed)
-        expect(label).toContain('[?]')
+        // The label must name the uncertainty. Pinned on the word rather than
+        // on SIGNAL's '[?]' glyph, so a copy change cannot quietly turn an
+        // unverified building back into a confident one.
+        expect(label.toLowerCase()).toContain('verified')
         expect(label).not.toMatch(/\bOPEN\b/)
         expect(label).not.toMatch(/\bCLOSED\b/)
       }

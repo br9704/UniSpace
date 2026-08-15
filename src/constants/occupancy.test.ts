@@ -84,9 +84,12 @@ describe('UoM palette', () => {
   // reverted on 2026-08-15 at Bruno's instruction after seeing it beside the
   // pre-SIGNAL build. These pin what replaced it so the two cannot half-mix.
   it('defines the core tokens', () => {
-    expect(tokenValue('--color-bg')).toBe('#F0F2F5')
-    expect(tokenValue('--color-amber')).toBe('#806A29')
-    expect(tokenValue('--color-text-primary')).toBe('#1E293B')
+    expect(tokenValue('--color-bg')).toBe('#F7F8FA')
+    // The accent is UoM azure, not gold. Darkening #C8A951 far enough to clear
+    // AA on a light ground produced a muddy brown; the blue is in the same
+    // palette, clears 5.58:1, and is what the university actually uses.
+    expect(tokenValue('--color-amber')).toBe('#006C8F')
+    expect(tokenValue('--color-text-primary')).toBe('#0B1F33')
     expect(tokenValue('--color-uom-navy')).toBe('#003865')
   })
 
@@ -99,10 +102,10 @@ describe('UoM palette', () => {
     }
   })
 
-  it('uses the rounded UoM radius scale', () => {
-    expect(tokenValue('--radius-sm')).toBe('6px')
+  it('uses a restrained radius scale', () => {
+    expect(tokenValue('--radius-sm')).toBe('8px')
     expect(tokenValue('--radius-md')).toBe('12px')
-    expect(tokenValue('--radius-lg')).toBe('20px')
+    expect(tokenValue('--radius-lg')).toBe('16px')
   })
 
   it('has no light theme left in the stylesheet', () => {

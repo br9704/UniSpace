@@ -10,7 +10,7 @@ export default function LoadFailure({ message }: LoadFailureProps) {
       className="mono h-full w-full flex flex-col items-center justify-center gap-3 p-6 text-center text-sm"
       style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text-secondary)' }}
     >
-      <p>&gt; COULD NOT LOAD BUILDINGS</p>
+      <p>Could not load buildings</p>
       <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{message}</p>
       <button
         type="button"
@@ -25,7 +25,7 @@ export default function LoadFailure({ message }: LoadFailureProps) {
           cursor: 'pointer',
         }}
       >
-        [ RETRY ]
+        Try again
       </button>
     </div>
   )

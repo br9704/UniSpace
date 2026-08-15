@@ -77,7 +77,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
             cursor: 'pointer',
           }}
         >
-          [ RETRY ]
+          Try again
         </button>
       </div>
     )

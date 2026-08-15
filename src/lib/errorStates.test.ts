@@ -53,7 +53,12 @@ describe('error states', () => {
     // PRD § 12.7: browsing without GPS is a first-class path. The prompt is
     // dismissible and explains, rather than gating.
     const prompt = find('LocationPrompt.tsx').code
-    expect(prompt).toMatch(/BROWSE WITHOUT LOCATION/)
+    // Case-insensitive: the invariant is that the escape hatch exists and is
+    // labelled for what it does, not that the label is shouted. It was pinned
+    // to the literal 'BROWSE WITHOUT LOCATION' and broke the moment SIGNAL's
+    // all-caps copy was rewritten in sentence case — a copy edit failing a
+    // behavioural test tells you the test was checking the wrong thing.
+    expect(prompt).toMatch(/browse without location/i)
     expect(prompt).toMatch(/dismissed/)
   })
 

@@ -37,7 +37,7 @@ export default function LocationPrompt({ denied }: LocationPromptProps) {
         }}
       >
         <p className="mono text-xs" style={{ color: 'var(--color-text-primary)' }}>
-          {denied ? '> LOCATION BLOCKED' : '> LOCATION IS OFF'}
+          {denied ? 'Location is blocked' : 'Location is off'}
         </p>
 
         <p
@@ -62,7 +62,7 @@ export default function LocationPrompt({ denied }: LocationPromptProps) {
             cursor: 'pointer',
           }}
         >
-          [ BROWSE WITHOUT LOCATION ]
+          Browse without location
         </button>
       </div>
     </div>

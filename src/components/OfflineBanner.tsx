@@ -31,7 +31,7 @@ export default function OfflineBanner() {
             fontSize: 12, letterSpacing: '0.05em', textAlign: 'center',
           }}
         >
-          &gt; OFFLINE — showing last known data
+          Offline — showing last known data
         </motion.div>
       )}
     </AnimatePresence>

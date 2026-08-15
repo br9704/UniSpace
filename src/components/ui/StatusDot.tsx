@@ -20,7 +20,7 @@ interface StatusDotProps {
  * A filled dot of either colour would answer a question the data cannot answer,
  * and the green one would answer it wrongly for 13 of 18 buildings.
  *
- * Square, like everything else in SIGNAL.
+ * Round, like everything else now that SIGNAL's square rule is retired.
  */
 export default function StatusDot({ open, verified = true, size = 6 }: StatusDotProps) {
   return (
@@ -30,6 +30,7 @@ export default function StatusDot({ open, verified = true, size = 6 }: StatusDot
       style={{
         width: size,
         height: size,
+        borderRadius: '50%',
         backgroundColor: !verified
           ? 'transparent'
           : open ? 'var(--color-live)' : 'var(--color-text-muted)',

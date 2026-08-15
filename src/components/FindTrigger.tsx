@@ -24,7 +24,7 @@ export default function FindTrigger({ onClick }: FindTriggerProps) {
         cursor: 'pointer',
       }}
     >
-      [ FIND A SPOT → ]
+      Find a spot →
     </button>
   )
 }

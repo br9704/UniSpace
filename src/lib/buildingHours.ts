@@ -40,13 +40,14 @@ function formatTime(hhmm: string): string {
  *
  * Every surface goes through here so the unverified case cannot be forgotten at
  * one call site — which is how 13 buildings came to advertise a confident
- * "OPEN" derived from a made-up timetable. `[?]` matches the marker
- * `AccessibilityPanel` already uses for the same idea.
+ * "OPEN" derived from a made-up timetable. It names the uncertainty in words
+ * rather than SIGNAL's `[?]` glyph, which on a light card read as an
+ * unrendered control instead of a deliberate third state.
  *
  * @param detailed include the closing/opening time, where there is room for it.
  */
 export function openStatusLabel(status: OpenStatus, detailed = false): string {
-  if (!status.verified) return detailed ? '[?] HOURS NOT VERIFIED' : '[?] HOURS'
+  if (!status.verified) return detailed ? 'Hours not verified' : 'Hours unverified'
   if (!detailed) return status.open ? 'OPEN' : 'CLOSED'
   if (status.open) return `OPEN · CLOSES ${status.closesAt}`
   return status.opensAt ? `CLOSED · OPENS ${status.opensAt}` : 'CLOSED'

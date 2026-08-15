@@ -55,7 +55,7 @@ export default function BuildingFilters({
         <input
           id="building-search"
           type="search"
-          placeholder="> search buildings"
+          placeholder="Search buildings"
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           className="mono w-full text-sm"

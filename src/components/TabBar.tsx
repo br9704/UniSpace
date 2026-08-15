@@ -8,9 +8,9 @@ import { NavLink } from 'react-router-dom'
  * speed at a glance, but the text is what carries the state.
  */
 const TABS = [
-  { to: '/', label: '~/home', icon: HomeIcon },
-  { to: '/map', label: '~/map', icon: MapIcon },
-  { to: '/alerts', label: '~/more', icon: MoreIcon },
+  { to: '/', label: 'Home', icon: HomeIcon },
+  { to: '/map', label: 'Map', icon: MapIcon },
+  { to: '/alerts', label: 'More', icon: MoreIcon },
 ]
 
 function HomeIcon() {

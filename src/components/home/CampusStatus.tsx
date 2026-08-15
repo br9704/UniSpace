@@ -32,10 +32,14 @@ function StatRow({ label, value, accent }: { label: string; value: string; accen
  * plain grey: useful context, not something to draw the eye.
  */
 export default function CampusStatus({ overview }: CampusStatusProps) {
-  const { items, quietCount, openCount, verifiedHoursCount, averagePct, quietest, busiest, peakHourToday, lastUpdated } =
+  const { items, quietCount, readingCount, openCount, verifiedHoursCount, averagePct, quietest, busiest, peakHourToday, lastUpdated } =
     overview
 
-  const campusIsQuiet = quietCount > items.length / 2
+  // Judged only against buildings that reported. With no readings at all the
+  // honest answer is neither "quiet" nor "busy" — it is that we do not know,
+  // and saying so is the whole premise of this app.
+  const hasReadings = readingCount > 0
+  const campusIsQuiet = hasReadings && quietCount > readingCount / 2
 
   // Mark aggregates as approximate whenever nothing underneath them is observed.
   // With no live counts and no crowd reports, every percentage here is derived
@@ -68,16 +72,25 @@ export default function CampusStatus({ overview }: CampusStatusProps) {
               width: 12,
               height: 12,
               borderRadius: '50%',
-              backgroundColor: campusIsQuiet ? 'var(--color-live)' : 'var(--color-occ-moderate)',
-              boxShadow: campusIsQuiet ? 'var(--glow-live)' : 'var(--glow-gold)',
+              // Steel when there is nothing to report: a filled shape wants a
+              // border-weight grey, and the dimmest text token is reserved for
+              // type by contrast.test.ts.
+              backgroundColor: !hasReadings
+                ? 'var(--color-steel)'
+                : campusIsQuiet ? 'var(--color-live)' : 'var(--color-occ-moderate)',
+              boxShadow: !hasReadings
+                ? 'none'
+                : campusIsQuiet ? 'var(--glow-live)' : 'var(--glow-gold)',
             }}
           />
           <p className="mono text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
-            CAMPUS IS {campusIsQuiet ? 'QUIET' : 'BUSY'}
+            {!hasReadings ? 'NO CAMPUS READING' : `CAMPUS IS ${campusIsQuiet ? 'QUIET' : 'BUSY'}`}
           </p>
         </div>
         <p className="mono text-sm leading-[1.5]" style={{ color: 'var(--color-text-muted)' }}>
-          {quietCount} of {items.length} buildings under 50%
+          {hasReadings
+            ? `${quietCount} of ${readingCount} buildings with a reading are under 50%`
+            : `No occupancy data for any of the ${items.length} buildings right now`}
         </p>
       </div>
 

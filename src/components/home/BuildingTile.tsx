@@ -70,8 +70,19 @@ export default function BuildingTile({
         {/* 28px of clearance: the favourite's hit box reaches 44px in from the
             card edge and the padding only accounts for 18 of it. */}
         <p
-          className="text-[14px] font-semibold truncate pr-7"
-          style={{ color: 'var(--color-text-primary)' }}
+          className="text-[13.5px] font-semibold pr-7 leading-tight"
+          // Two lines rather than an ellipsis. The building name is the thing a
+          // user is scanning for, and "Alan Gil…" / "Student…" defeated the
+          // point of the tile. minHeight reserves both lines so a one-line name
+          // does not make its tile shorter than the one beside it.
+          style={{
+            color: 'var(--color-text-primary)',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            minHeight: '2.2em',
+          }}
         >
           {item.building.short_name || item.building.name}
         </p>

@@ -51,7 +51,7 @@ export default function FeedbackSheet({
     <BottomSheet label={`Report incorrect information about ${buildingName}`} onDismiss={onDismiss}>
         <div className="px-5 py-5">
           <h2 className="mono text-sm tracking-wide" style={{ color: 'var(--color-text-primary)' }}>
-            &gt; REPORT AN ERROR
+            Report an error
           </h2>
 
           {sent ? (

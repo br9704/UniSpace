@@ -52,7 +52,7 @@ export default function AlertsPage() {
             // Never let a demo be mistaken for the real thing. If the app is
             // reading local fixtures rather than a live backend, it says so.
             <p className="mono text-xs mt-2" style={{ color: 'var(--color-amber)' }}>
-              &gt; RUNNING ON LOCAL FIXTURE DATA — NOT LIVE
+              Running on local fixture data — not live
             </p>
           )}
         </Card>
