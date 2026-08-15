@@ -6,6 +6,29 @@
 
 ---
 
+> ## ⏱ This is the kickoff prompt, and it has been executed
+>
+> **Everything in "Where this actually stands" below describes 2026-08-14, before the work happened.
+> It is kept as written because the OWNER OVERRIDE at the bottom is what set the whole recovery in
+> motion, and the two sections only make sense read together.** Do not treat any of it as current.
+>
+> What has changed since:
+>
+> - **The app is live** at <https://unispace-tawny.vercel.app>. "Still no live URL" below is stale.
+> - Phase 1 (the forensic audit) produced `WIRING-AUDIT.md`. Phase 3 (re-plan) produced Phase 1.9
+>   and the Ship Runbook in `MASTERPLAN.md`. Phase 4 (build) ran R1–R5 and Sprints 19–25.
+> - The task counts below (199 `[x]`, 111 `[ ]`) are the pre-audit claims this document exists to
+>   distrust. Per `CLAUDE.md`, do not restate them; recount from `MASTERPLAN.md`.
+> - **The Supabase backend was never re-provisioned, and will not be** (decided 2026-08-15, on cost).
+>   Phase 1 item 3 below — "establish the deploy blockers" — was answered by shipping on the
+>   committed fixture layer instead. Read every instruction here about Supabase state, Google Places
+>   quota and Edge Function deployment as parked.
+> - The design and motion sections, and the locked decisions at the bottom, are **still binding**.
+>
+> Precedence, per `CLAUDE.md`: masterplan (sequencing) > `CLAUDE.md` (rules) > this file (kickoff).
+
+---
+
 ## Where this actually stands (measured)
 
 - **199 tasks `[x]`, 111 `[ ]`** — the most complete of Bruno's unreleased projects, ~64% through a 36-sprint plan
@@ -58,6 +81,11 @@ A public URL where someone can open a map of UniMelb and see live occupancy — 
 Bruno has a locked design system. Any UI you build or fix **inherits it**. Never ask him to make a design decision you can answer by reading this; never introduce a new palette, font, or motion language.
 
 **Source of truth:** `~/bruno-portfolio/CLAUDE.md` → "Redesign Design Decisions (2026-07 · SIGNAL)". Read it before touching any visual surface.
+
+> *Note for anyone reading this in the public repo: that path is a private local file and is not
+> part of this project. You do not need it — the whole system it defines is reproduced verbatim
+> below, and again in `MASTERPLAN.md` § Sprint R3. The reference is kept because it records where
+> the design authority actually lives, which is a cross-project system rather than this app.*
 
 **The system — "SIGNAL": a warm-black precision instrument.** Ryoji Ikeda data-minimalism × cassette-futurist hardware × subtle broadcast-CRT texture. It should *operate* like a beautiful old machine — directory listings, keyboard nav, instrument readouts — while staying clean and fast.
 

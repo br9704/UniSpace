@@ -11,9 +11,37 @@
 
 ---
 
+> ## ⏱ Read this as a record, not a status page
+>
+> **Everything below describes the repository as it stood on 2026-08-14, before the recovery
+> sprints.** It is deliberately preserved unedited — the point of a forensic audit is that it says
+> what was true when it ran. Nothing here should be read as the current state of the project.
+>
+> Where each finding was resolved:
+>
+> | Finding | Resolved by |
+> |---|---|
+> | RC-1 — Supabase project deleted | **Closed as "won't do", 2026-08-15.** The backend is deliberately not being provisioned — a recurring cost on a portfolio project. The app runs on the committed fixture layer built in R2 and says so on screen. See `MASTERPLAN.md` § *Owner-Gated Ship Runbook* § 1, now parked, and the decision log |
+> | RC-1a — migration `013` uncommitted | R1.6 — `013_data_verification_fixes.sql` is committed. The 12 Place IDs it originally held are **not** recovered and were not invented; 11 of 18 remain NULL |
+> | RC-2 — Tailwind v4 against v3 syntax | R1.1 — `@import "tailwindcss"` + `@theme`; emitted utilities went 97 → 194 |
+> | RC-3 — `pnpm build` fails | R1.3 — both `useWebPush` issues were real bugs, not type noise |
+> | § 2 falsely-marked tasks | R0 correction pass, then re-observed in R5 |
+> | § 3 honesty violations | R1.8, then recounted again in R2.7 — the curve rows are **1,156**, not the 1,321 computed here |
+> | § 5 blockers B3–B10 | B3 in R1.3 · B4 in the Ship Runbook · B7 in R1.5 · B8 in S22 · B9 done 2026-08-14 |
+> | § 6 design-system state | R3 — SIGNAL applied, light palette deleted |
+>
+> The current state of every one of these lives in `MASTERPLAN.md`, which is the source of truth for
+> sequencing. This file is the source of truth only for what the audit measured.
+
+---
+
 ## 1. The three root causes
 
 ### RC-1 — The Supabase project no longer exists (SEVERITY: FATAL)
+
+> The ref below is a **deleted Supabase project**. It is published here because it is the evidence
+> for the finding, and it is safe to publish: it resolves to nothing, grants nothing, and is not a
+> credential. No project was ever provisioned to replace it — see the decision of 2026-08-15.
 
 `.env.local` points at project ref `kvagntgpiylxhjntexml`.
 
@@ -148,7 +176,7 @@ Vercel runs the `build` script. **The project cannot deploy today**, independent
 | B5 | `GOOGLE_PLACES_API_KEY` never set; Places billing state unknown. Public deploy without a quota cap is an uncapped bill. |
 | B6 | Mapbox token has no URL restriction — a public deploy leaks a usable token. |
 | B7 | `src/lib/supabase.ts` **throws at module load** if env vars are absent → white screen, no error UI, on any misconfigured deploy. |
-| B8 | Main JS bundle **2,275 KB (637 KB gzip)**. PRD § 10.1 targets LCP < 2.5 s on 4G. Not achievable. Mapbox + Recharts + Turf are all in the entry chunk. |
+| B8 | Main JS bundle **2,275 KB (637 KB gzip)**. PRD § 10.1 targets LCP < 2.5 s on 4G. Not achievable. Mapbox + Recharts + Turf are all in the entry chunk. ⚠️ **Unresolved discrepancy (flagged 2026-08-15):** two other committed artifacts — `src/lib/bundleBudget.test.ts` and `MASTERPLAN.md` S22.1 — both record the pre-split entry as **2,375 KB**. The gzip figure agrees at 637 KB in all three. One of the raw figures is a transcription error and the original build output no longer exists to settle it. |
 | B9 | No Vercel project linked. `vercel.json` exists and is correct for a Vite SPA. |
 | B10 | Docker is **not installed**, so `supabase start` (local stack) is unavailable — there is no local database fallback. |
 

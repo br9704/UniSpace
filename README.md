@@ -5,7 +5,7 @@
 <h1 align="center">UniSpace</h1>
 
 <p align="center">
-  <strong>Real-time campus occupancy for university students.</strong>
+  <strong>Campus occupancy for university students — live where it can be, honestly estimated where it can't.</strong>
 </p>
 
 <p align="center">
@@ -13,8 +13,7 @@
 </p>
 
 <p align="center">
-  <em>Currently running on modelled estimates for 18 real UoM buildings — the app says so on
-  screen. Live occupancy switches on when the backend is provisioned.</em>
+  <em>Running on committed fixture data for 18 real UoM buildings — the app says so on screen.</em>
 </p>
 
 <p align="center">
@@ -30,29 +29,66 @@
   <a href="#tech-stack">Tech Stack</a> &middot;
   <a href="#local-setup">Setup</a> &middot;
   <a href="#documentation">Docs</a> &middot;
-  <a href="#current-status">Status</a>
+  <a href="#pilot-campus">Pilot Campus</a> &middot;
+  <a href="#roadmap">Roadmap</a>
 </p>
 
 ---
 
-> **Status: live.** Every sprint through Sprint 25 is complete and deployed. The public build runs
-> on modelled occupancy estimates for 18 real UoM buildings, and labels itself as such — live
-> crowdsourced data switches on once the Supabase backend is provisioned
-> ([`MASTERPLAN.md`](MASTERPLAN.md) § *Owner-Gated Ship Runbook*).
+> **Status: live, and running on fixture data.** Every engineering task through Sprint 25 is closed
+> and the app is deployed. It shows modelled occupancy estimates for 18 real UoM buildings and
+> labels itself as such on screen.
 >
 > Runs locally with no backend at all: `pnpm install && pnpm dev`.
 
 ---
 
+## There is no backend, on purpose
+
+The demo at [unispace-tawny.vercel.app](https://unispace-tawny.vercel.app) reads from a **committed
+fixture layer**, not a database. No Supabase project is provisioned, and none is going to be. A
+hosted Postgres, Realtime and Edge Function stack costs money every month, and this is a portfolio
+project — so the backend is deliberately closed rather than pending.
+
+That is a smaller gap than it sounds, because the backend was never the part that was hand-waved:
+
+| Committed and reviewable | Running |
+|---|---|
+| 21 SQL migrations, applied in order, RLS on every table | — |
+| 8 seed files: 18 buildings, 47 zones, 890 rooms, 1,156 typical-occupancy rows | — |
+| 7 Deno Edge Functions — aggregation, predictions, reports, alerts, feedback, Google sync | — |
+| The full React app, and the test suite that covers it | ✅ deployed |
+
+Run `pnpm test` to see the suite for yourself — 325 tests across 30 files.
+
+The fixture layer (Sprint R2) is what makes that tenable. It is **generated from the same committed
+seed SQL the database would be seeded from** — `pnpm generate:fixtures`, with a test that fails if
+the two fall out of step — so the app is exercising the real data shapes, not a mock someone wrote
+by hand. Every hook reads through one seam (`src/lib/dataSource.ts`); pointing it at a live Supabase
+project is an environment-variable change, not a rewrite.
+
+The honest consequence, stated plainly: **the live-crowdsourced path has never run against real
+users.** Its code is written and unit-tested, and the app is built to degrade to estimates when that
+path returns nothing — which, today, is always. What you can evaluate here is the client, the data
+model, and how the UI behaves when it does not know something. What you cannot evaluate is a
+production backend under load.
+
+---
+
 ## What is UniSpace?
 
-UniSpace gives every university student real-time visibility into campus occupancy so they never waste time walking to a full building again. It combines crowdsourced, privacy-preserving location data with anonymous crowd reports and modelled estimates of each building's weekly rhythm — check it before you leave, not after you arrive.
+UniSpace shows university students how busy campus buildings are, so fewer trips end at a full library. It combines crowdsourced, privacy-preserving location data with anonymous crowd reports and modelled estimates of each building's weekly rhythm — check it before you leave, not after you arrive.
+
+The design problem it actually solves is not "show occupancy". It is **showing occupancy honestly when you are not sure** — which, for a crowdsourced app on day one, is most of the time.
 
 No accounts. No hardware. No tracking. Just open the app and see where the space is.
 
 ## The Problem
 
 University students have no reliable way to know whether a study space is available before physically going there. During peak hours, students try **5–8 buildings** before finding a free spot, wasting **30–40 minutes** each time.
+
+*(Those figures, and the ones below, are the problem estimates recorded in [`PRD.md`](PRD.md) § 2.3.
+They are the premise this was built on, not measurements taken by this app.)*
 
 This is especially costly for:
 - **Commuter students** — limited campus time between classes
@@ -73,13 +109,18 @@ This is especially costly for:
 
 UniSpace always shows the best available data, and says which it is:
 
-| Priority | Source | When it's used |
-|:--------:|--------|----------------|
-| 1 | **Live crowdsourced** | Active UniSpace users currently in the building |
-| 2 | **Crowd reports** | Anonymous 1–5 busyness reports (30-min decay) |
-| 3 | **UniSpace predicted** | Model trained on this campus's own accumulated occupancy history |
-| 4 | **Typical estimate** | UniSpace's modelled weekly rhythm for that building — an estimate, labelled as one |
-| 5 | **No data** | Grey polygon — "No data available" |
+| Priority | Source | When it's used | In the live demo |
+|:--------:|--------|----------------|------------------|
+| 1 | **Live crowdsourced** | Active UniSpace users currently in the building | never — needs a backend |
+| 2 | **Crowd reports** | Anonymous 1–5 busyness reports (30-min decay) | only within your own session |
+| 3 | **UniSpace predicted** | Model trained on this campus's own accumulated occupancy history | never — no history has been collected |
+| 4 | **Typical estimate** | UniSpace's modelled weekly rhythm for that building — an estimate, labelled as one | **this is what you see** |
+| 5 | **No data** | Grey polygon — "No data available" | outside a building's open hours |
+
+The hierarchy is not decoration for the demo: it is why the demo is usable at all. With no backend
+every zone returns `data_quality: 'none'`, blending falls through to tier 4, and the UI renders the
+estimated treatment — dimmed, no green dot, `~` qualifier. That is the same code path a real
+deployment runs on day one, before it has any users.
 
 > **On Google.** Google's public Places API does **not** expose live or typical busyness — the
 > Popular Times you see in Google Maps is an internal feature with no public endpoint. UniSpace
@@ -111,11 +152,13 @@ Privacy is a core architectural constraint, not an afterthought:
 | **Frontend** | React 19 + TypeScript, Vite 8 (PWA) |
 | **Styling** | Tailwind CSS v4 |
 | **Map** | Mapbox GL JS |
+| **Routing** | React Router 7 |
 | **Backend** | Supabase — Postgres, Realtime, Edge Functions (Deno) |
 | **External data** | Google Places API (opening hours only) |
 | **Charts** | Recharts |
 | **Animations** | Framer Motion |
 | **Geospatial** | Turf.js (client-side point-in-polygon) |
+| **Validation** | Zod (runtime validation of all external data) |
 | **State** | React hooks — no state library |
 
 ---
@@ -127,12 +170,12 @@ Privacy is a core architectural constraint, not an afterthought:
 - Node.js 20+
 - pnpm 11 (`npm install -g pnpm`)
 - A Mapbox account (free tier is sufficient) — needed for the map tiles
-- A Supabase project — **only** if you want to run against a real backend
+- A Supabase project — optional, and not required for anything described below
 
-### Quick start — no backend required
+### Quick start — this is the normal path
 
-The app runs entirely on local fixtures, generated from the committed seed SQL. Use this to work on
-anything that isn't the database itself.
+The app runs entirely on local fixtures, generated from the committed seed SQL. Everything except
+the database itself can be developed and tested this way, which is why it is the default.
 
 ```bash
 git clone https://github.com/br9704/UniSpace.git
@@ -150,12 +193,16 @@ pnpm dev
 You get all 18 buildings, their floor zones and their weekly occupancy curves, with no live
 occupancy — which is exactly what a real deployment looks like before it has users.
 
-### Running against Supabase
+### Running against your own Supabase project
+
+Nothing requires this, and the hosted project for UniSpace is deliberately not provisioned. These
+are the instructions for anyone who wants to stand the backend up themselves — the schema and
+functions are all here.
 
 ```bash
-supabase db push                    # migrations 001–014
-# then run supabase/seed/001–004 via the SQL editor or CLI
-supabase functions deploy <name>    # for each of the 6 Edge Functions
+supabase db push                    # migrations 001–021
+# then run supabase/seed/001–005 via the SQL editor or CLI
+supabase functions deploy <name>    # for each of the 7 Edge Functions
 ```
 
 Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in `.env.local`. See
@@ -183,6 +230,7 @@ A test fails if the generated fixtures fall out of step with the seed SQL, so th
 | `VAPID_PUBLIC_KEY` | Supabase secrets | Web Push VAPID public key |
 | `VAPID_PRIVATE_KEY` | Supabase secrets | Web Push VAPID private key |
 | `VAPID_EMAIL` | Supabase secrets | Contact email for VAPID |
+| `IP_HASH_SALT` | Supabase secrets | Any long random string. Required by `submit-report` and `submit-feedback`, which hash the caller's IP for rate limiting. **An unsalted SHA-256 of an IPv4 address is not anonymous** — there are only about four billion of them, so the whole space can be enumerated and the hash reversed. Without the salt, a rate-limiting hash becomes a stored identifier in all but name. |
 
 > **Never commit secrets.** All client-side env vars use the `VITE_` prefix. Server-side secrets are set in the Supabase dashboard only.
 
@@ -200,7 +248,7 @@ UniSpace/
 │   ├── types/            # Shared TypeScript interfaces and enums
 │   └── constants/        # App constants (colours, thresholds, map defaults)
 ├── supabase/
-│   ├── migrations/       # SQL migrations (001–014), applied sequentially
+│   ├── migrations/       # SQL migrations (001–021), applied sequentially
 │   ├── functions/        # Deno Edge Functions
 │   └── seed/             # Seed data scripts
 ├── PRD.md                # Product requirements document
@@ -222,6 +270,8 @@ campuses ──< buildings ──< building_zones ──< zone_occupancy
                 ├──< occupancy_reports
                 ├──< google_popularity_cache
                 ├──< google_popular_times
+                ├──< rooms
+                ├──< feedback
                 └──< user_alerts
 ```
 
@@ -236,6 +286,8 @@ campuses ──< buildings ──< building_zones ──< zone_occupancy
 | `google_popularity_cache` | Cached Google current popularity (30-min TTL) |
 | `google_popular_times` | Google typical weekly popularity histogram |
 | `occupancy_reports` | Anonymous crowd reports (1-5 busyness + optional noise, 30-min expiry) |
+| `rooms` | Room directory — code, floor, type, capacity (no room-level occupancy, by design) |
+| `feedback` | Anonymous data-correction reports (no `user_id` column, no read policy) |
 | `user_alerts` | Push notification subscriptions (keyed by push token, no user ID) |
 
 All tables have **Row Level Security** enabled. Anonymous users can read; only the service role (Edge Functions) can write.
@@ -249,6 +301,8 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 | **Product Requirements** | Full feature specs, data models, personas, design system, privacy rules, UI screen specs | [`PRD.md`](PRD.md) |
 | **Implementation Plan** | Sprint-by-sprint breakdown with progress tracking, architecture decisions, and risk log | [`MASTERPLAN.md`](MASTERPLAN.md) |
 | **Agent Instructions** | Coding standards, privacy rules, commit conventions, sprint protocol | [`CLAUDE.md`](CLAUDE.md) |
+| **Forensic Audit** | The August 2026 audit that found the three systemic failures, and what it verified as genuinely working | [`WIRING-AUDIT.md`](WIRING-AUDIT.md) |
+| **Motion Spec** | Binding animation specification — how motion encodes liveness, change and confidence | [`MOTION.md`](MOTION.md) |
 | **Environment Template** | Required environment variables with descriptions | [`.env.example`](.env.example) |
 
 ---
@@ -261,7 +315,22 @@ All tables have **Row Level Security** enabled. Anonymous users can read; only t
 
 Those curves are UniSpace's own modelled estimates of campus rhythm, not measurements and not Google data — the UI labels them as estimates wherever they are shown. Google's public Places API does not expose live busyness, so it is used only for opening hours.
 
-> Capacity estimates are directional (~), not precise. Building data will be verified in Sprint 17.
+**What is actually sourced, and what is not.** Seed data verification (Sprint 17) is complete, and it
+found that most of the seeded real-world data had been invented. What has since been replaced with
+published values:
+
+- **Hours** — the five library buildings carry UoM's published opening hours. That source publishes
+  a *current-week* table, so those hours will be wrong over exams, summer and public holidays. The
+  other 13 buildings have no published source and remain unverified.
+- **Accessibility** — the flags are nullable, and default to *unknown* rather than *no*. Only the
+  claim UoM states unambiguously — all libraries have lifts and an accessible toilet — is asserted.
+  Step-free entry, accessible parking, and all 13 non-library buildings render as `[?]`.
+- **Google Place IDs** — 11 of 18 are NULL and the remaining 7 are unverified. Resolving them needs
+  a live Places API key, so they are left undone rather than guessed.
+- **Room directory** — the table and UI exist; no room data has been seeded, so it renders nothing.
+
+> Capacity estimates are directional (~), not precise. The remaining unverified items are tracked in
+> [`MASTERPLAN.md`](MASTERPLAN.md) § *Owner-Gated Ship Runbook*, step 5.
 
 ---
 
@@ -297,7 +366,7 @@ Those curves are UniSpace's own modelled estimates of campus rhythm, not measure
 > and the project had not compiled since Sprint 20. The audit is in
 > [`WIRING-AUDIT.md`](WIRING-AUDIT.md); these six sprints fixed what it found.
 
-- [x] **R0:** Forensic audit and honest correction of 22 falsely-marked tasks
+- [x] **R0:** Forensic audit and honest correction — the 12 falsely-marked claims catalogued in [`WIRING-AUDIT.md`](WIRING-AUDIT.md) § 2
 - [x] **R1:** Foundation repair — Tailwind v4 migration, build fixed, fail-soft config
 - [x] **R2:** Local fixture layer — the whole app runs with no backend
 - [x] **R3:** SIGNAL design system + component decomposition
@@ -306,11 +375,11 @@ Those curves are UniSpace's own modelled estimates of campus rhythm, not measure
 
 ### Phase 2 — Polish & reliability
 - [x] **Sprint 19:** Accessibility (WCAG 2.1 AA, contrast computed and enforced)
-- [x] **Sprint 20:** Push notifications & alerts
+- [x] **Sprint 20:** Push notifications & alerts *(code complete; delivery needs the Edge Functions deployed)*
 - [x] **Sprint 21:** Offline graceful degradation
-- [x] **Sprint 22:** Performance — landing route cut from 637 KB to 189 KB gzip
+- [x] **Sprint 22:** Performance — landing route cut from 637 KB to 190 KB gzip, held there by `bundleBudget.test.ts`
 - [x] **Sprint 23:** Error states & edge cases
-- [x] **Sprint 24:** Room directory & cross-building room search
+- [x] **Sprint 24:** Room directory & cross-building room search *(table and UI ready; no room data seeded yet)*
 - [x] **Sprint 25:** Anonymous feedback system
 - [x] **Sprint 18:** Deployed — [unispace-tawny.vercel.app](https://unispace-tawny.vercel.app)
 
@@ -325,7 +394,13 @@ which contradicts this app's core promise.
 
 ## Contributing
 
-This project is under active development by [Bruno Jaamaa](https://github.com/br9704). Development follows the sprint plan in [`MASTERPLAN.md`](MASTERPLAN.md) with coding standards defined in [`CLAUDE.md`](CLAUDE.md).
+Built by [Bruno Jaamaa](https://github.com/br9704). Sprints 0–25 are closed; the sprint plan, every
+architectural decision and its reasoning, and the deferrals with their reasons are all in
+[`MASTERPLAN.md`](MASTERPLAN.md). Coding standards are in [`CLAUDE.md`](CLAUDE.md).
+
+If you are reading the code, [`WIRING-AUDIT.md`](WIRING-AUDIT.md) is probably the most interesting
+file here: it is the forensic audit that found this project's checkmarks had drifted badly from
+reality, and it is preserved unedited, including the parts that were embarrassing.
 
 ---
 

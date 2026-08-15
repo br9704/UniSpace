@@ -26,19 +26,24 @@ Every occupancy figure, percentage, and "N people here now" animates by counting
 
 ## Confidence is a visual state, not a footnote
 
-Blended occupancy (Google Popular Times + live broadcasts) varies wildly in trustworthiness. Motion encodes it:
+Blended occupancy (modelled weekly estimates + crowd reports + live broadcasts) varies wildly in trustworthiness. Motion encodes it:
+
+> **Corrected 2026-08-14.** This section originally said "Google Popular Times". There is no Google
+> occupancy tier: Google's public API does not expose busyness, and the weekly curves are this
+> project's own hand-authored estimates. Google Places is used for opening hours only. See
+> `MASTERPLAN.md` § Architecture Decisions Log, 2026-08-14.
 
 | Confidence | Treatment |
 |---|---|
 | High (live broadcasts present) | Full-intensity zone, breathing on, green `● LIVE` dot |
-| Medium (Popular Times only) | 70% intensity, no breathing, label `~ estimated`, no green |
+| Medium (modelled estimate only) | 70% intensity, no breathing, label `~ estimated`, no green |
 | Low / stale | 40% intensity, dashed border on the card, `> last seen 24m ago` in dim text |
 
-**The cold-start screen is a first-class design.** Zero users must not look broken: zones render at medium-confidence treatment with `~ estimated from historical patterns` typed once under the map title, 40ms/char.
+**The cold-start screen is a first-class design.** Zero users must not look broken: zones render at medium-confidence treatment with `~ estimated from historical patterns` typed once under the map title, 40ms/char. *(As shipped in R4.12 the line reads `~ estimated from typical campus patterns` — "historical" implied a record of this campus that does not exist.)*
 
 ## Per-surface
 
-**Map load (S3/S7)** — Building markers drop with 40ms stagger, scale .85→1, 250ms, capped at 20 staggered then instant. Heatmap fades in 400ms linear *after* markers land. Never both at once — layered arrival reads as system coming online.
+**Map load (S3/S7)** — Building markers drop with 40ms stagger, scale .85→1, 250ms, capped at 20 staggered then instant. Heatmap fades in 400ms linear *after* markers land. Never both at once — layered arrival reads as system coming online. *(Deferred in R4.5: the map draws building polygons, not markers, so there is nothing to drop. The layered-arrival intent is met by the fill cross-fading in over an already-drawn basemap. Revisit if markers are ever added.)*
 
 **Building card (S8)** — Opens as a sheet, 280ms ease-out. Occupancy bar fills 0→value over 500ms with count-up in sync. Floor rows (S9) reveal with 60ms stagger. Trend sparkline draws left→right over 600ms linear, once, on first open only.
 

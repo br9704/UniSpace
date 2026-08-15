@@ -15,6 +15,20 @@ of scope. Counted as of 2026-08-14: **0 open engineering tasks, 31 owner-gated r
 *(Phase 1.9 Recovery and all of Phase 2 closed 2026-08-14. Every remaining item in
 S0–S25 is owner-gated: it needs credentials, real-world data, or a physical device.)*
 
+⚠️ **RECOUNTED 2026-08-15:** still **0 open engineering tasks** — that holds, and every `[ ]` left in
+this file is still in the Ship Runbook. The runbook figure has moved twice. It now carries **37
+steps: 18 open, 7 done, 12 parked.**
+
+- **Done (7):** VAPID keys (§ 2), the three Vercel items (§ 3), and PWA icons plus the accessibility
+  and hours research (§ 5).
+- **Parked (12):** all of § 1 and the items downstream of it, after the 2026-08-15 decision that
+  **the Supabase backend will not be provisioned** (see the decision log). Marked `[⏭️]`, not `[ ]`,
+  because they are closed by choice rather than waiting.
+- **Open (18):** real remaining work. The urgent one is a single line in § 2 — **restrict the Mapbox
+  token** — which is independent of Supabase and live on a public URL today.
+
+Counted from this file, not restated: `grep -oE "^\s*- \[[^]]*\]"` over the runbook section.
+
 **Current state (2026-08-14, post-audit):** The 199 `[x]` marks recorded before this date were
 **claims, not facts**. A forensic audit — `WIRING-AUDIT.md`, in this folder — ran the toolchain,
 probed the backend and inspected the built CSS. Findings:
@@ -350,6 +364,8 @@ fixture layer (Sprint R2) stands in for the backend throughout.
         figures — 1,252 here and 1,453 in README — were both unbacked by any committed artifact.
         The count changed again in R1.7 when the two extra buildings below were finally removed
         from the seeds, which is the point: it is recounted from the files, never restated.)
+        → **The current figure is 1,156**, set at R2.7 when the closed-day curve rows came out.
+        Re-verified 2026-08-15 against the committed seeds. Do not cite 1,172 as current.
   - [x] S7.extra — Removed Giblin Eunson (inside FBE) and Brownless (not in OSM) from
         `buildingMeta.ts` — ⚠️ **but not from the seed files until R1.7 (2026-08-14).** For five
         sprints the database described 20 buildings while the UI and README said 18.
@@ -486,7 +502,19 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 ---
 
 ### Sprint 11: Prediction Engine (Phase 1)
-**Goal:** Implement basic prediction using Google popular times as baseline, with the framework for Pulse's own predictions when data accumulates.
+**Goal:** Implement basic prediction using Google popular times as baseline, with the framework for UniSpace's own predictions when data accumulates.
+
+> ⚠️ **ANNOTATED 2026-08-15 — read this sprint's "Google" and colour references as historical.**
+> Two later decisions rewrote its vocabulary without changing what was built:
+> - **2026-08-14, data relabel.** The `google_popular_times` rows are hand-authored modelled curves,
+>   not Google data. R3.11 rewrote `PredictionSourceBadge` accordingly, so the S11.8 subtask and the
+>   "Source badge correctly shows *Google data*" test criterion below describe copy that has since
+>   been removed as untrue. Google Places feeds opening hours only.
+> - **2026-08-14, SIGNAL supersedes PRD § 11.** The "UoM Gold" and "UoM blue" bars in S11.5 and the
+>   chart legend are gone with the retired navy/gold palette; charts read the SIGNAL tokens through
+>   `src/lib/tokens.ts`.
+>
+> The sprint itself closed correctly — nothing here needs redoing.
 
 **Inputs:** Sprint 2 (Google popular times data), Sprint 5 (occupancy_history accumulating)
 
@@ -505,7 +533,7 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 - [x] S11.5 — Create src/components/SparklineChart.tsx ✅ (6-hour Recharts area sparkline, UoM Gold)
 - [x] S11.6 — Add "Usually peaks at..." text calculation ✅ (getPeakHour in predictionInsights.ts)
 - [x] S11.7 — Add "Best time to go today" calculation ✅ (getBestTimeToGo + getAvoidWindow in predictionInsights.ts, 23 unit tests)
-- [x] S11.8 — Add confidence badge (Google vs Pulse source) ✅ (PredictionSourceBadge.tsx)
+- [x] S11.8 — Add confidence badge (Google vs UniSpace source) ✅ (PredictionSourceBadge.tsx)
 - [x] S11.9 — Wire charts into BuildingCard expanded state ✅ (PredictionSection in BuildingCardExpanded)
 
 **Test criteria:**
@@ -516,9 +544,9 @@ fixture layer (Sprint R2) stands in for the backend throughout.
 - Source badge correctly shows "Google data" when using google_popular_times
 
 **Notes:**
-- Phase 1 uses Google data as baseline — Pulse's own EWMA predictions come in Phase 3
+- Phase 1 uses Google data as baseline — UniSpace's own EWMA predictions come in Phase 3
 - Reference PRD Section 6.4 (F004) for prediction logic
-- Gold bars = Pulse predicted, UoM blue bars = Google typical (in chart legend)
+- Gold bars = UniSpace predicted, UoM blue bars = Google typical (in chart legend)
 
 ---
 
@@ -1118,6 +1146,13 @@ every component under 150 lines.
 - [x] No layout shift on skeleton→content anywhere (CLS ≈ 0) ✅ opacity-only pulse, heights reserved
 
 **Gate — MOTION.md acceptance checklist, verbatim:**
+
+> ⚠️ **DUPLICATE, flagged 2026-08-15.** This block and the one immediately above it are two passes at
+> the same gate; the second was evidently a revision that was appended rather than merged. **This
+> one is the current record** — it is the later of the two and cites the enforcing tests by name
+> (`journeys.test.ts`, `motion.test.ts`). Both are left in place because masterplan content is never
+> deleted. The two agree on every outcome; only the evidence cited differs.
+
 - [⏭️] Breathing invisible in any single frame; visible over 4s of recording ⏭️ **owner-verified**
 - [⏭️] Change vs liveness visually distinct in a recording ⏭️ **owner-verified**
 - [x] All three confidence tiers distinguishable ✅ distinct opacity, qualifier and border style;
@@ -1474,10 +1509,23 @@ rather than installed, per CLAUDE.md § 6.
       room 1011. 8 tests.
 - [⏭️] S24.6 — Verify hours against the 2026 semester calendar ⏭️ **Owner-gated** — needs the
       published calendar. Ship Runbook.
+  - ⚠️ **PARTIALLY CLOSED 2026-08-15.** The five library buildings now carry UoM's published hours
+        (migration `017` + seeds; Ship Runbook § 5). Every seeded hour before that was invented and
+        every one was wrong. Still open: the source is a *current-week* table, so it will be wrong
+        over exams, summer and public holidays, and the 13 non-library buildings have no published
+        source at all. The `[⏭️]` stands for that remainder.
 - [⏭️] S24.7 — Verify accessibility data against UoM AccessAbility ⏭️ **Owner-gated, and the highest
       priority item in that list.** PRD § 13.4: wrong accessibility data is harmful, not merely
       inaccurate. S25's feedback path exists precisely because this cannot be fully verified from
       here.
+  - ⚠️ **PARTIALLY CLOSED 2026-08-15.** The *data model* is fixed, which was the larger of the two
+        problems: the columns were `BOOLEAN NOT NULL DEFAULT FALSE`, so "nobody has checked" — the
+        true answer for most buildings — was unrepresentable, and every unchecked building was
+        silently asserting *not accessible*. Migration `018` makes them nullable; seed `005`
+        asserts only the one claim UoM states unambiguously (all libraries have lifts and an
+        accessible toilet); everything else renders `[?]`. Still open: step-free entry, accessible
+        parking, and all 13 non-library buildings. See Ship Runbook § 5, including the caveat that
+        the source is a student-written guide rather than a facilities audit.
 - [x] S24.8 — "Report an error" ✅ On every building card, not buried in settings — the correction
       path belongs where the error is seen.
 - [x] S24.9 — `Room` / `RoomType` types ✅
@@ -1536,6 +1584,10 @@ rather than installed, per CLAUDE.md § 6.
 > roadmap, not the work queue. Every unchecked box below is deliberate — **111 unchecked boxes are
 > not 111 things to do.** Do not start any of them.
 >
+> *(Recounted 2026-08-15: the 111 no longer exist as `[ ]`. Acting on exactly this instruction, every
+> one of them was re-marked `[⏭️]`, so a blank box could never again be mistaken for a to-do. The
+> only `[ ]` boxes left anywhere in this file are the 30 open steps in the Ship Runbook.)*
+>
 > Phases 4–5 additionally require Supabase Auth accounts and Stripe billing, which contradict the
 > PRD's own positioning (§ 13.1: *"No accounts for core features"*) and cost real money. Revisit
 > only after a public URL exists and is used.
@@ -1543,12 +1595,12 @@ rather than installed, per CLAUDE.md § 6.
 ## Phase 3 — Intelligence `[⏭ roadmap, not scheduled]`
 
 ### Sprint 26: EWMA Prediction Engine `[⏭]`
-**Goal:** Implement Pulse's own prediction model using Exponentially Weighted Moving Average on occupancy_history. Replace Google baseline when sample_count >= 14 days for a given day/hour slot. Add confidence scoring (high/medium/low based on sample count and variance).
+**Goal:** Implement UniSpace's own prediction model using Exponentially Weighted Moving Average on occupancy_history. Replace the modelled-estimate baseline when sample_count >= 14 days for a given day/hour slot. Add confidence scoring (high/medium/low based on sample count and variance).
 
 **Subtasks:**
 - [⏭️] S26.1 — Implement EWMA calculation in compute-predictions Edge Function
 - [⏭️] S26.2 — Confidence scoring (high: 14+ days, medium: 7–13 days, low: <7 days)
-- [⏭️] S26.3 — Auto-switch from Google baseline to Pulse predictions when threshold met
+- [⏭️] S26.3 — Auto-switch from the modelled-estimate baseline to UniSpace predictions when threshold met
 - [⏭️] S26.4 — Update PredictionChart to show confidence band
 - [⏭️] S26.5 — Unit tests for EWMA and confidence calculations
 
@@ -1736,8 +1788,10 @@ rather than installed, per CLAUDE.md § 6.
 | 2026-08-14 | `MOTION.md` is binding product behaviour | Motion encodes liveness, change and confidence — the three things this product sells. Its acceptance checklist is folded into the R4 gate verbatim. |
 | 2026-08-14 | **Local fixture layer instead of early cloud provisioning** | Supabase project deleted and Docker unavailable, so there is no backend to build against. Fixtures unblock ~20 sprints, keep owner-gated work at the end as instructed, cost nothing, and double as test data and the honest cold-start mode. |
 | 2026-08-14 | **"Google" data relabelled as modelled estimates** | `google_popular_times` seed rows are hand-authored curves, not Google data, yet the UI said "Based on Google data". Combined with the 2026-03-19 finding that Google's public API does not expose `current_popularity`, the entire Google tier was fictional. Honesty rule + PRD § 13.4 ("UI clearly labels when data comes from Google vs Pulse") both require the relabel. Google Places retained for opening-hours only. |
-| 2026-08-14 | Name standardised to **UniSpace** | Matches `package.json`, README, PWA manifest and `github.com/br9704/UniSpace`. PRD/MASTERPLAN "Pulse" references updated. |
+| 2026-08-14 | Name standardised to **UniSpace** | Matches `package.json`, README, PWA manifest and `github.com/br9704/UniSpace`. PRD/MASTERPLAN "Pulse" references updated. ⚠️ **CORRECTED 2026-08-15:** that last sentence was not true when written. The sweep was finished in this file on 2026-08-15 (Sprints 11, 26, the competitive-position list and the risk table). **`PRD.md` was never swept and still carries 31 "Pulse" references, starting with its title** — it is off limits under CLAUDE.md § 6 and needs Bruno's explicit go-ahead. Deliberately left as "Pulse" here: the S0 outputs and test criteria that record the literal placeholder string the dev server showed at the time, and the repo path `~/Desktop/PULSE`. Renaming those would be falsifying a record, not finishing a rename. |
 | 2026-08-14 | Position broadcast uses **HTTP Edge Function invoke, not a Realtime channel** | Documenting existing behaviour: implementation diverged from PRD § 7.2 and was never recorded. Functionally equivalent, one fewer moving part, and the privacy invariant holds either way. Code is correct; the PRD is what needs updating. |
+| 2026-08-15 | **The Supabase backend will not be provisioned** | Bruno's call, on cost: a hosted Postgres + Realtime + Edge Function stack is a recurring monthly bill on a portfolio project. Ship Runbook § 1 is **parked**, not pending, and its boxes are `[⏭️]`. This is affordable only because Sprint R2 already built the fixture layer against the committed seed SQL — the app stands up with no backend and says so on screen. **Recorded honestly: the live-crowdsourced path has never run against real users and cannot be evaluated from this repo.** The schema, seeds and all 7 Edge Functions stay committed and reviewable, and `src/lib/dataSource.ts` keeps provisioning later an env-var change rather than a rewrite. |
+| 2026-08-15 | **Repository goes public** | Every document is now written for a stranger with no context, not for Bruno. Consequences applied in this pass: the README leads with the actual state of the deployment rather than assuming the reader knows; `WIRING-AUDIT.md` and `ENGINEERPROMPT.md` carry banners saying they are point-in-time records, because both read as current status pages otherwise; and the dead project ref `kvagntgpiylxhjntexml` is labelled as deleted where it appears, so it does not read as a live identifier. |
 | 2026-08-14 | **Build gate must run `pnpm build`, never `vite build` alone** | `vite build` succeeds while `tsc -b` fails. That gap is precisely how three fatal defects passed the S12.30 and S18 audits. R1.2 adds a built-CSS assertion for the same reason. |
 
 ---
@@ -1758,7 +1812,16 @@ rather than installed, per CLAUDE.md § 6.
 | MazeMap | Indoor wayfinding, floor plans (future consideration) | — |
 
 ### Competitive Position at MVP Deploy (Sprint 18)
-After completing Sprints 0–18, Pulse will combine:
+
+> ⚠️ **ANNOTATED 2026-08-15.** This was written in March 2026 as a forward-looking claim, and two of
+> its ten items no longer describe the product. **Item 7 is void:** there is no Google Popular Times
+> tier — Google's public API does not expose busyness, and the weekly curves are this project's own
+> modelled estimates (decision log, 2026-08-14). **Item 1 is aspirational as shipped:** the heatmap
+> is real, but with no backend provisioned it renders estimates, not real-time occupancy. The
+> remaining eight hold. Kept as written because the claim it makes is what the sprint plan was
+> shaped around.
+
+After completing Sprints 0–18, UniSpace will combine:
 1. Real-time occupancy heatmap on interactive map (unique)
 2. Manual crowd reporting without sensors (Campus Spots model)
 3. Smart recommendations with scoring algorithm (unique)
@@ -1770,7 +1833,7 @@ After completing Sprints 0–18, Pulse will combine:
 9. Floor-level breakdown (MazeMap concept, simplified)
 10. Privacy-first, no account required (unique positioning)
 
-**No single competitor has more than 3 of these. Pulse will have all 10.**
+**No single competitor has more than 3 of these. UniSpace will have all 10.**
 
 ---
 
@@ -1794,10 +1857,10 @@ S15 (Photos+Tips) ────────────────────�
 
 | Risk | Status | Notes |
 |------|--------|-------|
-| Cold start — insufficient crowdsourced data | **Strongly mitigated** | Google Popular Times (F010) + manual crowd reporting (S13) — two independent fallback mechanisms from day one |
-| Google Places API cost | Monitoring | ~$8/month for 10 buildings. Cache aggressively (30min TTL) |
-| Google Places API unavailable | Planned | Fallback to Pulse predictions + crowd reports in blending logic |
-| Location permission denial | Planned | Allow browsing with Google + predicted + crowd report data without GPS |
+| Cold start — insufficient crowdsourced data | **Strongly mitigated** | ⚠️ *2026-08-15: the mitigation is real but the naming here is stale.* Modelled weekly estimates (not Google — see decision log 2026-08-14) + manual crowd reporting (S13) — two independent fallback mechanisms from day one |
+| Google Places API cost | Monitoring | ⚠️ *2026-08-15: stale.* The `~$8/month for 10 buildings` estimate assumed Google was an occupancy source for 10 buildings. Scope is now opening-hours only across 18 buildings, so the ceiling is far lower — and the Ship Runbook § 2 requires a hard quota cap regardless, because an uncapped public deploy is an uncapped bill |
+| Google Places API unavailable | Planned | Fallback to UniSpace predictions + crowd reports in blending logic. ⚠️ *2026-08-15: low impact now — Google feeds opening hours only, so losing it costs open/closed labels, not occupancy* |
+| Location permission denial | Planned | Allow browsing with estimated + predicted + crowd report data without GPS |
 | Supabase Realtime connection limits | Monitoring | Free tier: 200 concurrent. Polling fallback planned |
 | Building capacity estimates inaccurate | Accepted | Directional only ("~"). Report inaccuracy button (S24) + feedback system (S25) |
 | iOS push requires 16.4+ + home screen | Accepted | In-app alerts as fallback |
@@ -1828,35 +1891,96 @@ S15 (Photos+Tips) ────────────────────�
 >
 > Ordered by dependency. Do not reorder.
 
-### 1. Supabase — recreate the backend from scratch
-The previous project (`kvagntgpiylxhjntexml`) is **gone**, not paused. This is a clean rebuild.
+### 1. Supabase — `[⏭️] PARKED — deliberately not provisioned (cost)`
 
-- [ ] Create a new Supabase project. **Do not touch `jaamaabruno@gmail.coms project` or
-      `speechmax`** — CLAUDE.md § 6 puts both permanently off limits.
-- [ ] Apply migrations `001`–`016` **in order**, including the `013` rewritten in R1.6 and the
+> ⚠️ **DECIDED 2026-08-15 (Bruno): the backend is not going to be provisioned.** A hosted Postgres +
+> Realtime + Edge Function stack is a recurring monthly cost, and this is a portfolio project. **This
+> section is closed, not pending** — it is a decision, not a backlog item, and nothing is waiting on
+> it.
+>
+> **The checklist below stays in full, and stays correct.** It is the instructions for whoever does
+> stand this up later — Bruno at some future point, or anyone who clones the repo. Every migration,
+> seed and Edge Function it refers to is committed and reviewable; none of it is running anywhere.
+> The boxes are `[⏭️]` rather than `[ ]` because per this file's legend a blank box reads as a
+> to-do, and these are deliberately out of scope.
+>
+> What the app does instead: the fixture layer built in **Sprint R2** is generated from the same
+> committed seed SQL a real database would be seeded from, and `seedData.test.ts` fails if the two
+> drift. Every hook reads through one seam (`src/lib/dataSource.ts`), so provisioning later is an
+> environment-variable change rather than a rewrite. The honest cost of the decision, recorded
+> plainly: **the live-crowdsourced path has never run against real users**, and cannot be evaluated
+> from this repo.
+
+The previous project (`kvagntgpiylxhjntexml`) is **gone**, not paused — a deleted project ref, dead
+since before 2026-08-14 and safe to leave in the record. It is not a live identifier and grants
+nothing.
+
+- [⏭️] Create a new Supabase project ⏭️ **parked (cost)**. **Do not touch
+      `jaamaabruno@gmail.coms project` or `speechmax`** — CLAUDE.md § 6 puts both permanently off
+      limits.
+- [⏭️] Apply migrations `001`–`016` **in order** ⏭️ **parked (cost)** — including the `013` rewritten in R1.6 and the
       `015` (rooms) / `016` (feedback) added in S24/S25.
-- [ ] Apply seeds `001`–`004` (18 buildings; **1,321** popular-times rows).
-- [ ] Deploy all 7 Edge Functions: `aggregate-occupancy`, `sync-google-popularity`,
+      ⚠️ **CORRECTED 2026-08-15:** the range is now `001`–`018`. Two migrations landed after this
+      line was written — `017_verified_hours.sql` and `018_accessibility_unknown.sql`, both from the
+      research recorded in § 5 below. Verified by `ls supabase/migrations/`, which shows 18 files
+      with no gaps.
+- [⏭️] Apply seeds `001`–`004` (18 buildings; **1,321** popular-times rows) ⏭️ **parked (cost)**.
+      ⚠️ **CORRECTED 2026-08-15:** the range is now `001`–`005` (`005_verified_accessibility.sql`),
+      and the row count is **1,156**, not 1,321.
+
+      **The popular-times row count was stated three different ways in this repo. Resolved:**
+
+      | Figure | Where it was stated | Verdict |
+      |---|---|---|
+      | 1,321 | this line, inherited from `WIRING-AUDIT.md` § 3 | **stale** — computed before R1.7 and R2.7 |
+      | 1,172 | `src/lib/dataSource.ts:96` (code comment) | **stale** — the post-R1.7 figure, never updated after R2.7 |
+      | **1,156** | `src/lib/fixtures/seedData.generated.ts` | ✅ **correct** |
+
+      Verified three independent ways on 2026-08-15, not restated from any of the above: counting
+      the tuples in the committed seeds (`002` = 335 + `004` = 821 = 1,156); counting the objects
+      the generator actually emits into `SEED_TYPICAL_CURVES` (1,156); and the derived header the
+      generator writes at the top of that file. The same count cross-checks against `buildings 18`
+      and `zones 47` in that header.
+
+      Why it drifted twice: R1.7 removed the two dropped buildings (1,321 → 1,172) and R2.7 removed
+      the 16 closed-day rows (1,172 → 1,156). Both corrections are recorded above; this line and the
+      `dataSource.ts` comment each stopped at a different point along the way. **`dataSource.ts:96`
+      is still wrong and is flagged for the code owners** — it is only a comment, and the paging
+      logic it describes was already fixed in R2.1.extra to page until a short page rather than
+      assume a fixed row count, so nothing behaves incorrectly because of it.
+- [⏭️] Deploy all 7 Edge Functions ⏭️ **parked (cost)**: `aggregate-occupancy`, `sync-google-popularity`,
       `compute-predictions`, `submit-report`, `manage-alerts`, `send-alerts`, `submit-feedback`.
-- [ ] Set Edge Function secrets: `GOOGLE_PLACES_API_KEY`, `VAPID_PUBLIC_KEY`,
+      All seven are committed under `supabase/functions/` and reviewable; none is deployed.
+- [⏭️] Set Edge Function secrets ⏭️ **parked (cost)**: `GOOGLE_PLACES_API_KEY`, `VAPID_PUBLIC_KEY`,
       `VAPID_PRIVATE_KEY`, `VAPID_EMAIL`, and **`IP_HASH_SALT`** (any long random string).
       Without the salt, an unsalted SHA-256 of an IPv4 address is brute-forceable — only four
       billion possibilities — which would make the rate-limiting hash a stored identifier in all
       but name.
-- [ ] Create `pg_cron` schedules — `aggregate-occupancy` 10s · `sync-google-popularity` 30min ·
-      `compute-predictions` hourly · `send-alerts` 2min.
-- [ ] Verify RLS is enabled on **every** table (anon SELECT only; writes via service role).
-- [ ] Add the production domain to Supabase CORS allowed origins.
+- [⏭️] Create `pg_cron` schedules ⏭️ **parked (cost)** — `aggregate-occupancy` 10s ·
+      `sync-google-popularity` 30min · `compute-predictions` hourly · `send-alerts` 2min.
+- [⏭️] Verify RLS is enabled on **every** table ⏭️ **parked (cost)** (anon SELECT only; writes via
+      service role). The policies themselves are committed in the migrations and can be read there.
+- [⏭️] Add the production domain to Supabase CORS allowed origins ⏭️ **parked (cost)**.
 
 ### 2. Keys, quotas and the bill
+
+> ⚠️ **ANNOTATED 2026-08-15.** Two of the four items here were only ever needed *because* a backend
+> was coming. With § 1 parked they are parked too. **The Mapbox item is not** — it is independent of
+> Supabase, it is live right now on a public URL, and it is the one genuinely urgent thing in this
+> whole runbook.
+
 - [x] VAPID keys ✅ **Generated 2026-08-14** and written to `.env.local` (gitignored).
       `VITE_VAPID_PUBLIC_KEY` and `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY` are all set.
-- [ ] Copy `VAPID_PRIVATE_KEY`, `VAPID_PUBLIC_KEY` and `VAPID_EMAIL` from `.env.local` into the
-      Supabase Edge Function secrets. (The keys exist; only the paste is owner-gated.)
-- [ ] Google Cloud: enable Places API, **set a hard quota cap and a budget alert.** A public deploy
-      without a cap is an uncapped bill. Scope is opening-hours only now, so the cap can be low.
+- [⏭️] Copy `VAPID_PRIVATE_KEY`, `VAPID_PUBLIC_KEY` and `VAPID_EMAIL` from `.env.local` into the
+      Supabase Edge Function secrets ⏭️ **parked** — there are no Edge Function secrets to set,
+      because there is no project. The keys exist locally and are unused.
+- [⏭️] Google Cloud: enable Places API, **set a hard quota cap and a budget alert** ⏭️ **parked** —
+      the Places call lives in `sync-google-popularity`, which is not deployed, so nothing is
+      calling Google and there is no bill to cap. If the backend is ever provisioned this becomes
+      live again immediately, and it must be done *before* the cron is scheduled, not after.
 - [ ] Mapbox: **restrict the public token to the production domain.** Unrestricted, a public deploy
-      hands anyone a usable token.
+      hands anyone a usable token. **Still open and still urgent** — the deployed site is serving
+      this token today, and this item does not depend on Supabase in any way.
 
 ### 3. Vercel — **DONE 2026-08-14**
 
@@ -1875,16 +1999,21 @@ The previous project (`kvagntgpiylxhjntexml`) is **gone**, not paused. This is a
 - [ ] Optional: custom domain, or a subdomain of `brunojaamaa.dev`.
 - [ ] Optional: turn off Deployment Protection for the `*-bruno-jaamaas-projects` alias if you want
       that URL public too. The `unispace-tawny` alias is already open.
-- [ ] Once Supabase exists: add `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`, remove
+- [⏭️] Once Supabase exists: add `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY`, remove
       `VITE_USE_FIXTURES`, redeploy. That is the whole switch from demo to live.
+      ⏭️ **Parked 2026-08-15 — Supabase is not going to exist (§ 1).** Kept because it documents how
+      small the switch is: two environment variables and a redeploy, no code change. `VITE_USE_FIXTURES=true`
+      is now the permanent production configuration, not a temporary one.
 
 ### 4. Manual verification on the live URL
 - [ ] Mobile browser test at 375 px.
 - [ ] PWA install on iOS **and** Android. iOS needs an in-UI "Share → Add to Home Screen" flow —
       there is no programmatic install prompt, and Web Push on iOS requires Home Screen install
       (unchanged through iOS 26).
-- [ ] Push delivery (requires HTTPS). Send **Declarative Web Push** payloads for Safari/iOS 18.4+;
+- [⏭️] Push delivery (requires HTTPS). Send **Declarative Web Push** payloads for Safari/iOS 18.4+;
       keep the service-worker path for Chrome/Firefox.
+      ⏭️ **Parked 2026-08-15** — delivery runs from `send-alerts`, an Edge Function with nowhere to
+      deploy to (§ 1). Nothing can be pushed, so nothing can be tested.
 - [ ] GPS permission flow, both grant and deny.
 - [ ] Cold-start screen with zero users — must look intentional, not broken.
 - [ ] **VoiceOver pass** on macOS and iOS (S19.7).
@@ -1903,8 +2032,15 @@ most of its effort on.
 
 - [ ] **Google Place IDs** — 11 of 18 are NULL and the other 7 unverified. Needs a Places API key.
       Commit as migration `017`. (R1.6)
+      ⚠️ **CORRECTED 2026-08-15:** `017` and `018` are taken — this item was written before the
+      hours and accessibility migrations below existed. **Commit as `019`.**
 - [ ] **Room directory** — codes, floors and types per building, from UoM's Find a Room. Seeds
       table `rooms`; the UI is built and renders nothing until then. (S24.2)
+      ✅ *Note 2026-08-15: this one is NOT blocked by § 1 being parked.* Room data is committed seed
+      SQL, and `pnpm generate:fixtures` regenerates the fixture layer from it — so seeding rooms
+      makes the directory and the cross-building search work in the deployed demo, with no backend.
+      It is gated only on sourcing the real codes and floors, which is the same reason it was
+      deferred in the first place: inventing them is not an option.
 - [x] **Accessibility researched and the data model corrected** ✅ 2026-08-15. Source:
       `unimelb.edu.au/accessibility/guides/mobility`. Every flag in the database had been invented,
       and the schema could only say "yes" or "no" — so the true answer for most buildings, *nobody
@@ -1939,6 +2075,14 @@ most of its effort on.
 ---
 
 ## Post-Launch
+
+> ⚠️ **ANNOTATED 2026-08-15.** This whole section was written for a deployment with a provisioned
+> backend. With § 1 parked, most of it describes something that does not exist: there is no Supabase
+> dashboard to watch, no Edge Function invocations, no Realtime connections, no `pg_cron` job, and
+> no Google Places calls — so no Google bill. **What still applies to the live site is exactly
+> three things:** Vercel build status and Web Vitals; the Mapbox usage alert and token restriction;
+> and the standing "no third-party analytics" rule, which is a product guarantee and not contingent
+> on anything. The rest is kept as the operating manual for whoever provisions the backend later.
 
 ### Monitoring
 - Supabase dashboard: Realtime concurrent connections (free tier caps at **200** — polling
