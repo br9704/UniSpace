@@ -196,14 +196,14 @@
  * they exist only to be read through var().
  */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
   /* Spacing (8pt grid) */
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
   --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-12: 48px;
 
-  /* Square, everywhere. Kept as a token so pills can be retired in one place. */
-  --radius-full: 2px;
+  /* Pills, as in the pre-SIGNAL system. */
+  --radius-full: 9999px;
 
   /* Font weights — NOT `--font-*`, which is the font-family namespace in v4 */
   --font-regular: 400;
@@ -211,8 +211,12 @@
   --font-semibold: 600;
   --font-bold: 700;
 
-  /* Focus is a bracket, not a glow. */
-  --focus-ring: 0 0 0 1px var(--color-bg), 0 0 0 2px var(--color-amber);
+  /* Glows, restored with the UoM palette. */
+  --glow-gold: 0 0 20px rgba(128, 106, 41, 0.15);
+  --glow-live: 0 0 12px rgba(38, 88, 63, 0.2);
+
+  /* A ring offset from the surface, not a bracket. */
+  --focus-ring: 0 0 0 2px var(--color-bg-primary), 0 0 0 4px var(--color-uom-blue);
 
   /* Motion: ease-out or linear only, nothing over 600ms. */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -232,12 +236,23 @@ html, body, #root {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Data, labels, readouts and ASCII are monospace throughout. */
+/*
+ * Labels and readouts.
+ *
+ * SIGNAL set these in monospace throughout — its "instrument voice" — and 113
+ * elements across 50 files still carry the class. The pre-SIGNAL build this was
+ * reverted to had no monospace anywhere, and that difference is a large part of
+ * why the two still read differently even after the palette went back.
+ *
+ * So the rule is redefined rather than the 113 call sites edited: same class,
+ * body typeface. What is kept is `tabular-nums`, which is not stylistic — it is
+ * what stops a counting number changing width mid-animation and reading as a
+ * glitch. The negative tracking went with the monospace it was compensating for.
+ */
 .mono,
 [data-readout] {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
 }
 
 /*
@@ -256,8 +271,8 @@ html, body, #root {
 }
 
 ::selection {
-  background-color: var(--color-amber);
-  color: var(--color-bg);
+  background-color: rgba(0, 128, 164, 0.3);
+  color: var(--color-text-primary);
 }
 
 /*
