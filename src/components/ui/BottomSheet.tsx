@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { motion } from 'framer-motion'
+import { useDismissOnEscape } from '@/hooks/useDismissOnEscape'
 
 interface BottomSheetProps {
   /** Names the dialog for assistive technology. Required, not optional. */
@@ -20,6 +21,8 @@ const TRANSITION = { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const }
  * other never does.
  */
 export default function BottomSheet({ label, onDismiss, children }: BottomSheetProps) {
+  useDismissOnEscape(onDismiss)
+
   return (
     <>
       <motion.div
@@ -33,6 +36,7 @@ export default function BottomSheet({ label, onDismiss, children }: BottomSheetP
 
       <motion.div
         role="dialog"
+        aria-modal="true"
         aria-label={label}
         className="fixed left-0 right-0 bottom-0 z-[100] max-w-[420px] mx-auto"
         style={{

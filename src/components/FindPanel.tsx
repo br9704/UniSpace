@@ -7,6 +7,7 @@ import { aggregateNoise } from '@/lib/noiseAggregation'
 import FindResults from './FindResults'
 import FilterChipRow from './FilterChipRow'
 import { useFindFilters, type OccupancyFilter } from '@/hooks/useFindFilters'
+import { useDismissOnEscape } from '@/hooks/useDismissOnEscape'
 
 interface FindPanelProps {
   visible: boolean
@@ -31,6 +32,10 @@ const OCCUPANCY_CHIPS: { key: OccupancyFilter; label: string }[] = [
 export default function FindPanel({
   visible, onDismiss, buildings, occupancyMap, userPosition, onBuildingSelect,
 }: FindPanelProps) {
+  // Gated on `visible`: this panel stays mounted when closed, so an ungated
+  // listener would swallow Escape for whatever is actually open.
+  useDismissOnEscape(onDismiss, visible)
+
   const { effectiveFilters, isFilterActive, isCapActive, toggleFilter, toggleCap, reset } =
     useFindFilters()
   const reportsMap = useRecentReports()
@@ -63,6 +68,7 @@ export default function FindPanel({
 
           <motion.div
             role="dialog"
+            aria-modal="true"
             aria-label="Find a spot"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}

@@ -4,6 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import type { BlendedOccupancy, Building } from '@/types'
 import { buildingsToFeatureCollection } from '@/lib/mapHelpers'
 import { getFillLayerConfig, getOutlineLayerConfig, getLabelLayerConfig } from '@/lib/mapLayers'
+import { applyBasemapContrast } from '@/lib/basemapContrast'
 import { MAPBOX_STYLE, DEFAULT_CAMPUS_CENTER, DEFAULT_ZOOM, MIN_ZOOM, MAX_ZOOM, MAX_BOUNDS } from '@/constants/map'
 import { useBreathingLayer } from '@/hooks/useBreathingLayer'
 import { getConfidence } from '@/lib/confidence'
@@ -80,6 +81,9 @@ export default function Map({ buildings, occupancyMap, onBuildingClick, isChangi
   const addLayers = useCallback((map: mapboxgl.Map, blds: Building[], occMap?: Map<string, BlendedOccupancy>) => {
     if (blds.length === 0) return
     if (map.getSource(BUILDINGS_SOURCE)) return
+
+    // Before our own layers, so the basemap underneath them is legible.
+    applyBasemapContrast(map)
 
     const geojson = buildingsToFeatureCollection(blds, occMap)
     map.addSource(BUILDINGS_SOURCE, { type: 'geojson', data: geojson })

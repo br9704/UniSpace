@@ -81,23 +81,23 @@
   /* ── UoM palette, restored from the pre-SIGNAL system ── */
   --color-uom-navy: #003865;
   --color-uom-blue: #0080A4;
-  --color-uom-gold: #006C8F;
+  --color-uom-gold: #005875;
   --color-uom-gold-light: #E8C97A;
   --color-text-on-navy: #FFFFFF;
   --color-text-on-navy-muted: rgba(255, 255, 255, 0.55);
   --color-text-on-navy-subtle: rgba(255, 255, 255, 0.4);
-  --color-source-live: #145836;
+  --color-source-live: #10472B;
   --color-source-google: #0080A4;
-  --color-source-predicted: #006C8F;
+  --color-source-predicted: #005875;
   --color-source-stale: #94A3B8;
 
   --color-bg: #F7F8FA;
   --color-surface: #FFFFFF;
-  --color-steel: #CFD8E3;
-  --color-hairline: #E4E9F0;
+  --color-steel: #AEBBCB;
+  --color-hairline: #CBD5E1;
 
-  --color-text-primary: #0B1F33;
-  --color-text-secondary: #44546A;
+  --color-text-primary: #08192A;
+  --color-text-secondary: #374556;
 
   /*
    * `--text-dim` is decoration only and cannot carry readable text — it sits far
@@ -108,12 +108,12 @@
    * Enforced by `contrast.test.ts`, which computes the ratios rather than
    * trusting them, and greps every .tsx for unguarded `--color-text-dim`.
    */
-  --color-text-dim: #C3CBD6;
-  --color-text-muted: #5B6B80;
+  --color-text-dim: #AEBBCB;
+  --color-text-muted: #4E5C6E;
 
-  --color-amber: #006C8F;
+  --color-amber: #005875;
   --color-amber-bright: #0A93BE;
-  --color-amber-dim: #005875;
+  --color-amber-dim: #00465D;
 
   /*
    * Reserved for live/positive state — the `● LIVE` dot and open/closed. If it
@@ -124,7 +124,7 @@
    * token carries text. It also has to stay 1.5:1 clear of `--text-muted`, or
    * "live" and "estimated" become the same shade of nothing.
    */
-  --color-live: #145836;
+  --color-live: #10472B;
 
   /*
    * ── Occupancy ramp ──
@@ -157,9 +157,9 @@
   --color-bg-input: #FFFFFF;
   --color-bg-page: #F7F8FA;
   --color-bg-overlay: rgba(0, 0, 0, 0.3);
-  --color-border: #E4E9F0;
-  --color-border-bright: #CFD8E3;
-  --color-text-tertiary: #5B6B80;
+  --color-border: #CBD5E1;
+  --color-border-bright: #AEBBCB;
+  --color-text-tertiary: #4E5C6E;
   --color-text-accent: #003865;
 
   /* ── Typography ── */
@@ -245,7 +245,7 @@
    * only thing this value ever draws is a rule, so contrast.test.ts has no
    * business policing it and no existing colour token moves to add it.
    */
-  --border-panel: #DCE3EC;
+  --border-panel: #C7D2E0;
 
   /* Font weights — NOT `--font-*`, which is the font-family namespace in v4 */
   --font-regular: 400;

@@ -88,8 +88,8 @@ describe('UoM palette', () => {
     // The accent is UoM azure, not gold. Darkening #C8A951 far enough to clear
     // AA on a light ground produced a muddy brown; the blue is in the same
     // palette, clears 5.58:1, and is what the university actually uses.
-    expect(tokenValue('--color-amber')).toBe('#006C8F')
-    expect(tokenValue('--color-text-primary')).toBe('#0B1F33')
+    expect(tokenValue('--color-amber')).toBe('#005875')
+    expect(tokenValue('--color-text-primary')).toBe('#08192A')
     expect(tokenValue('--color-uom-navy')).toBe('#003865')
   })
 

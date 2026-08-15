@@ -4,6 +4,7 @@ import type { BlendedOccupancy, Building, HourlyPrediction, UserAlert } from '@/
 import BuildingCardHeader from './BuildingCardHeader'
 import BuildingCardSummary from './BuildingCardSummary'
 import BuildingCardDetails from './BuildingCardDetails'
+import { useDismissOnEscape } from '@/hooks/useDismissOnEscape'
 
 interface BuildingCardProps {
   building: Building
@@ -54,6 +55,8 @@ export default function BuildingCard({
 }: BuildingCardProps) {
   const y = useMotionValue(0)
 
+  useDismissOnEscape(onDismiss)
+
   function handleDragEnd(_: never, info: PanInfo) {
     // Distance or flick — either should dismiss, so a quick swipe works without
     // having to drag the sheet all the way down.
@@ -77,6 +80,7 @@ export default function BuildingCard({
 
       <motion.div
         role="dialog"
+        aria-modal="true"
         aria-label={building.name}
         style={{
           position: 'fixed', left: 0, right: 0, bottom: 0, y,

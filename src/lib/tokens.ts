@@ -16,17 +16,17 @@
 const FALLBACKS: Record<string, string> = {
   '--color-bg': '#F0F2F5',
   '--color-surface': '#FFFFFF',
-  '--color-steel': '#CBD5E1',
-  '--color-hairline': '#E2E8F0',
-  '--color-text-primary': '#1E293B',
-  '--color-text-secondary': '#556376',
-  '--color-text-dim': '#CBD5E1',
-  '--color-text-tertiary': '#5A6D88',
-  '--color-amber': '#806A29',
+  '--color-steel': '#AEBBCB',
+  '--color-hairline': '#CBD5E1',
+  '--color-text-primary': '#08192A',
+  '--color-text-secondary': '#374556',
+  '--color-text-dim': '#AEBBCB',
+  '--color-text-tertiary': '#4E5C6E',
+  '--color-amber': '#005875',
   '--color-amber-bright': '#E8C97A',
-  '--color-amber-dim': '#9A803C',
-  '--color-live': '#26583F',
-  '--color-border': '#E2E8F0',
+  '--color-amber-dim': '#00465D',
+  '--color-live': '#10472B',
+  '--color-border': '#CBD5E1',
 }
 
 /**
