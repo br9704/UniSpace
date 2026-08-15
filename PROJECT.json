@@ -32,7 +32,7 @@
   ],
   "metrics": [
     {
-      "value": "173 KB",
+      "value": "169 KB",
       "label": "landing route gzip, down from 637 KB",
       "source": "src/lib/bundleBudget.test.ts"
     },
@@ -77,10 +77,11 @@
       "Reconciled seed data with the UI: the database described 20 buildings while the app and README said 18",
       "Made accessibility columns nullable so 'nobody has checked' is representable, and forbade any flag being set false from an absence of evidence",
       "Fixed a fixture generator that silently dropped every database-default timestamp, so every freshness stamp in the deployed app rendered nothing",
-      "Fixed a fixture generator that skipped two migrations, leaving every building on the map as a rectangle instead of its real OSM footprint"
+      "Fixed a fixture generator that skipped two migrations, leaving every building on the map as a rectangle instead of its real OSM footprint",
+      "Fixed the home screen announcing 'CAMPUS IS BUSY' at 14% average occupancy: an `occupancy?.pct ?? 100` fallback scored the 13 buildings with no reading as completely full, so absent data was rounded to bad news in the first line a user reads"
     ],
     "measured": [
-      "Landing route 637 KB to 173 KB gzip, measured from the build output at every step; a budget test fails if Mapbox or Recharts reappear on it",
+      "Landing route 637 KB to 169 KB gzip, measured from the build output at every step; a budget test fails if Mapbox or Recharts reappear on it",
       "Naming a Recharts chunk made the landing route 108 KB worse, because it was already correctly split behind a lazy import",
       "WCAG contrast computed from index.css rather than inspected: caught a 2.56:1 token carrying 49 pieces of real content, and later blocked a palette revert that failed 13 assertions",
       "1,156 occupancy curve rows, recounted from the committed seeds after three different figures appeared in the repo"

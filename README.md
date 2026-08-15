@@ -12,7 +12,7 @@ UniSpace shows how full every building on a university campus is, so students st
 
 | | |
 |---|---|
-| **Landing route** | **173 KB gzip**, down from 637 KB — Mapbox's 439 KB stays off it entirely |
+| **Landing route** | **169 KB gzip**, down from 637 KB — Mapbox's 439 KB stays off it entirely |
 | **Tests** | **380** across 32 files, including four that assert properties most projects only write down |
 | **Campus data** | **18** buildings · **47** zones · **890** rooms · **1,156** modelled occupancy rows |
 | **Coordinates sent to a server** | **None.** Zone matching runs on the device; a test fails the build if that changes |
@@ -58,10 +58,11 @@ source they arrived with, so they inherit the low-confidence treatment automatic
 enforces that an estimate can never render as a live reading.
 
 That principle runs all the way down into the data. A building whose opening hours have no
-published source shows `[?] HOURS NOT VERIFIED` and a hollow status dot instead of a confident
-OPEN or CLOSED — and is deliberately *not* excluded by the "Open Now" filter, because filtering on
+published source reads "Hours not verified" with a hollow status dot instead of a confident OPEN
+or CLOSED — and is deliberately *not* excluded by the "Open Now" filter, because filtering on
 invented hours quietly cut the campus to five libraries on weekends. Accessibility flags are
-nullable and render `[?]` when nobody has checked, with the provenance shown inline.
+nullable and render `[?]` when nobody has checked, with the provenance shown inline. Both are
+visible in the third screenshot above.
 
 The privacy design is the constraint everything else bends around. The browser reads GPS, matches
 the point against building polygons locally with Turf.js, and sends a `zone_id` — never a
@@ -193,7 +194,7 @@ could not be identified with confidence are still quadrilaterals and are named a
 matched to a guess.
 
 Measurement changed decisions repeatedly, and not always in the expected direction. Splitting
-Mapbox out took the landing route from 637 KB to 173 KB gzip; the next optimisation, naming a
+Mapbox out took the landing route from 637 KB to 169 KB gzip; the next optimisation, naming a
 `charts` chunk for Recharts, made things **worse** — it was already correctly split behind the
 lazy building card, and naming it caused the bundler to hoist it into a static import, adding
 108 KB to the route in the name of shrinking it. Computing contrast ratios rather than eyeballing
@@ -213,6 +214,15 @@ and, worse, that the columns could only say yes or no, so the true answer for mo
 `false` from an absence of evidence, and unverified flags render `[?]` with their provenance shown
 inline. The same rule was then applied to opening hours. That is the third screenshot above: a
 building the app knows things about, being explicit about the things it does not.
+
+The clearest example of why that principle is worth the effort was also the last bug found. The
+first line on the home screen announced **CAMPUS IS BUSY** while average occupancy read 14% and
+every building on the list said EMPTY. The cause was a single fallback: `occupancy?.pct ?? 100`
+scored a building with *no reading* as completely full, and 13 of 18 buildings have no reading, so
+the app was declaring a crowded campus on the strength of missing data. It now judges quiet against
+only the buildings that reported, and names its own denominator — "5 of 5 buildings with a reading
+are under 50%". Absent data had been quietly rounded to bad news, in the one line a user reads
+first, which is the failure this whole project is organised against.
 
 The receipts are in [`MASTERPLAN.md`](MASTERPLAN.md) — the corrections, as-shipped deltas, and the
 reasoning behind every deferral.
@@ -353,8 +363,9 @@ photographs. Each is listed in [`MASTERPLAN.md`](MASTERPLAN.md) rather than quie
 One note on history: Sprint R3 applied a dark, single-accent design system called SIGNAL, with a
 monospace "instrument voice" throughout. Its component decomposition and accessibility work stand
 and are load-bearing, but **the visual layer was reverted on 2026-08-15** — university navy and
-gold on a light ground, and the monospace dropped across 113 elements. The reasoning is in the
-masterplan's Architecture Decisions Log. The screenshots above are the current build.
+azure on a light ground, the monospace dropped across 113 elements, and the terminal affordances
+(`</section>` labels, `~/home`, bracketed controls) replaced with words and icons. The reasoning
+is in the masterplan's Architecture Decisions Log. The screenshots above are the current build.
 
 | | |
 |---|---|
