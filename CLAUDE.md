@@ -111,7 +111,7 @@ supabase/
 
 ## 4. Privacy Rules — Non-Negotiable
 
-These rules come from the PRD (Section 12) and must never be violated regardless of what seems convenient.
+These rules come from the PRD (Section 13, *Privacy & Ethics*) and must never be violated regardless of what seems convenient.
 
 1. **Raw GPS coordinates must NEVER leave the client device.** Zone detection happens client-side using Turf.js. Only `zone_id` is broadcast.
 2. **`session_id` is never written to any database table.** It is used only for in-memory counting in Edge Functions.
@@ -187,7 +187,7 @@ If you encounter an ambiguity, a blocker, or a decision that isn't covered by th
 
 1. **Check the PRD.** It likely addresses it.
 2. **Check the MASTERPLAN.** The sprint notes may have context.
-3. **Check open questions** in Section 15 of the PRD — the question may already be logged.
+3. **Check Section 16 of the PRD**, *Resolved Decisions* — the question may already have been settled there. (There is no open-questions register; Section 15 is *Risks & Mitigations*. Unresolved questions live in the MASTERPLAN's Architecture Decisions Log, or nowhere yet.)
 4. **Stop and ask the user.** Do not guess on decisions that affect architecture, privacy, or product behaviour.
 
 Never silently make a product decision. Log it.
