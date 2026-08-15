@@ -1770,6 +1770,58 @@ rather than installed, per CLAUDE.md § 6.
 
 ## Architecture Decisions Log
 
+### 2026-08-15 (later) — the visual layer, and three bugs it was hiding
+
+The palette revert above was the first of four passes. What followed is recorded
+because the *sequence* is the lesson: each round of "it still looks wrong" turned
+out to be a defect rather than a taste disagreement, and none of them were
+visible from the source.
+
+**1. Every spacing utility in the app was dead.** `* { margin: 0; padding: 0 }`
+sat unlayered in `index.css`. Unlayered rules outrank every cascade layer, and
+Tailwind v4 puts all utilities in `@layer utilities` — so that one line
+overrode `p-6`, `mx-6`, `mt-5`, the lot. Classes were in the markup, `.mx-6`
+resolved to the correct value, the build was green, and every container
+rendered glued to its neighbour. Read as a design failure and treated as one
+for two rounds. Found by probing a live element:
+`getComputedStyle(div.className = 'mx-6 p-6')` → `margin 0px, padding 0px`.
+Third bug of this shape in this file, after the dropped font `@import` and the
+`@source` directive. **This stylesheet cannot be verified by reading it.**
+
+**2. The headline was confidently wrong.** The home page announced
+`CAMPUS IS BUSY` while average occupancy read ~14% and every building on screen
+said EMPTY. `(item.occupancy?.pct ?? 100)` counted a building with *no reading*
+as completely full; 13 of 18 have no reading, so the app asserted a crowded
+campus on the strength of missing data — in the first line a user reads, and in
+the direction that does most harm. Now judged only among buildings that
+reported, with the denominator named.
+
+**3. No dialog could be closed from a keyboard.** Both sheets were
+`role="dialog"` dismissible only by backdrop tap or drag. They cover the tab
+bar, so a keyboard user who opened a building card was stuck. WCAG 2.1.2.
+A test already pressed Escape and *passed on the bug*, because it never asserted
+the sheet had gone. Replacing it with an invariant over every `role="dialog"`
+in the tree immediately found a third dialog nobody had noticed (`FindPanel`).
+
+**Also shipped:** the accent moved from gold to UoM azure — darkening
+`#C8A951` far enough to clear AA produced a muddy brown — and contrast was
+raised across the board, solved jointly because `--color-live` must stay 1.5:1
+clear of `--color-text-muted` and that is exactly the ratio of their two
+contrasts against the ground. SIGNAL's terminal voice (`</at a glance>`,
+`~/home`, `[ REPORT ]`, `[?] HOURS`) is gone. The basemap's roads are darkened
+via layer ids read out of the loaded style — an earlier attempt guessed the
+*Streets* ids and silently missed every actual street, since `light-v11`
+collapses the network into one `road-simple` layer.
+
+**Method note.** Everything after the palette was found with Playwright:
+screenshot for appearance, drive the app for behaviour. The two find different
+classes of defect, and neither is reachable by reading source. Scripts live
+outside the repo, so `playwright` is deliberately **not** in `package.json` —
+committing it would mean a browser download on every `pnpm install`.
+
+**As shipped:** tsc clean · **388 tests / 33 files** · lint clean · build clean ·
+end-to-end drive 11/11 against the deployed URL with zero console errors.
+
 ### 2026-08-15 — SIGNAL reverted; PRD § 11's UoM palette restored
 
 **Decision.** R3's SIGNAL design system is retired in this project. The palette,
