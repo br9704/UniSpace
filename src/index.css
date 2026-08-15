@@ -179,15 +179,36 @@
   --text-lg: 1.125rem;
   --text-xl: 1.375rem;
   --text-2xl: 1.75rem;
+  /* 32px — the home tile's percentage, the largest number on that screen. The
+     scale jumped 28 → 48 and so could not express it. */
+  --text-3xl: 2rem;
   --text-4xl: 3rem;
 
-  /* ── Shape: effectively square ── */
+  /*
+   * ── Shape: a ladder, not one value ──
+   *
+   * 20 panel → 18 row → 16 tile → 12 input → 6 chip. The step tells you what
+   * contains what before a word is read; SIGNAL flattened all five to 12px.
+   */
   --radius-sm: 6px;
   --radius-md: 12px;
+  --radius-tile: 16px;
+  --radius-row: 18px;
   --radius-lg: 20px;
 
-  /* No shadows in this system. Depth comes from hairlines and steel borders. */
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 56, 101, 0.06);
+  /*
+   * Two tiers of depth, plus a hover step.
+   *
+   * The line that used to sit here said "no shadows in this system" — true of
+   * SIGNAL, false since the palette revert, and the kind of stale comment that
+   * makes the next agent undo the undo.
+   *
+   * --shadow-card sits under the white section panels (navy-tinted, so it reads
+   * as the page's own light); --shadow-tile under the cards inside them;
+   * --shadow-elevated is the pointer hover lift in `.card-lift` below.
+   */
+  --shadow-card: 0 4px 20px rgba(0, 56, 101, 0.06);
+  --shadow-tile: 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-elevated: 0 8px 30px rgba(0, 56, 101, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
@@ -202,8 +223,29 @@
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
   --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-12: 48px;
 
+  /*
+   * Two half-steps the card ladder needs. The pre-SIGNAL home page padded its
+   * tiles at 18 and its rows at 22 — the only two values off the 8pt grid, and
+   * the two that keep tile / row / panel reading as three distinct tiers
+   * instead of collapsing into 16 / 24 / 24.
+   */
+  --space-4-5: 18px;
+  --space-5-5: 22px;
+
   /* Pills, as in the pre-SIGNAL system. */
   --radius-full: 9999px;
+
+  /*
+   * The panel outline: translucent navy at 65%, over a soft shadow. It is the
+   * pre-SIGNAL system's single strongest signature — a 1px hairline plus no
+   * shadow is most of why the palette revert alone did not land the look.
+   *
+   * Deliberately NOT in the --color-* namespace. It is a border treatment, not
+   * a text or background colour, and it must not start being read as one: the
+   * only thing this value ever draws is a rule, so contrast.test.ts has no
+   * business policing it and no existing colour token moves to add it.
+   */
+  --border-panel: rgba(0, 56, 101, 0.65);
 
   /* Font weights — NOT `--font-*`, which is the font-family namespace in v4 */
   --font-regular: 400;
@@ -262,6 +304,34 @@ html, body, #root {
 [data-count] {
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
+}
+
+/*
+ * Pointer affordance for a tappable card: depth, not scale.
+ *
+ * The pre-SIGNAL build grew its cards under the cursor (scale 1.02). That is
+ * not restored, because `constants/animations.ts` records the decision against
+ * it — "a card that grows under the cursor is decoration" — and a silent
+ * reversal of a recorded decision is not on. A one-step shadow raise is the
+ * same acknowledgement with nothing moving, so no text shifts under the reader
+ * and no layout reflows.
+ *
+ * A CSS transition, so the reduced-motion block at the bottom of this file
+ * collapses it to 0.01ms: the raised shadow still applies on hover, it just
+ * applies instantly rather than easing. Gated on a real pointer so it never
+ * sticks on after a tap.
+ *
+ * This is also the first consumer of --ease, which until now was declared and
+ * read by nothing.
+ */
+.card-lift {
+  transition: box-shadow var(--dur-fast) var(--ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-lift:hover {
+    box-shadow: var(--shadow-elevated);
+  }
 }
 
 *:focus-visible {

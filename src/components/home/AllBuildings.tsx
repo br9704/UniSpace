@@ -3,9 +3,12 @@ import { motion } from 'framer-motion'
 import type { CampusItem } from '@/hooks/useCampusOverview'
 import type { GooglePopularTime } from '@/types'
 import { staggerContainer, fadeInUp } from '@/constants/animations'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import Card from '../ui/Card'
 import SectionLabel from '../SectionLabel'
 import BuildingRow from './BuildingRow'
+import BuildingFilters from './BuildingFilters'
+import type { SortKey } from './BuildingFilters'
 
 interface AllBuildingsProps {
   items: CampusItem[]
@@ -14,10 +17,6 @@ interface AllBuildingsProps {
   onToggleFavourite: (id: string) => void
   onOpen: (id: string) => void
 }
-
-type SortKey = 'occupancy' | 'name' | 'distance'
-
-const SORTS: SortKey[] = ['occupancy', 'name', 'distance']
 
 /** Searchable, sortable directory of every building on campus. */
 export default function AllBuildings({
@@ -29,6 +28,7 @@ export default function AllBuildings({
 }: AllBuildingsProps) {
   const [query, setQuery] = useState('')
   const [sortBy, setSortBy] = useState<SortKey>('occupancy')
+  const prefersReducedMotion = usePrefersReducedMotion()
 
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -50,58 +50,32 @@ export default function AllBuildings({
 
   return (
     <Card variant="elevated">
-      <SectionLabel className="mb-3">all buildings</SectionLabel>
+      {/* 14px, deliberately 2px tighter than the 16px every other panel heading
+          uses, because a search field follows rather than content. */}
+      <SectionLabel className="mb-3.5">all buildings</SectionLabel>
 
-      <label className="sr-only" htmlFor="building-search">Search buildings</label>
-      <input
-        id="building-search"
-        type="search"
-        placeholder="> search buildings"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="mono w-full text-xs px-3"
-        style={{
-          minHeight: 44,
-          backgroundColor: 'var(--color-bg)',
-          border: '1px solid var(--color-hairline)',
-          borderRadius: 'var(--radius-md)',
-          color: 'var(--color-text-primary)',
-          outline: 'none',
-        }}
+      <BuildingFilters
+        query={query}
+        onQueryChange={setQuery}
+        sortBy={sortBy}
+        onSortChange={setSortBy}
       />
 
-      <div className="flex gap-2 mt-3 mb-4" role="group" aria-label="Sort buildings">
-        {SORTS.map((key) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setSortBy(key)}
-            aria-pressed={sortBy === key}
-            className="mono text-xs px-2.5"
-            style={{
-              minHeight: 44,
-              background: 'none',
-              border: `1px solid ${sortBy === key ? 'var(--color-amber)' : 'var(--color-hairline)'}`,
-              borderRadius: 'var(--radius-md)',
-              color: sortBy === key ? 'var(--color-amber)' : 'var(--color-text-secondary)',
-              cursor: 'pointer',
-            }}
-          >
-            {key.toUpperCase()}
-          </button>
-        ))}
-      </div>
-
       {visible.length === 0 ? (
-        <p className="mono text-xs text-center py-6" style={{ color: 'var(--color-text-muted)' }}>
+        <p className="mono text-sm text-center py-5" style={{ color: 'var(--color-text-muted)' }}>
           &gt; no buildings match “{query}”
         </p>
       ) : (
         <motion.ul
           variants={staggerContainer}
-          initial="hidden"
+          // See TileGrid: CSS cannot stop a framer stagger, so it starts already
+          // visible instead of animating for a user who asked for none.
+          initial={prefersReducedMotion ? 'visible' : 'hidden'}
           animate="visible"
-          className="flex flex-col gap-3"
+          // 16px, not the grid's 12px. Rows in a vertical list need more
+          // separation than tiles in a grid, which have a column edge to divide
+          // them; using one value for both is half of why the page reads flat.
+          className="flex flex-col gap-4"
         >
           {visible.map((item) => (
             <motion.li key={item.building.id} variants={fadeInUp}>

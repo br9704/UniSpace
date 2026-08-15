@@ -1,7 +1,9 @@
+import { motion } from 'framer-motion'
 import type { CampusItem } from '@/hooks/useCampusOverview'
 import type { GooglePopularTime } from '@/types'
 import { BUILDING_META } from '@/constants/buildingMeta'
-import { getActiveAmenities } from '@/lib/amenityHelpers'
+import { getOccupancyColourVar } from '@/constants/occupancy'
+import { cardPress } from '@/constants/animations'
 import { getCurrentTypical } from '@/lib/occupancyHelpers'
 import { formatHour } from '@/lib/predictionInsights'
 import { isOpenNow, openStatusLabel } from '@/lib/buildingHours'
@@ -9,6 +11,7 @@ import OccupancyBar from '../OccupancyBar'
 import CountUpValue from '../CountUpValue'
 import FavouriteButton from '../FavouriteButton'
 import StatusDot from '../ui/StatusDot'
+import BuildingRowFooter from './BuildingRowFooter'
 
 interface BuildingRowProps {
   item: CampusItem
@@ -30,7 +33,6 @@ export default function BuildingRow({
   const pct = item.occupancy?.pct ?? null
   const status = isOpenNow(building)
   const meta = BUILDING_META[building.slug]
-  const amenities = getActiveAmenities(building)
   const typical = getCurrentTypical(typicalRows, building.id)
 
   const peak = typicalRows
@@ -39,31 +41,57 @@ export default function BuildingRow({
 
   return (
     <div
+      // Shadow as a class, not inline: see BuildingTile — an inline box-shadow
+      // would outrank `.card-lift:hover` and kill the lift.
+      className="relative card-lift shadow-tile"
       style={{
-        backgroundColor: 'var(--color-surface)',
-        border: '1px solid var(--color-hairline)',
-        borderRadius: 'var(--radius-md)',
+        backgroundColor: 'var(--color-bg-card)',
+        border: '2px solid var(--border-panel)',
+        // Same occupancy stripe as the tile, so the directory scans the same
+        // way the grid does. Declared after `border`, which would overwrite it.
+        borderLeft: `4px solid ${getOccupancyColourVar(pct)}`,
+        borderRadius: 'var(--radius-row)',
       }}
     >
-      <button
+      {/* Beside the percentage, as in the pre-SIGNAL build — but a sibling of
+          the row button, never nested inside it. That build could nest because
+          its card was a role="button" div, which a11y.test.ts now forbids. */}
+      <div className="absolute" style={{ top: 8, right: 4 }}>
+        <FavouriteButton isFavourite={isFavourite} onToggle={onToggleFavourite} size={18} />
+      </div>
+
+      <motion.button
         type="button"
         onClick={onOpen}
-        className="w-full text-left p-4"
-        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+        {...cardPress}
+        className="w-full text-left"
+        // 22px inset, with the bottom opened up because the amenity row below
+        // completes it — the row does not get taller, the last 12px just moves
+        // outside the tap target so the Directions link can be a real <a>.
+        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '22px 22px 12px' }}
       >
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <p className="text-base" style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>
+        {/* 28px of clearance past the 22px inset, so the percentage stops short
+            of the favourite's 44px hit box. */}
+        <div className="flex items-start justify-between gap-3 pr-7">
+          <div className="flex-1 min-w-0 pr-3">
+            <p className="text-[20px] font-bold leading-tight" style={{ color: 'var(--color-text-primary)' }}>
               {building.name}
             </p>
             {meta && (
-              <p className="mono text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+              // A filled chip rather than a second line of prose, so the address
+              // reads as metadata at a glance and stops competing with the
+              // status line under it.
+              <p
+                className="mono text-xs inline-block mt-1.5 px-2.5 py-[3px] rounded-[var(--radius-sm)]"
+                style={{ backgroundColor: 'var(--color-bg-chip)', color: 'var(--color-text-muted)' }}
+              >
                 {meta.address}
               </p>
             )}
           </div>
+          {/* Text-primary, not the occupancy colour: see BuildingTile. */}
           <span
-            className="mono text-lg shrink-0"
+            className="mono text-xl font-bold shrink-0"
             data-count
             style={{ color: 'var(--color-text-primary)' }}
           >
@@ -72,11 +100,13 @@ export default function BuildingRow({
         </div>
 
         <div className="mt-3">
-          <OccupancyBar pct={pct} height={4} />
+          <OccupancyBar pct={pct} height={6} className="rounded-full" />
         </div>
 
-        <div className="mono flex items-center gap-2 mt-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
-          <StatusDot open={status.open} verified={status.verified} size={5} />
+        {/* 8px between the secondary facts, deliberately unchanged — a tight
+            stack is what the pre-SIGNAL row had here too. */}
+        <div className="mono flex items-center gap-1.5 mt-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+          <StatusDot open={status.open} verified={status.verified} size={6} />
           <span>{!status.verified ? openStatusLabel(status) : status.open ? `OPEN · CLOSES ${status.closesAt}` : 'AFTER HOURS'}</span>
           {item.walkMinutes !== null && <span>· ~{Math.round(item.walkMinutes)} MIN</span>}
         </div>
@@ -89,40 +119,9 @@ export default function BuildingRow({
             {peak && ` · PEAKS ${formatHour(peak.hour_of_day).toUpperCase()}`}
           </p>
         )}
+      </motion.button>
 
-        {amenities.length > 0 && (
-          <ul className="flex flex-wrap gap-1.5 mt-3">
-            {amenities.map((amenity) => (
-              <li
-                key={amenity.label}
-                className="mono text-xs px-1.5 py-0.5"
-                style={{
-                  border: '1px solid var(--color-hairline)',
-                  color: 'var(--color-text-muted)',
-                }}
-              >
-                {amenity.label}
-              </li>
-            ))}
-          </ul>
-        )}
-      </button>
-
-      <div
-        className="flex items-center justify-between px-2"
-        style={{ borderTop: '1px solid var(--color-hairline)' }}
-      >
-        <FavouriteButton isFavourite={isFavourite} onToggle={onToggleFavourite} size={12} />
-        <a
-          href={`https://www.google.com/maps/dir/?api=1&destination=${building.entrance_lat},${building.entrance_lng}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mono text-xs no-underline flex items-center"
-          style={{ color: 'var(--color-text-secondary)', minHeight: 44, padding: '0 8px' }}
-        >
-          [ DIRECTIONS → ]
-        </a>
-      </div>
+      <BuildingRowFooter building={building} />
     </div>
   )
 }

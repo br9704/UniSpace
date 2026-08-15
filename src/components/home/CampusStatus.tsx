@@ -10,10 +10,12 @@ interface CampusStatusProps {
 
 function StatRow({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className="mono flex justify-between gap-4 text-xs">
+    // 13px with the value at weight 600, the pre-SIGNAL StatRow. At 11px and a
+    // uniform weight, six of these read as a dense table rather than six facts.
+    <div className="mono flex justify-between gap-4 text-sm">
       <dt style={{ color: 'var(--color-text-muted)' }}>{label}</dt>
       <dd
-        className="text-right"
+        className="text-right font-semibold"
         style={{ color: accent ? 'var(--color-amber)' : 'var(--color-text-primary)' }}
       >
         {value}
@@ -46,12 +48,35 @@ export default function CampusStatus({ overview }: CampusStatusProps) {
     : '~'
 
   return (
-    <Card variant="elevated" className="flex flex-col gap-4">
+    // 20px between the three blocks. This card carries the answer to the
+    // question the app exists to answer; it should breathe more than the grids
+    // below it, not the same.
+    <Card variant="elevated" className="flex flex-col gap-5">
       <div>
-        <p className="mono text-sm" style={{ color: 'var(--color-text-primary)' }}>
-          CAMPUS IS {campusIsQuiet ? 'QUIET' : 'BUSY'}
-        </p>
-        <p className="mono text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+        {/*
+          The 12px dot with its own glow is how the pre-SIGNAL build opened this
+          card, and it is the page's only chromatic headline. Decorative and
+          aria-hidden — the sentence beside it already says the state, so the
+          colour adds nothing a screen reader needs. Both glows are existing
+          tokens that had no consumers.
+        */}
+        <div className="flex items-center gap-2.5" style={{ marginBottom: 6 }}>
+          <span
+            aria-hidden="true"
+            className="shrink-0"
+            style={{
+              width: 12,
+              height: 12,
+              borderRadius: '50%',
+              backgroundColor: campusIsQuiet ? 'var(--color-live)' : 'var(--color-occ-moderate)',
+              boxShadow: campusIsQuiet ? 'var(--glow-live)' : 'var(--glow-gold)',
+            }}
+          />
+          <p className="mono text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
+            CAMPUS IS {campusIsQuiet ? 'QUIET' : 'BUSY'}
+          </p>
+        </div>
+        <p className="mono text-sm leading-[1.5]" style={{ color: 'var(--color-text-muted)' }}>
           {quietCount} of {items.length} buildings under 50%
         </p>
       </div>
@@ -59,8 +84,11 @@ export default function CampusStatus({ overview }: CampusStatusProps) {
       <div style={{ height: 1, backgroundColor: 'var(--color-hairline)' }} />
 
       <div>
-        <SectionLabel className="mb-3">at a glance</SectionLabel>
-        <dl className="flex flex-col gap-2">
+        {/* The stat stack was one flex column at gap 14 in the pre-SIGNAL
+            build, with this heading as its first child — so both intervals are
+            14, not 12 and 8. */}
+        <SectionLabel className="mb-3.5">at a glance</SectionLabel>
+        <dl className="flex flex-col gap-3.5">
           <StatRow
             label="BUILDINGS"
             // "n OPEN" alone implied the remainder were closed. Only

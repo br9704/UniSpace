@@ -33,7 +33,7 @@ export default function RoomSearch({ buildings, onOpenBuilding }: RoomSearchProp
 
   return (
     <Card variant="elevated">
-      <SectionLabel className="mb-3">find a room</SectionLabel>
+      <SectionLabel className="mb-4">find a room</SectionLabel>
 
       <label className="sr-only" htmlFor="room-search">Search rooms by code</label>
       <input
@@ -42,10 +42,13 @@ export default function RoomSearch({ buildings, onOpenBuilding }: RoomSearchProp
         placeholder="> e.g. 101, G12"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="mono w-full text-xs px-3"
+        className="mono w-full text-sm px-3"
         style={{
           minHeight: 44,
-          backgroundColor: 'var(--color-bg)',
+          // #FAFBFD, so the field sits below the white panel rather than
+          // matching the page behind it — same treatment as the directory
+          // search above.
+          backgroundColor: 'var(--color-bg-input)',
           border: '1px solid var(--color-hairline)',
           borderRadius: 'var(--radius-md)',
           color: 'var(--color-text-primary)',
@@ -56,17 +59,17 @@ export default function RoomSearch({ buildings, onOpenBuilding }: RoomSearchProp
       {query.trim().length >= 2 && (
         <div aria-live="polite">
           {results.length === 0 ? (
-            <p className="mono text-xs mt-3" style={{ color: 'var(--color-text-muted)' }}>
+            <p className="mono text-sm mt-3" style={{ color: 'var(--color-text-muted)' }}>
               &gt; no room matches “{query}”
             </p>
           ) : (
-            <ul className="mt-3 flex flex-col gap-1">
+            <ul className="mt-3 flex flex-col gap-2">
               {results.map((room) => (
                 <li key={room.id}>
                   <button
                     type="button"
                     onClick={() => onOpenBuilding(room.building_id)}
-                    className="mono flex items-center justify-between gap-3 w-full text-xs text-left px-3"
+                    className="mono flex items-center justify-between gap-3 w-full text-sm text-left px-3"
                     style={{
                       minHeight: 44,
                       background: 'none',
