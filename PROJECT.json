@@ -37,8 +37,8 @@
       "source": "src/lib/bundleBudget.test.ts"
     },
     {
-      "value": "380",
-      "label": "tests across 32 files",
+      "value": "388",
+      "label": "tests across 33 files",
       "source": ".github/workflows/ci.yml"
     },
     {
@@ -78,7 +78,8 @@
       "Made accessibility columns nullable so 'nobody has checked' is representable, and forbade any flag being set false from an absence of evidence",
       "Fixed a fixture generator that silently dropped every database-default timestamp, so every freshness stamp in the deployed app rendered nothing",
       "Fixed a fixture generator that skipped two migrations, leaving every building on the map as a rectangle instead of its real OSM footprint",
-      "Fixed the home screen announcing 'CAMPUS IS BUSY' at 14% average occupancy: an `occupancy?.pct ?? 100` fallback scored the 13 buildings with no reading as completely full, so absent data was rounded to bad news in the first line a user reads"
+      "Fixed the home screen announcing 'CAMPUS IS BUSY' at 14% average occupancy: an `occupancy?.pct ?? 100` fallback scored the 13 buildings with no reading as completely full, so absent data was rounded to bad news in the first line a user reads",
+      "Fixed a keyboard trap: two role=dialog sheets were dismissible only by pointer and cover the tab bar (WCAG 2.1.2). The existing Escape test passed on the bug because it never asserted the sheet had gone; an invariant over every dialog in the tree found a third"
     ],
     "measured": [
       "Landing route 637 KB to 169 KB gzip, measured from the build output at every step; a budget test fails if Mapbox or Recharts reappear on it",

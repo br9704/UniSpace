@@ -13,12 +13,12 @@ UniSpace shows how full every building on a university campus is, so students st
 | | |
 |---|---|
 | **Landing route** | **169 KB gzip**, down from 637 KB — Mapbox's 439 KB stays off it entirely |
-| **Tests** | **380** across 32 files, including four that assert properties most projects only write down |
+| **Tests** | **388** across 33 files, including five that assert properties most projects only write down |
 | **Campus data** | **18** buildings · **47** zones · **890** rooms · **1,156** modelled occupancy rows |
 | **Coordinates sent to a server** | **None.** Zone matching runs on the device; a test fails the build if that changes |
 
 [![CI](https://github.com/br9704/UniSpace/actions/workflows/ci.yml/badge.svg)](https://github.com/br9704/UniSpace/actions/workflows/ci.yml)
-![tests](https://img.shields.io/badge/tests-380%20passing-2ea043)
+![tests](https://img.shields.io/badge/tests-388%20passing-2ea043)
 ![license](https://img.shields.io/badge/license-all%20rights%20reserved-8b949e)
 [![live](https://img.shields.io/badge/live-unispace--tawny.vercel.app-003366)](https://unispace-tawny.vercel.app)
 
@@ -149,7 +149,7 @@ That is a smaller gap than it sounds, because the backend was never the hand-wav
 | 22 SQL migrations, applied in order, RLS on every table | — |
 | 8 seed files: 18 buildings, 47 zones, 890 rooms, 1,156 occupancy rows | — |
 | 7 Deno Edge Functions — aggregation, predictions, reports, alerts, feedback, hours sync | — |
-| The React client and the 380-test suite that covers it | deployed |
+| The React client and the 388-test suite that covers it | deployed |
 
 The honest consequence, stated once: **the live-crowdsourced path has never run against real
 users.** Its code is written and unit-tested, and the app is built to fall through to estimates
@@ -215,6 +215,15 @@ and, worse, that the columns could only say yes or no, so the true answer for mo
 inline. The same rule was then applied to opening hours. That is the third screenshot above: a
 building the app knows things about, being explicit about the things it does not.
 
+A related lesson, from the map. Building footprints were invisible against Mapbox's `light-v11`,
+which draws roads near-white on a near-white ground because it is designed to sit *under* a
+visualisation. The first fix matched layer ids like `road-motorway` and `road-primary` — the names
+the full Streets style uses. `light-v11` collapses the entire road network into one `road-simple`
+layer, so that pattern matched footpaths and steps and not a single street. It shipped looking
+slightly better and was entirely wrong. Reading the ids out of the loaded style in a browser fixed
+it in one attempt. Three separate bugs in this project have now had the same shape: the stylesheet
+cannot be verified by reading it, only by measuring what a browser computes.
+
 The clearest example of why that principle is worth the effort was also the last bug found. The
 first line on the home screen announced **CAMPUS IS BUSY** while average occupancy read 14% and
 every building on the list said EMPTY. The cause was a single fallback: `occupancy?.pct ?? 100`
@@ -232,10 +241,10 @@ reasoning behind every deferral.
 ## Verification
 
 `pnpm build` runs `tsc -b` before `vite build`, because the gap between those two is how three
-fatal defects passed two separate audits. **380 tests across 32 files**, no DOM required —
+fatal defects passed two separate audits. **388 tests across 33 files**, no DOM required —
 component logic is extracted into pure functions and tested there.
 
-Four assert properties rather than behaviour, which is the part worth stealing:
+Five assert properties rather than behaviour, which is the part worth stealing:
 
 | File | Tests | What it makes impossible |
 |---|---|---|
@@ -243,6 +252,15 @@ Four assert properties rather than behaviour, which is the part worth stealing:
 | [`src/lib/contrast.test.ts`](src/lib/contrast.test.ts) | 17 | Any text token dropping below WCAG AA — ratios computed from `index.css`, not inspected |
 | [`src/lib/bundleBudget.test.ts`](src/lib/bundleBudget.test.ts) | 4 | The landing route exceeding budget, or Mapbox or Recharts reappearing on it. Measures the real `dist/` output |
 | [`src/index.css.test.ts`](src/index.css.test.ts) | 14 | A framework config change silently emitting no CSS. Compiles the stylesheet through Vite and asserts against the build output |
+| [`src/lib/dialogDismissal.test.ts`](src/lib/dialogDismissal.test.ts) | 8 | A `role="dialog"` reachable only by pointer. Finds every dialog in the tree and requires each to route through the one shared dismissal hook |
+
+The last one is the clearest argument for writing tests this way. Two sheets were dismissible only
+by backdrop tap or drag, and they cover the tab bar — so a keyboard user who opened a building card
+was trapped behind it (WCAG 2.1.2). There *was* a test that pressed Escape, and it passed on the
+bug, because it never asserted the sheet had actually gone. Replacing it with an invariant over
+every dialog in the tree immediately surfaced a third one nobody had noticed. Asserting the
+property rather than the instance is what turns a test from a record of what someone thought to
+check into a constraint on the whole codebase.
 
 Also enforced: no animation may ignore `prefers-reduced-motion`
 ([`motion.test.ts`](src/lib/motion.test.ts)); an estimate may never render as a live reading
@@ -271,8 +289,8 @@ pnpm dev
 ```
 $ pnpm test
 
- Test Files  32 passed (32)
-      Tests  380 passed (380)
+ Test Files  33 passed (33)
+      Tests  388 passed (388)
 ```
 
 You get all 18 buildings, their floor zones, the room directory and the weekly occupancy curves,
@@ -283,7 +301,7 @@ well.
 |---|---|
 | `pnpm dev` | Dev server on fixtures |
 | `pnpm build` | `tsc -b && vite build` — never `vite build` alone |
-| `pnpm test` | 380 unit and integration tests |
+| `pnpm test` | 388 unit and integration tests |
 | `pnpm lint` | ESLint, zero suppressions in the codebase |
 | `pnpm generate:fixtures` | Regenerate fixtures after editing `supabase/seed/` |
 
